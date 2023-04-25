@@ -21,5 +21,14 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    'react/jsx-filename-extension': [2, { 'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
+    "no-use-before-define": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "comma-dangle": "off",
+    "quotes": "off",
+    "object-curly-newline": "off"
   },
 };
