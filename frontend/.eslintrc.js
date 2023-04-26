@@ -29,6 +29,8 @@ module.exports = {
     "import/no-unresolved": "off",
     "comma-dangle": "off",
     "quotes": "off",
-    "object-curly-newline": "off"
+    "object-curly-newline": "off",
+    "import/prefer-default-export" : "off",
+    "arrow-body-style": "off"
   },
 };
