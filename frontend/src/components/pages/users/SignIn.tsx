@@ -13,8 +13,8 @@ export const SignIn: VFC = memo(() => {
   const handleClick = () => setShow(!show);
 
   return (
-    <Flex align="center" justify="center" height="100vh">
-      <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md">
+    <Flex align="center" justify="center" height="100vh" px={3}>
+      <Box bg="white" w="md" p={4} borderRadius="md" shadow="md">
         <Heading as="h1" size="lg" textAlign="center">
           {appInfo.Info.appName}
         </Heading>
