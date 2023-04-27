@@ -7,8 +7,12 @@ import { ChangeEvent, memo, useState, VFC } from "react";
 export const SignIn: VFC = memo(() => {
   const onClickLogin = () => alert("");
 
-  const [userId, setUserId] = useState("");
-  const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setUserId(e.target.value);
+  const [userEmail, setUserEmail] = useState("");
+  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => setUserEmail(e.target.value);
+
+  const [userPassword, setUserPassword] = useState("");
+  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setUserPassword(e.target.value);
+
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -20,9 +24,21 @@ export const SignIn: VFC = memo(() => {
         </Heading>
         <Divider my={4} />
         <Stack spacing={3} py={4} px={10}>
-          <Input placeholder="ユーザーID" value={userId} onChange={onChangeUserId} aria-label="ユーザーID" />
+          <Input
+            placeholder="Eメールアドレス"
+            value={userEmail}
+            onChange={onChangeEmail}
+            aria-label="Eメールアドレス"
+          />
           <InputGroup size="md">
-            <Input pr="4.5rem" type={show ? "text" : "password"} placeholder="パスワード" aria-label="パスワード" />
+            <Input
+              pr="4.5rem"
+              type={show ? "text" : "password"}
+              placeholder="パスワード"
+              aria-label="パスワード"
+              value={userPassword}
+              onChange={onChangePassword}
+            />
             <InputRightElement width="4.5rem">
               <Button h="1.75rem" size="sm" bg="teal.400" color="white" onClick={handleClick}>
                 {show ? "非表示" : "表示"}
