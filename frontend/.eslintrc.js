@@ -31,6 +31,8 @@ module.exports = {
     "quotes": "off",
     "object-curly-newline": "off",
     "import/prefer-default-export" : "off",
-    "arrow-body-style": "off"
+    "arrow-body-style": "off",
+    "react/prop-types": "off",
+    "jsx-a11y/anchor-is-valid": "off"
   },
 };

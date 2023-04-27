@@ -1,5 +1,6 @@
 import { Error404 } from "components/pages/errors/Error404";
 import { Home } from "components/pages/Home";
+import { HeaderLayout } from "components/templates/HeaderLayout";
 import { memo, VFC } from "react";
 import { Route, Switch } from "react-router-dom";
 import { UserRoutes } from "./UserRoutes";
@@ -8,7 +9,9 @@ export const Router: VFC = memo(() => {
   return (
     <Switch>
       <Route exact path="/">
-        <Home />
+        <HeaderLayout>
+          <Home />
+        </HeaderLayout>
       </Route>
       <Route
         path="/user"
@@ -20,7 +23,7 @@ export const Router: VFC = memo(() => {
                 exact={route.exact}
                 path={`${url}${route.path}`}
               >
-                {route.children}
+                <HeaderLayout>{route.children}</HeaderLayout>
               </Route>
             ))}
           </Switch>
