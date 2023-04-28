@@ -31,6 +31,7 @@ module.exports = {
     "arrow-body-style": "off",
     "react/prop-types": "off",
     "jsx-a11y/anchor-is-valid": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "no-unused-vars": "warn"
   },
 };

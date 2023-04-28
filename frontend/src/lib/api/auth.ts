@@ -10,7 +10,11 @@ export const signUp = (params: SignUpParams) => {
 
 // サインイン（ログイン）
 export const signIn = (params: SignInParams) => {
-  return client.post("auth/sign_in", params);
+  return client.post("auth/sign_in", params, {
+    headers: {
+      Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+    },
+  });
 };
 
 // サインアウト（ログアウト）
@@ -28,13 +32,9 @@ export const signOut = () => {
 // もしcookieの中に_access_token、_client、_uidがなかったらreturnで処理を抜け
 // 存在する場合はそれぞれの値を持つ。
 export const getCurrentUser = () => {
-  if (
-    !Cookies.get("_access_token") ||                              // eslint-disable-line
-    !Cookies.get("_client") ||                                    // eslint-disable-line
-    !Cookies.get("_uid")
-  ) return;
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) return;
 
-  return client.get("/auth/sessions", {                           // eslint-disable-line
+  return client.get("/auth/sessions", {                                                           // eslint-disable-line
     headers: {
       "access-token": Cookies.get("_access_token"),
       client: Cookies.get("_client"),
