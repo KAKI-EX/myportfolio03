@@ -1,10 +1,11 @@
-# ログイン状態確認用コントローラー
-class Api::V1::Auth::SessionsController < ApplicationController
-  def index
-    if current_api_v1_user
-      render json: { is_login: true, data: current_api_v1_user }
-    else
-      render json: { is_login: false, message: "ユーザーが存在しません" }
+class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
+  before_action :authenticate_api_key
+
+  private
+
+  def authenticate_api_key
+    authenticate_or_request_with_http_token do |token, options|
+      token == ENV['API_KEY']
     end
   end
 end
