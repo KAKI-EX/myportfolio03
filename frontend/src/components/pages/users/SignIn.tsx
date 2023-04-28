@@ -2,12 +2,14 @@ import { Box, Button, Divider, Flex, Heading, Input, InputGroup, InputRightEleme
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 
 import { appInfo } from "consts/appconst";
-import { ChangeEvent, memo, useState, VFC } from "react";
+import { SignInParams } from "interfaces";
+import { signIn } from "lib/api/auth";
+import React, { ChangeEvent, memo, useState, VFC } from "react";
+import { useHistory } from "react-router-dom";
 
 export const SignIn: VFC = memo(() => {
-  const onClickLogin = () => alert("");
-
   const [userEmail, setUserEmail] = useState("");
+  const history = useHistory();
   const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => setUserEmail(e.target.value);
 
   const [userPassword, setUserPassword] = useState("");
@@ -15,6 +17,28 @@ export const SignIn: VFC = memo(() => {
 
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
+
+  // -------------------------------------------------------------------------------------------
+
+  // ボタンを押すことにより発生する読み込みイベントをここで妨げている。
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    const params: SignInParams = {
+      email: userEmail,
+      password: userPassword,
+    };
+
+    try {
+      console.log(params);
+      const res = await signIn(params);
+      console.log(res);
+      history.push("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  // -------------------------------------------------------------------------------------------
 
   return (
     <Flex align="center" justify="center" height="100vh" px={3}>
@@ -47,9 +71,9 @@ export const SignIn: VFC = memo(() => {
           </InputGroup>
           <Box />
           <PrimaryButton
-            // disabled={userId === ""}
+            disabled={userEmail === "" || userPassword === ""}
             // loading={loading}
-            onClick={onClickLogin}
+            onClick={handleSubmit}
           >
             ログイン
           </PrimaryButton>

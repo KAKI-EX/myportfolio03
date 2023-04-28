@@ -1,11 +1,11 @@
 import { Button } from "@chakra-ui/react";
-import { memo, ReactNode, VFC } from "react";
+import React, { memo, ReactNode, VFC } from "react";
 
 type Props = {
   children: ReactNode;
   disabled?: boolean;
   loading?: boolean;
-  onClick: () => void;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 export const PrimaryButton: VFC<Props> = memo((props) => {
