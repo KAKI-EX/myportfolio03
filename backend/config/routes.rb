@@ -8,9 +8,9 @@ Rails.application.routes.draw do
         sessions: 'api/v1/auth/sessions'
       }
 
-      # namespace :auth do
-      #   resources :sessions_check, only: %i[index]
-      # end
+      namespace :auth do
+        resources :sessions_check, only: %i[index]
+      end
     end
   end
 end

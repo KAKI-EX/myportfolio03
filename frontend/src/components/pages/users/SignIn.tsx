@@ -10,21 +10,18 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import React, { ChangeEvent, memo, useCallback, useContext, useState, VFC } from "react";
+import { ChangeEvent, memo, useCallback, useContext, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { appInfo } from "consts/appconst";
-import { SignInParams } from "interfaces";
-import { signIn } from "lib/api/auth";
-import Cookies from "js-cookie";
-import { useMessage } from "hooks/useToast";
 import { AuthContext } from "App";
+import { useSignIn } from "hooks/useSignIn";
+import { useMessage } from "hooks/useToast";
 
 export const SignIn: VFC = memo(() => {
   console.log("SignIn.tsx SignInが走っています。");
   const [userEmail, setUserEmail] = useState("");
-  const history = useHistory();
   const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => setUserEmail(e.target.value);
 
   const [userPassword, setUserPassword] = useState("");
@@ -35,55 +32,14 @@ export const SignIn: VFC = memo(() => {
 
   // -------------------------------------------------------------------------------------------
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
-
-  const [loading, setLoading] = useState<boolean>(false);
   const { showMessage } = useMessage();
+  const history = useHistory();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // ボタンを押すことにより発生する読み込みイベントをここで妨げている。
+  console.log(userEmail);
   const handleSubmit = useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-
-      const params: SignInParams = {
-        email: userEmail,
-        password: userPassword,
-      };
-
-      console.log("SignIn.tsx SignInが走っています。");
-
-      try {
-        setLoading(true);
-        const res = await signIn(params);
-        if (res?.status === 200) {
-          const addLoginFlag = { ...res, isLogin: "true" };
-          const cookieData = {
-            _access_token: res.headers["access-token"],
-            _client: res.headers.client,
-            _uid: res.headers.uid,
-            _user_id: res.data.data.id,
-            _isLogin: addLoginFlag.isLogin,
-          };
-          Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
-
-          console.log(document.cookie);
-          setIsSignedIn(true);
-          setCurrentUser(res?.data.data);
-          setLoading(false);
-          history.push("/");
-          showMessage({ title: "ログインしました", status: "success" });
-          // console.log(currentUser);
-          // console.log(isSignIn);
-        } else {
-          showMessage({ title: "ログインできませんでした。", status: "" });
-          setLoading(false);
-        }
-      } catch (err) {
-        showMessage({ title: "ログインできませんでした。", status: "error" });
-        console.log(err);
-        setLoading(false);
-      }
-    },
-    [history, setIsSignedIn, setCurrentUser, showMessage, onChangeEmail, onChangePassword, setLoading]
+    useSignIn({ userEmail, userPassword, setLoading, setIsSignedIn, setCurrentUser, history, showMessage }),
+    [userEmail, userPassword]
   );
   // -------------------------------------------------------------------------------------------
 
