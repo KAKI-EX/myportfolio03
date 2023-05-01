@@ -1,5 +1,7 @@
+import Cookies from "js-cookie";
 import { memo, VFC } from "react";
 
 export const Home: VFC = memo(() => {
-  return <p>homeページです。</p>;
+  console.log(document.cookie);
+  return <p>{document.cookie}</p>;
 });

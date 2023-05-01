@@ -79,7 +79,6 @@ export const SignIn: VFC = memo(() => {
           <Box />
           <PrimaryButton
             disabled={userEmail === "" || userPassword === ""}
-            // loading={loading}
             onClick={handleSubmit}
             loading={loading}
           >

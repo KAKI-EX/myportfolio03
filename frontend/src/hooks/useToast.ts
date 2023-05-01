@@ -7,21 +7,20 @@ type Props = {
 };
 
 export const useMessage = () => {
-  const toast = useToast({
-    containerStyle: {
-      marginTop: "5rem"
-    }
-  });
+  const toast = useToast({});
 
   const showMessage = useCallback(
-    (props) => {
+    (props: Props) => {
       const { status, title } = props;
-      toast({
-        title,
-        status,
-        position: "top",
-        duration: 2000,
-        isClosable: true,
+      const titleSplit = (String(title).split(","));
+      titleSplit.forEach((titles: string) => {
+        toast({
+          title: titles,
+          status,
+          position: "top",
+          duration: 3000,
+          isClosable: true,
+        });
       });
     },
     [toast]

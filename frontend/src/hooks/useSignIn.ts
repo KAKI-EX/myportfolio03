@@ -1,7 +1,7 @@
 import { SignInParams, User } from "interfaces";
 import Cookies from "js-cookie";
 import { signIn } from "lib/api/auth";
-import React, { Dispatch, useCallback } from "react";
+import React, { Dispatch } from "react";
 import { useHistory } from "react-router-dom";
 import { useMessage } from "./useToast";
 
@@ -31,29 +31,29 @@ export const useSignIn = (customParams: Params) => {
       setLoading(true);
       const res = await signIn(params);
       if (res?.status === 200) {
-        const addLoginFlag = { ...res, isLogin: "true" };
+        console.log(res);
         const cookieData = {
           _access_token: res.headers["access-token"],
           _client: res.headers.client,
           _uid: res.headers.uid,
           _user_id: res.data.data.id,
-          _isLogin: addLoginFlag.isLogin,
         };
         Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
-
-        console.log(document.cookie);
+        // console.log(document.cookie);
         setIsSignedIn(true);
         setCurrentUser(res?.data.data);
         setLoading(false);
         history.push("/");
-        showMessage({ title: "ログインしました", status: "success" });
-      } else {
-        showMessage({ title: "ログインできませんでした。", status: "" });
-        setLoading(false);
+        showMessage({ title: res.data.message, status: "success" });
       }
-    } catch (err) {
-      showMessage({ title: "ログインできませんでした。", status: "error" });
-      console.log(err);
+      // エラーハンドリング
+    } catch (err: any) {
+      console.log(err.response);
+      if (err.response && err.response.data && err.response.data.errors) {
+        showMessage({ title: `code:${err.response.status} ${err.response.data.errors}`, status: "error" });
+      } else {
+        showMessage({ title: "ログインできませんでした。", status: "error" });
+      }
       setLoading(false);
     }
   };
