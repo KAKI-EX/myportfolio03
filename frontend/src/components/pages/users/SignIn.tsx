@@ -10,37 +10,72 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import { ChangeEvent, memo, useCallback, useContext, useState, VFC } from "react";
+import React, { ChangeEvent, memo, useContext, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { appInfo } from "consts/appconst";
 import { AuthContext } from "App";
-import { useSignIn } from "hooks/useSignIn";
 import { useMessage } from "hooks/useToast";
+import { SignInParams } from "interfaces";
+import Cookies from "js-cookie";
+import { signIn } from "lib/api/auth";
 
 export const SignIn: VFC = memo(() => {
-  console.log("SignIn.tsx SignInが走っています。");
+  console.log("サインインが走っています");
+  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
+
   const [userEmail, setUserEmail] = useState("");
   const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => setUserEmail(e.target.value);
 
   const [userPassword, setUserPassword] = useState("");
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setUserPassword(e.target.value);
 
+  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-
-  // -------------------------------------------------------------------------------------------
-  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
   const { showMessage } = useMessage();
   const history = useHistory();
-  const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(userEmail);
-  const handleSubmit = useCallback(
-    useSignIn({ userEmail, userPassword, setLoading, setIsSignedIn, setCurrentUser, history, showMessage }),
-    [userEmail, userPassword]
-  );
+  // -------------------------------------------------------------------------------------------
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const params: SignInParams = {
+      email: userEmail,
+      password: userPassword,
+    };
+
+    console.log(params);
+    try {
+      setLoading(true);
+      const res = await signIn(params);
+      if (res?.status === 200) {
+        console.log(res);
+        const cookieData = {
+          _access_token: res.headers["access-token"],
+          _client: res.headers.client,
+          _uid: res.headers.uid,
+          _user_id: res.data.data.id,
+        };
+        Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
+        // console.log(document.cookie);
+        setIsSignedIn(true);
+        setCurrentUser(res?.data.data);
+        setLoading(false);
+        history.push("/");
+        showMessage({ title: res.data.message, status: "success" });
+      }
+      // エラーハンドリング
+    } catch (err: any) {
+      console.log(err.response);
+      if (err.response && err.response.data && err.response.data.errors) {
+        showMessage({ title: `code:${err.response.status} ${err.response.data.errors}`, status: "error" });
+      } else {
+        showMessage({ title: "ログインできませんでした。", status: "error" });
+      }
+      setLoading(false);
+    }
+  };
   // -------------------------------------------------------------------------------------------
 
   return loading ? (
@@ -77,11 +112,7 @@ export const SignIn: VFC = memo(() => {
             </InputRightElement>
           </InputGroup>
           <Box />
-          <PrimaryButton
-            disabled={userEmail === "" || userPassword === ""}
-            onClick={handleSubmit}
-            loading={loading}
-          >
+          <PrimaryButton disabled={userEmail === "" || userPassword === ""} onClick={handleSubmit} loading={loading}>
             ログイン
           </PrimaryButton>
         </Stack>

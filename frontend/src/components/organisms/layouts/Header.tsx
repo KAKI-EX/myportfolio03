@@ -4,18 +4,24 @@ import { MenuDrawer } from "components/molecules/MenuDrawer";
 import { appInfo } from "consts/appconst";
 import Cookies from "js-cookie";
 import { signOut } from "lib/api/auth";
-import React, { memo, useCallback, VFC } from "react";
+import React, { memo, useCallback, useContext, VFC } from "react";
 import { useHistory } from "react-router-dom";
+import { useMessage } from "hooks/useToast";
+import { AuthContext } from "App";
 
 export const Header: VFC = memo(() => {
+  console.log("ヘッダーが走っています");
   const history = useHistory();
+  const { showMessage } = useMessage();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onClickHome = useCallback(() => history.push("/"), [history]);
   const onClickSignIn = useCallback(() => history.push("/user/sign_in"), [history]);
   const onClickSignUp = useCallback(() => history.push("/user/sign_up"), [history]);
+  const { setLoading } = useContext(AuthContext);
 
-  const onClickSignOut = async (e : React.MouseEvent<HTMLAnchorElement>) => {
+  const onClickSignOut = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setLoading(true);
     console.log("onClickSignOutが走っています");
     try {
       const res = await signOut();
@@ -25,10 +31,19 @@ export const Header: VFC = memo(() => {
         Cookies.remove("_uid");
         Cookies.remove("_user_id");
         Cookies.remove("_isLogin");
-        console.log("removeしたよ");
+        showMessage({ title: "ログアウトしました。", status: "success" });
       }
     } catch (err: any) {
       console.log(err.response);
+      if (err.response && err.response.data && err.response.data.errors) {
+        showMessage({
+          title: err.response.data.errors,
+          status: "error",
+        });
+      } else {
+        showMessage({ title: "ログアウトできませんでした。", status: "error" });
+      }
+      setLoading(false);
     }
   };
 

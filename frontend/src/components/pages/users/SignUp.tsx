@@ -10,6 +10,9 @@ import { useHistory } from "react-router-dom";
 import { useMessage } from "hooks/useToast";
 
 export const SignUp: VFC = memo(() => {
+  console.log("サインアップが走っています");
+  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
+
   const [userName, setUserName] = useState("");
   const onChangeName = (e: ChangeEvent<HTMLInputElement>) => setUserName(e.target.value);
 
@@ -22,11 +25,10 @@ export const SignUp: VFC = memo(() => {
   const [userPasswordConfirmation, setUserPasswordConfirmation] = useState("");
   const onClickPasswordConfirmation = (e: ChangeEvent<HTMLInputElement>) => setUserPasswordConfirmation(e.target.value);
 
-  // -------------------------------------------------------------------------------------------
-  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
   const { showMessage } = useMessage();
+  // -------------------------------------------------------------------------------------------
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -37,6 +39,8 @@ export const SignUp: VFC = memo(() => {
       password: userPassword,
       passwordConfirmation: userPasswordConfirmation,
     };
+
+    console.log("SignUp.tsxが走っています");
 
     try {
       setLoading(true);
