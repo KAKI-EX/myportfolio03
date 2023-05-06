@@ -10,40 +10,36 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import React, { ChangeEvent, memo, useContext, useState, VFC } from "react";
+import React, { memo, useContext, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 
-import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { appInfo } from "consts/appconst";
 import { AuthContext } from "App";
 import { useMessage } from "hooks/useToast";
 import { SignInParams } from "interfaces";
 import Cookies from "js-cookie";
 import { signIn } from "lib/api/auth";
+import { useForm } from "react-hook-form";
+import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 
 export const SignIn: VFC = memo(() => {
   console.log("サインインが走っています");
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
-
-  const [userEmail, setUserEmail] = useState("");
-  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => setUserEmail(e.target.value);
-
-  const [userPassword, setUserPassword] = useState("");
-  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setUserPassword(e.target.value);
 
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const { showMessage } = useMessage();
   const history = useHistory();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInParams>({ criteriaMode: "all", reValidateMode: "onSubmit" });
 
-  // -------------------------------------------------------------------------------------------
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const params: SignInParams = {
-      email: userEmail,
-      password: userPassword,
-    };
+  const onSubmit = async (formData: SignInParams) => {
+    const { email, password } = formData;
+    const params: SignInParams = { email, password };
 
     console.log(params);
     try {
@@ -76,7 +72,6 @@ export const SignIn: VFC = memo(() => {
       setLoading(false);
     }
   };
-  // -------------------------------------------------------------------------------------------
 
   return loading ? (
     <Box h="50rem" display="flex" justifyContent="center" alignItems="center">
@@ -89,33 +84,67 @@ export const SignIn: VFC = memo(() => {
           {appInfo.Info.appName}
         </Heading>
         <Divider my={4} />
-        <Stack spacing={3} py={4} px={10}>
-          <Input
-            placeholder="Eメールアドレス"
-            value={userEmail}
-            onChange={onChangeEmail}
-            aria-label="Eメールアドレス"
-          />
-          <InputGroup size="md">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack spacing={3} py={4} px={10}>
             <Input
-              pr="4.5rem"
-              type={show ? "text" : "password"}
-              placeholder="パスワード"
-              aria-label="パスワード"
-              value={userPassword}
-              onChange={onChangePassword}
+              placeholder="Eメールアドレス"
+              aria-label="Eメールアドレス"
+              {...register("email", {
+                required: { value: true, message: "入力が必須の項目です。" },
+                pattern: {
+                  value: /[\w\-._]+@[\w\-._]+\.[A-Za-z]+/,
+                  message: "有効なメールアドレスを入力してください。",
+                },
+                maxLength: {
+                  value: 100,
+                  message: "メールアドレスは100文字以内で入力してください。",
+                },
+              })}
             />
-            <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" bg="teal.400" color="white" onClick={handleClick}>
-                {show ? "非表示" : "表示"}
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-          <Box />
-          <PrimaryButton disabled={userEmail === "" || userPassword === ""} onClick={handleSubmit} loading={loading}>
-            ログイン
-          </PrimaryButton>
-        </Stack>
+            {errors.email && (
+              <>
+                {errors.email.types?.pattern && <Box color="red">{errors.email.types.pattern}</Box>}
+                {errors.email.types?.required && <Box color="red">{errors.email.types.required}</Box>}
+              </>
+            )}
+            <InputGroup size="md">
+              <Input
+                pr="4.5rem"
+                type={show ? "text" : "password"}
+                placeholder="パスワード"
+                aria-label="パスワード"
+                {...register("password", {
+                  required: {
+                    value: true,
+                    message: "入力が必須の項目です。",
+                  },
+                  maxLength: {
+                    value: 32,
+                    message: "アルファベットのみ入力してください。",
+                  },
+                  minLength: {
+                    value: 8,
+                    message: "8文字以上入力してください。",
+                  },
+                })}
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" bg="teal.400" color="white" onClick={handleClick}>
+                  {show ? "非表示" : "表示"}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            {errors.password && (
+              <>
+                {errors.password?.types?.required && <Box color="red">{errors.password.types.required}</Box>}
+                {errors.password?.types?.minLength && <Box color="red">{errors.password.types.minLength}</Box>}
+                {errors.password?.types?.maxLength && <Box color="red">{errors.password.types.maxLength}</Box>}
+              </>
+            )}
+            <Box />
+            <PrimaryButtonForReactHookForm loading={loading}>ログイン</PrimaryButtonForReactHookForm>
+          </Stack>
+        </form>
       </Box>
     </Flex>
   );
