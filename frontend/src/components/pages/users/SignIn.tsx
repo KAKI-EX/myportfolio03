@@ -120,7 +120,7 @@ export const SignIn: VFC = memo(() => {
                   },
                   maxLength: {
                     value: 32,
-                    message: "アルファベットのみ入力してください。",
+                    message: "32文字以上のパスワードは設定できません。",
                   },
                   minLength: {
                     value: 8,
