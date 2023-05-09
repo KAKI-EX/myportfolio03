@@ -10,7 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_25_120253) do
+ActiveRecord::Schema.define(version: 2023_05_09_111516) do
+
+  create_table "memos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "user_id", null: false
+    t.string "shopping_data_id", null: false
+    t.string "purchase_name", null: false
+    t.string "shopping_memo"
+    t.string "amount"
+    t.string "price"
+    t.string "shopping_date"
+    t.string "memo_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "shopping_data", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "user_id"
+    t.string "shopping_date"
+    t.string "estimated_budget"
+    t.string "total_budget"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "shops", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "user_id"
+    t.string "shop_name"
+    t.string "shop_memo"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["shop_name", "user_id"], name: "index_shops_on_shop_name_and_user_id", unique: true
+  end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "provider", default: "email", null: false

@@ -34,6 +34,7 @@ module.exports = {
     "max-len": "off",
     "no-unused-vars": "warn",
     "react/jsx-props-no-spreading": "off",
-    "no-plusplus": "off"
+    "no-plusplus": "off",
+    'react/jsx-one-expression-per-line': 'off'
   },
 };
