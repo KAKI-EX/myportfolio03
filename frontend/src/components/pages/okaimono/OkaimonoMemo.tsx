@@ -1,7 +1,6 @@
-import { AddIcon, CloseIcon, SmallAddIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { SmallAddIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Divider,
   Flex,
   Heading,
@@ -9,46 +8,62 @@ import {
   Icon,
   Input,
   InputGroup,
-  InputLeftElement,
   Stack,
   VStack,
-  Show,
-  Hide,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
-import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { OkaimonoParams } from "interfaces";
 import { memo, useEffect, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const onSubmit = () => {
     alert("test");
   };
 
+  const defaultShoppingDate = new Date();
+  const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
+    locale: ja,
+  });
+
   const {
     register,
     handleSubmit,
-    control, // 追加
-  } = useForm<OkaimonoParams>();
+    control,
+    watch,
+  } = useForm<OkaimonoParams>({
+    defaultValues: {
+      shoppingDate: formattedDefaultShoppingDate,
+    },
+  });
 
-  // 追加
   const { fields, append, insert, remove } = useFieldArray({
     control,
     name: "listForm",
     keyName: "key", // デフォルトではidだが、keyに変更。
   });
 
+  const shoppingBudgetField = watch("shoppingBudget");
+  const watchedPriceFields = fields.map((field, index) => ({
+    price: watch(`listForm.${index}.price`),
+    amount: watch(`listForm.${index}.amount`),
+  }));
+  const totalprice = watchedPriceFields.reduce(
+    (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
+    0
+  );
+
   const insertInputForm = (index: number) => {
-    insert(index + 1, { purchasename: "", price: "", shoppingmemo: "" });
-    console.log(fields.length);
+    insert(index + 1, { purchaseName: "", price: "", shoppingMemo: "", amount: "" });
   };
 
   useEffect(() => {
-    for (let i = 0; i < 3; i++) {
-      // eslint-disable-line
-      append({ purchasename: "", price: "", shoppingmemo: "" });
+    for (let i = 0; i < 2; i++) {
+      append({ purchaseName: "", price: "", shoppingMemo: "", amount: "" });
     }
   }, [append]);
 
@@ -57,35 +72,50 @@ export const OkaimonoMemo: VFC = memo(() => {
       <Flex align="center" justify="center" px={3}>
         <VStack w="100rem">
           <Box>
-            <Heading as="h2" size="lg" textAlign="center" pt={5}>
+            <Heading as="h2" size="lg" textAlign="center" pt={3}>
               お買い物メモの作成
             </Heading>
             <Divider my={4} />
-            <Box>
-              <Stack align="center" justify="center" py={6} spacing="3">
-                <Box w="100%">
-                  <Heading as="h3" size="sm" textAlign="center" px={7} pt={2}>
-                    お買い物情報
-                  </Heading>
-                </Box>
+            <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
+              お買い物情報
+            </Heading>
+            <Box bg="white" rounded="xl">
+              <Stack align="center" justify="center" py={6} spacing="3" {...register("shoppingDate")}>
+                <Input size="md" type="date" w="90%" fontSize={{ base: "sm", md: "md" }} />
                 <Input
-                  placeholder="Select Date and Time"
+                  placeholder="お店の名前"
                   size="md"
-                  type="date"
                   w="90%"
                   fontSize={{ base: "sm", md: "md" }}
+                  {...register("shopName")}
                 />
-                <Input placeholder="お店の名前" size="md" w="90%" fontSize={{ base: "sm", md: "md" }} />
-                <Input placeholder="一言メモ" size="md" w="90%" fontSize={{ base: "sm", md: "md" }} />
-                <Divider my={4} />
+                <InputGroup w="90%">
+                  <Input
+                    size="md"
+                    placeholder="お買い物の予算"
+                    fontSize={{ base: "sm", md: "md" }}
+                    {...register("shoppingBudget")}
+                  />
+                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
+                    円
+                  </InputRightElement>
+                </InputGroup>
+                <Input
+                  placeholder="一言メモ"
+                  size="md"
+                  w="90%"
+                  fontSize={{ base: "sm", md: "md" }}
+                  {...register("oneWordMemo")}
+                />
               </Stack>
             </Box>
+            <Divider my={4} />
             <Box>
-              <Heading as="h3" size="sm" textAlign="center" px={10} pt={5}>
+              <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
                 お買い物リスト
               </Heading>
               {fields.map((field, index) => (
-                <HStack key={field.key} px={2} py={5} w="100%">
+                <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
                   <VStack spacing={1} w="5%">
                     <Box display={fields.length < 20 ? "block" : "none"}>
                       <SmallAddIcon
@@ -116,7 +146,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
                         w="100%"
-                        {...register(`listForm.${index}.purchasename`)}
+                        {...register(`listForm.${index}.purchaseName`)}
                       />
                     </Box>
                     <Box w="100%">
@@ -124,7 +154,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                         placeholder="メモ"
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
-                        {...register(`listForm.${index}.shoppingmemo`)}
+                        {...register(`listForm.${index}.shoppingMemo`)}
                       />
                     </Box>
                   </VStack>
@@ -136,14 +166,18 @@ export const OkaimonoMemo: VFC = memo(() => {
                       w="100%"
                       type="number"
                       min="1"
-                      {...register(`listForm.${index}.price`)}
+                      {...register(`listForm.${index}.amount`)}
                     />
                     <Box w="100%">
                       <InputGroup>
-                        <InputLeftElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                          ¥
-                        </InputLeftElement>
-                        <Input placeholder="希望金額" fontSize={{ base: "sm", md: "md" }} />
+                        <Input
+                          placeholder="いくら？"
+                          fontSize={{ base: "sm", md: "md" }}
+                          {...register(`listForm.${index}.price`)}
+                        />
+                        <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
+                          円
+                        </InputRightElement>
                       </InputGroup>
                     </Box>
                   </VStack>
@@ -151,10 +185,31 @@ export const OkaimonoMemo: VFC = memo(() => {
               ))}
             </Box>
           </Box>
-          <Stack w="80%" py="5%">
-            <PrimaryButtonForReactHookForm>お買い物リストを確定</PrimaryButtonForReactHookForm>
-            <DeleteButton>保存しない</DeleteButton>
-          </Stack>
+          <VStack
+            position="fixed"
+            bg="rgba(49,151,149,1)"
+            align="center"
+            justify="center"
+            w="90%"
+            bottom="1.5%"
+            rounded="xl"
+            zIndex="10"
+            opacity="0.85"
+          >
+            <Box mt={4}>
+              <Box as="p" color="white">
+                現在の合計(税別): {totalprice}円
+              </Box>
+              <Box as="p" color={Number(shoppingBudgetField || "") < totalprice ? "red.500" : "white"}>
+                お買い物予算残り: {Number(shoppingBudgetField || "") - totalprice}円
+              </Box>
+            </Box>
+            <Stack w="80%" py="3%">
+              <PrimaryButtonForReactHookForm>お買い物リストを確定</PrimaryButtonForReactHookForm>
+              <DeleteButton>保存しない</DeleteButton>
+            </Stack>
+          </VStack>
+          <Box h="12.5rem" />
         </VStack>
       </Flex>
     </form>

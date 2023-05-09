@@ -27,10 +27,14 @@ export interface User {
 }
 
 export interface OkaimonoParams {
-  // 他のプロパティ
+  shopName: string;
+  shoppingBudget: string;
+  oneWordMemo: string;
+  shoppingDate?: string | undefined
   listForm: Array<{
-    purchasename: string;
+    purchaseName: string;
     price: string;
-    shoppingmemo: string;
+    shoppingMemo: string;
+    amount: string;
   }>;
 }
