@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.string "shopping_memo"
     t.string "amount"
     t.string "price"
-    t.string "shopping_date"
+    t.string "shopping_date", null: false
     t.string "memo_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
   create_table "shopping_data", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "shop_id", null: false
-    t.string "shopping_date"
+    t.string "shopping_date", null: false
     t.string "shopping_memo"
     t.string "estimated_budget"
     t.string "total_budget"
