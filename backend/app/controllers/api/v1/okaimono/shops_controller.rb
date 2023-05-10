@@ -8,7 +8,11 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
 
   def create
     shop = Shop.new(shop_params)
-    if shop.save
+    existing_shop = User.find(shop.user_id).shops.where(shop_name: shop.shop_name)
+
+    if existing_shop.exists?
+      render json: existing_shop.first
+    elsif shop.save
       render json: shop
     else
       render json: shop.errors
