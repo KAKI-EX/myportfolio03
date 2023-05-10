@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
   create_table "memos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "shop_id", null: false
-    t.bigint "shopping_data_id", null: false
+    t.bigint "shopping_datum_id", null: false
     t.string "purchase_name", null: false
     t.string "shopping_memo"
     t.string "amount"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["shop_id"], name: "index_memos_on_shop_id"
-    t.index ["shopping_data_id"], name: "index_memos_on_shopping_data_id"
+    t.index ["shopping_datum_id"], name: "index_memos_on_shopping_datum_id"
     t.index ["user_id"], name: "index_memos_on_user_id"
   end
 
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
-  add_foreign_key "memos", "shopping_data", column: "shopping_data_id"
+  add_foreign_key "memos", "shopping_data"
   add_foreign_key "memos", "shops"
   add_foreign_key "memos", "users"
   add_foreign_key "shopping_data", "shops"
