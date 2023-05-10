@@ -1,8 +1,9 @@
 class CreateMemos < ActiveRecord::Migration[6.1]
   def change
     create_table :memos do |t|
-      t.string :user_id, null: false
-      t.string :shopping_data_id, null: false
+      t.references :user, null: false, foreign_key: true
+      t.references :shop, null: false, foreign_key: true
+      t.references :shopping_data, null: false, foreign_key: true
       t.string :purchase_name, null: false
       t.string :shopping_memo
       t.string :amount

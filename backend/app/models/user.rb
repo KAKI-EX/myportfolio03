@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 class User < ActiveRecord::Base
+  has_many :shops
+  has_many :shopping_data
+  has_many :memos
 
   # VALID_PASSWORD_REGIX = /\A(?=.*?[a-z])(?=.*?\d)[a-z\d]+\z/i
 
