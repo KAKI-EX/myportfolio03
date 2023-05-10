@@ -11,10 +11,9 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
     if shop.save
       render json: shop
     else
-      render json: shop.error
+      render json: shop.errors
     end
   end
-
 
   private
 
