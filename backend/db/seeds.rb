@@ -32,6 +32,7 @@ ShoppingDatum.create(
   shop_id: "1",
   user_id: "1",
   shopping_date: "20230901",
+  shopping_memo: "testUser_id1",
   estimated_budget: "2000",
   total_budget: "1900"
 )
@@ -41,6 +42,7 @@ ShoppingDatum.create(
   shop_id: "2",
   user_id: "1",
   shopping_date: "20230902",
+  shopping_memo: "testUser_id1",
   estimated_budget: "2100",
   total_budget: "2000"
 )
@@ -120,6 +122,7 @@ ShoppingDatum.create(
   shop_id: "3",
   user_id: "2",
   shopping_date: "20231001",
+  shopping_memo: "testUser_id2",
   estimated_budget: "2000",
   total_budget: "1900"
 )
@@ -129,6 +132,7 @@ ShoppingDatum.create(
   shop_id: "4",
   user_id: "2",
   shopping_date: "20231002",
+  shopping_memo: "testUser_id2",
   estimated_budget: "2100",
   total_budget: "2000"
 )

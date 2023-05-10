@@ -2,11 +2,15 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :okaimono do
-        post '/api/v1/okaimono/:id', to: 'posts#show'
-        post '/api/v1/okaimono/create', to: 'posts#create'
+        post  'memo/create',          to: 'memos#create'
+        get   'shoppingdatum/index',  to: 'shopping_datum#index'
+        post  'shoppingdatum/create', to: 'shopping_datum#create'
+        get   'shops/index/:id',          to: 'shops#index'
+        post  'shops/create',         to: 'shops#create'
       end
     end
   end
+
   namespace :api do
     namespace :v1 do
       resources :test, only: %i[index]
