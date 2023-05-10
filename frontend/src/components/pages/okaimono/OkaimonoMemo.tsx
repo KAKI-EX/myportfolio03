@@ -21,23 +21,14 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
 export const OkaimonoMemo: VFC = memo(() => {
-  const onSubmit = () => {
-    alert("test");
-  };
-
   const defaultShoppingDate = new Date();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-  } = useForm<OkaimonoParams>({
+  const { register, handleSubmit, control, watch } = useForm<OkaimonoParams>({
     defaultValues: {
-      shoppingDate: formattedDefaultShoppingDate,
+      shopping_date: formattedDefaultShoppingDate,
     },
   });
 
@@ -47,25 +38,37 @@ export const OkaimonoMemo: VFC = memo(() => {
     keyName: "key", // デフォルトではidだが、keyに変更。
   });
 
-  const shoppingBudgetField = watch("shoppingBudget");
+  const shoppingBudgetField = watch("estimated_budget");
   const watchedPriceFields = fields.map((field, index) => ({
     price: watch(`listForm.${index}.price`),
     amount: watch(`listForm.${index}.amount`),
   }));
-  const totalprice = watchedPriceFields.reduce(
+  const totalPrice = watchedPriceFields.reduce(
     (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
     0
   );
 
   const insertInputForm = (index: number) => {
-    insert(index + 1, { purchaseName: "", price: "", shoppingMemo: "", amount: "" });
+    insert(index + 1, { purchase_name: "", price: "", shopping_memo: "", amount: "" });
   };
 
   useEffect(() => {
     for (let i = 0; i < 2; i++) {
-      append({ purchaseName: "", price: "", shoppingMemo: "", amount: "" });
+      append({ purchase_name: "", price: "", shopping_memo: "", amount: "" });
     }
   }, [append]);
+
+  const onSubmit = async (formData: OkaimonoParams) => {
+    const addTotalPrice = { ...formData, totalPrice };
+    console.log(addTotalPrice);
+    const { shopping_date, shop_name, estimated_budget, shopping_memo } = formData;
+    // const params: OkaimonoParams {
+    //   shopName: shopName,
+    //   shoppingBudget:
+    //   oneWordMemo: string;
+    //   shoppingDate?: string | undefined
+    // }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -80,21 +83,21 @@ export const OkaimonoMemo: VFC = memo(() => {
               お買い物情報
             </Heading>
             <Box bg="white" rounded="xl">
-              <Stack align="center" justify="center" py={6} spacing="3" {...register("shoppingDate")}>
+              <Stack align="center" justify="center" py={6} spacing="3" {...register("shopping_date")}>
                 <Input size="md" type="date" w="90%" fontSize={{ base: "sm", md: "md" }} />
                 <Input
                   placeholder="お店の名前"
                   size="md"
                   w="90%"
                   fontSize={{ base: "sm", md: "md" }}
-                  {...register("shopName")}
+                  {...register("shop_name")}
                 />
                 <InputGroup w="90%">
                   <Input
                     size="md"
                     placeholder="お買い物の予算"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...register("shoppingBudget")}
+                    {...register("estimated_budget")}
                   />
                   <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
                     円
@@ -105,7 +108,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                   size="md"
                   w="90%"
                   fontSize={{ base: "sm", md: "md" }}
-                  {...register("oneWordMemo")}
+                  {...register("shopping_memo")}
                 />
               </Stack>
             </Box>
@@ -146,7 +149,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
                         w="100%"
-                        {...register(`listForm.${index}.purchaseName`)}
+                        {...register(`listForm.${index}.purchase_name`)}
                       />
                     </Box>
                     <Box w="100%">
@@ -154,7 +157,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                         placeholder="メモ"
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
-                        {...register(`listForm.${index}.shoppingMemo`)}
+                        {...register(`listForm.${index}.shopping_memo`)}
                       />
                     </Box>
                   </VStack>
@@ -198,10 +201,10 @@ export const OkaimonoMemo: VFC = memo(() => {
           >
             <Box mt={4}>
               <Box as="p" color="white">
-                現在の合計(税別): {totalprice}円
+                現在の合計(税別): {totalPrice}円
               </Box>
-              <Box as="p" color={Number(shoppingBudgetField || "") < totalprice ? "red.500" : "white"}>
-                お買い物予算残り: {Number(shoppingBudgetField || "") - totalprice}円
+              <Box as="p" color={Number(shoppingBudgetField || "") < totalPrice ? "red.500" : "white"}>
+                お買い物予算残り: {Number(shoppingBudgetField || "") - totalPrice}円
               </Box>
             </Box>
             <Stack w="80%" py="3%">

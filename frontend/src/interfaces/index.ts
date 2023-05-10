@@ -27,14 +27,14 @@ export interface User {
 }
 
 export interface OkaimonoParams {
-  shopName: string;
-  shoppingBudget: string;
-  oneWordMemo: string;
-  shoppingDate?: string | undefined
+  shop_name: string;
+  estimated_budget: string;
+  shopping_memo: string;
+  shopping_date: string
   listForm: Array<{
-    purchaseName: string;
+    purchase_name: string;
     price: string;
-    shoppingMemo: string;
+    shopping_memo: string;
     amount: string;
   }>;
 }
