@@ -11,11 +11,12 @@ import {
   Stack,
   VStack,
   InputRightElement,
+  Spinner,
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { ListFormParams, OkaimonoParams } from "interfaces";
-import { memo, useEffect, VFC } from "react";
+import { memo, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -29,6 +30,7 @@ export const OkaimonoMemo: VFC = memo(() => {
   const { separateCookies } = useCookie();
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
+  const [loading, setLoading] = useState(false);
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -87,6 +89,7 @@ export const OkaimonoMemo: VFC = memo(() => {
     const shopParams: OkaimonoParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
 
     try {
+      setLoading(true);
       const shopCreateRes = await shopCreate(shopParams);
       if (shopCreateRes.status === 200) {
         const shop_id = shopCreateRes.data.id; // eslint-disable-line
@@ -101,10 +104,7 @@ export const OkaimonoMemo: VFC = memo(() => {
         const shoppingDatumCreateRes = await shoppingDatumCreate(shoppingDataParams);
         if (shoppingDatumCreateRes.status === 200) {
           const shopping_datum_id = shoppingDatumCreateRes.data.id; // eslint-disable-line
-          console.log("お買物情報登録結果", shoppingDatumCreateRes);
-          console.log("shopping_datum_id:", shopping_datum_id);
           formData.listForm?.forEach(async (listFormItem, index) => {
-            console.log("listFormItemチェック", listFormItem);
             const memoParams: ListFormParams = {
               user_id,
               shop_id,
@@ -116,14 +116,18 @@ export const OkaimonoMemo: VFC = memo(() => {
               shopping_date,
             };
             const memosCreateRes = await memosCreate(memoParams);
-            history.push("/okaimono");
-            showMessage({ title: `${index + 1}件のメモを登録しました`, status: "success" });
           });
+          setLoading(false);
+          history.push("/okaimono");
+          if (formData.listForm) {
+            showMessage({ title: `${formData.listForm.length}件のメモを登録しました`, status: "success" });
+          }
         }
       }
     } catch (err: any) {
       showMessage({ title: "エラーが発生し、登録ができませんでした。", status: "error" });
       console.error(err.response);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -132,7 +136,11 @@ export const OkaimonoMemo: VFC = memo(() => {
     }
   }, [fields.length]);
 
-  return (
+  return loading ? (
+    <Box h="50rem" display="flex" justifyContent="center" alignItems="center">
+      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+    </Box>
+  ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Flex align="center" justify="center" px={3}>
         <VStack w="100rem">
