@@ -22,7 +22,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
                                   :shop_id,
                                   :shopping_datum_id,
                                   :purchase_name,
-                                  :shopping_memo,
+                                  :shopping_detail_memo,
                                   :amount,
                                   :price,
                                   :shopping_date,

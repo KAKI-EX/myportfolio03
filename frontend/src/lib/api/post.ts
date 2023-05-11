@@ -13,3 +13,10 @@ export const shoppingDatumCreate = (params: OkaimonoParams) => {
   console.log("postParams", params);
   return client.post("okaimono/shoppingdatum/create", params);
 };
+
+// メモ情報作成
+export const memosCreate = (params: OkaimonoParams) => {
+  console.log("memosCreateが走っています。");
+  console.log("memosParams", params);
+  return client.post("okaimono/memo/create", params);
+};

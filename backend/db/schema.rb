@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.bigint "shop_id", null: false
     t.bigint "shopping_datum_id", null: false
     t.string "purchase_name", null: false
-    t.string "shopping_memo"
+    t.string "shopping_detail_memo"
     t.string "amount"
     t.string "price"
     t.string "shopping_date", null: false
