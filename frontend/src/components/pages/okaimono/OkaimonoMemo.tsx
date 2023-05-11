@@ -21,18 +21,31 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { memosCreate, shopCreate, shoppingDatumCreate } from "lib/api/post";
 import { useCookie } from "hooks/useCookie";
+import { useMessage } from "hooks/useToast";
+import { useHistory } from "react-router-dom";
 
 export const OkaimonoMemo: VFC = memo(() => {
+  const history = useHistory();
   const { separateCookies } = useCookie();
   const defaultShoppingDate = new Date();
+  const { showMessage } = useMessage();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
+  const validationNumber = /^[0-9]+$/;
 
-  const { register, handleSubmit, control, watch } = useForm<OkaimonoParams>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<OkaimonoParams>({
     defaultValues: {
       shopping_date: formattedDefaultShoppingDate,
     },
+    criteriaMode: "all",
+    mode: "all",
   });
 
   const { fields, append, insert, remove } = useFieldArray({
@@ -46,6 +59,7 @@ export const OkaimonoMemo: VFC = memo(() => {
     price: watch(`listForm.${index}.price`),
     amount: watch(`listForm.${index}.amount`),
   }));
+
   // eslint-disable-next-line
   const total_budget = watchedPriceFields.reduce(
     (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
@@ -57,22 +71,20 @@ export const OkaimonoMemo: VFC = memo(() => {
   };
 
   useEffect(() => {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
       append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
     }
   }, [append]);
 
   const onSubmit = async (formData: OkaimonoParams) => {
     const user_id = separateCookies("_user_id"); // eslint-disable-line
-    // const addTotalPrice = { ...formData, total_budget };
     const {
       shop_name, // eslint-disable-line
       shopping_date, // eslint-disable-line
       shopping_memo, // eslint-disable-line
       estimated_budget, // eslint-disable-line
-      listForm,
     } = formData; // eslint-disable-line
-    const shopParams: OkaimonoParams = { user_id, shop_name }; // eslint-disable-line
+    const shopParams: OkaimonoParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
 
     try {
       const shopCreateRes = await shopCreate(shopParams);
@@ -91,7 +103,7 @@ export const OkaimonoMemo: VFC = memo(() => {
           const shopping_datum_id = shoppingDatumCreateRes.data.id; // eslint-disable-line
           console.log("お買物情報登録結果", shoppingDatumCreateRes);
           console.log("shopping_datum_id:", shopping_datum_id);
-          formData.listForm?.forEach(async (listFormItem) => {
+          formData.listForm?.forEach(async (listFormItem, index) => {
             console.log("listFormItemチェック", listFormItem);
             const memoParams: ListFormParams = {
               user_id,
@@ -100,18 +112,25 @@ export const OkaimonoMemo: VFC = memo(() => {
               purchase_name: listFormItem.purchase_name,
               price: listFormItem.price,
               shopping_detail_memo: listFormItem.shopping_detail_memo,
-              amount: listFormItem.amount,
+              amount: listFormItem.amount || "1",
               shopping_date,
             };
             const memosCreateRes = await memosCreate(memoParams);
-            console.log("memo登録レスポンス:", memosCreateRes);
+            history.push("/okaimono");
+            showMessage({ title: `${index + 1}件のメモを登録しました`, status: "success" });
           });
         }
       }
     } catch (err: any) {
-      console.log("shop登録エラー:", err.response);
+      showMessage({ title: "エラーが発生し、登録ができませんでした。", status: "error" });
+      console.error(err.response);
     }
   };
+  useEffect(() => {
+    if (fields.length === 20) {
+      showMessage({ title: "メモは最大20件までの追加が可能です。", status: "warning" });
+    }
+  }, [fields.length]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -139,13 +158,22 @@ export const OkaimonoMemo: VFC = memo(() => {
                   <Input
                     size="md"
                     placeholder="お買い物の予算"
+                    type="number"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...register("estimated_budget")}
+                    {...register("estimated_budget", {
+                      pattern: {
+                        value: validationNumber,
+                        message: "半角整数で入力してください。",
+                      },
+                    })}
                   />
                   <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
                     円
                   </InputRightElement>
                 </InputGroup>
+                {errors.estimated_budget && errors.estimated_budget.types?.pattern && (
+                  <Box color="red">{errors.estimated_budget.types.pattern}</Box>
+                )}
                 <Input
                   placeholder="一言メモ"
                   size="md"
@@ -192,8 +220,15 @@ export const OkaimonoMemo: VFC = memo(() => {
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
                         w="100%"
-                        {...register(`listForm.${index}.purchase_name`)}
+                        {...register(`listForm.${index}.purchase_name`, {
+                          required: { value: true, message: "商品名が入力されていません" },
+                        })}
                       />
+                      {errors.listForm && errors.listForm[index]?.purchase_name && (
+                        <Box color="red" fontSize="sm">
+                          {errors.listForm[index]?.purchase_name?.types?.required}
+                        </Box>
+                      )}
                     </Box>
                     <Box w="100%">
                       <Input
@@ -218,6 +253,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                       <InputGroup>
                         <Input
                           placeholder="いくら？"
+                          type="number"
                           fontSize={{ base: "sm", md: "md" }}
                           {...register(`listForm.${index}.price`)}
                         />
@@ -253,7 +289,7 @@ export const OkaimonoMemo: VFC = memo(() => {
               </Box>
             </Box>
             <Stack w="80%" py="3%">
-              <PrimaryButtonForReactHookForm>お買い物リストを確定</PrimaryButtonForReactHookForm>
+              <PrimaryButtonForReactHookForm disabled={!isValid}>お買い物リストを確定</PrimaryButtonForReactHookForm>
               <DeleteButton>保存しない</DeleteButton>
             </Stack>
           </VStack>

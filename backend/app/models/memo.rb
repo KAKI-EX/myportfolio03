@@ -4,6 +4,7 @@ class Memo < ApplicationRecord
   validates :purchase_name, length: {maximum: 50, message: "商品名は%{count}文字以上の登録はできません。"}
   validates :shopping_detail_memo, length: {maximum: 150, message: "商品メモは%{count}文字以上の登録はできません。"}
   validates :amount, numericality: { only_integer: true, less_than_or_equal_to: 1000, message: "数字のみ入力してください。1000以上は入力できません" }
+  validates :price, numericality: { only_integer: true, message: "金額は数字のみ入力してください。" }, allow_blank: true
 
   belongs_to :user
   belongs_to :shop

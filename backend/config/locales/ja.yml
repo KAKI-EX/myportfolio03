@@ -9,6 +9,10 @@ ja:
               blank: "が入力されていません。"
             email:
               blank: "が入力されていません。"
+        memo:
+          attributes:
+            shopping_datum:
+              require:
     attributes:
       user:
         confirmation_sent_at: パスワード確認送信時刻
