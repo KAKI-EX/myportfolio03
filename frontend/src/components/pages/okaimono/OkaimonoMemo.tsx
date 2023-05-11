@@ -19,8 +19,11 @@ import { memo, useEffect, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { shopCreate, shoppingDatumCreate } from "lib/api/post";
+import { useCookie } from "hooks/useCookie";
 
 export const OkaimonoMemo: VFC = memo(() => {
+  const { separateCookies } = useCookie();
   const defaultShoppingDate = new Date();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
@@ -43,7 +46,8 @@ export const OkaimonoMemo: VFC = memo(() => {
     price: watch(`listForm.${index}.price`),
     amount: watch(`listForm.${index}.amount`),
   }));
-  const totalPrice = watchedPriceFields.reduce(
+  // eslint-disable-next-line
+  const total_budget = watchedPriceFields.reduce(
     (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
     0
   );
@@ -59,15 +63,34 @@ export const OkaimonoMemo: VFC = memo(() => {
   }, [append]);
 
   const onSubmit = async (formData: OkaimonoParams) => {
-    const addTotalPrice = { ...formData, totalPrice };
-    console.log(addTotalPrice);
-    const { shopping_date, shop_name, estimated_budget, shopping_memo } = formData;
-    // const params: OkaimonoParams {
-    //   shopName: shopName,
-    //   shoppingBudget:
-    //   oneWordMemo: string;
-    //   shoppingDate?: string | undefined
-    // }
+    const user_id = separateCookies("_user_id"); // eslint-disable-line
+    // const addTotalPrice = { ...formData, total_budget };
+    const { shop_name, shopping_date, shopping_memo, estimated_budget } = formData; // eslint-disable-line
+    const shopParams: OkaimonoParams = { user_id, shop_name }; // eslint-disable-line
+
+    try {
+      const shopCreateRes = await shopCreate(shopParams);
+      console.log("Create:", shopCreateRes);
+      if (shopCreateRes.status === 200) {
+        const shop_id = shopCreateRes.data.id; // eslint-disable-line
+        console.log("shop_idチェック", shop_id);
+        const shoppingDataParams: OkaimonoParams = {
+          user_id,
+          shop_id,
+          shopping_date,
+          shopping_memo,
+          estimated_budget,
+          total_budget,
+        };
+        const shoppingDatumCreateRes = await shoppingDatumCreate(shoppingDataParams);
+        if (shoppingDatumCreateRes.status === 200) {
+          const shopping_datum_id = shoppingDatumCreateRes.data.id; // eslint-disable-line
+          console.log("お買物情報登録結果", shoppingDatumCreateRes);
+        }
+      }
+    } catch (err: any) {
+      console.log("shop登録エラー:", err.response);
+    }
   };
 
   return (
@@ -201,10 +224,12 @@ export const OkaimonoMemo: VFC = memo(() => {
           >
             <Box mt={4}>
               <Box as="p" color="white">
-                現在の合計(税別): {totalPrice}円
+                現在の合計(税別): {total_budget}円 {/* eslint-disable-line */}
               </Box>
-              <Box as="p" color={Number(shoppingBudgetField || "") < totalPrice ? "red.500" : "white"}>
-                お買い物予算残り: {Number(shoppingBudgetField || "") - totalPrice}円
+              {/* eslint-disable-next-line */}
+              <Box as="p" color={Number(shoppingBudgetField || "") < total_budget ? "red.500" : "white"}>
+                {/* eslint-disable-next-line */}
+                お買い物予算残り: {Number(shoppingBudgetField || "") - total_budget}円
               </Box>
             </Box>
             <Stack w="80%" py="3%">
