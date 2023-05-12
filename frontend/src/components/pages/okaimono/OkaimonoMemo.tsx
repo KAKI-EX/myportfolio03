@@ -15,19 +15,15 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { ListFormParams, MergeParams } from "interfaces";
+import { MergeParams } from "interfaces";
 import { memo, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import { memosCreate, shopCreate, shoppingDatumCreate } from "lib/api/post";
-import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
-import { useHistory } from "react-router-dom";
+import { useMemoCreate } from "hooks/useMemoCreate";
 
 export const OkaimonoMemo: VFC = memo(() => {
-  const history = useHistory();
-  const { separateCookies } = useCookie();
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState(false);
@@ -35,7 +31,6 @@ export const OkaimonoMemo: VFC = memo(() => {
     locale: ja,
   });
   const validationNumber = /^[0-9]+$/;
-
   const {
     register,
     handleSubmit,
@@ -78,71 +73,20 @@ export const OkaimonoMemo: VFC = memo(() => {
     }
   }, [append]);
 
-  const onSubmit = async (formData: MergeParams) => {
-    const user_id = separateCookies("_user_id"); // eslint-disable-line
-    const {
-      shop_name, // eslint-disable-line
-      shopping_date, // eslint-disable-line
-      shopping_memo, // eslint-disable-line
-      estimated_budget, // eslint-disable-line
-      purchase_name, // eslint-disable-line
-      price,
-      shopping_detail_memo, // eslint-disable-line
-      amount,
-    } = formData; // eslint-disable-line
-    const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
-
-    try {
-      setLoading(true);
-      const shopCreateRes = await shopCreate(shopParams);
-      if (shopCreateRes.status === 200) {
-        const shop_id = shopCreateRes.data.id; // eslint-disable-line
-        const shoppingDataParams: MergeParams = {
-          user_id,
-          shop_id,
-          shopping_date,
-          shopping_memo,
-          estimated_budget,
-          total_budget,
-        };
-        const shoppingDatumCreateRes = await shoppingDatumCreate(shoppingDataParams);
-        if (shoppingDatumCreateRes.status === 200) {
-          const shopping_datum_id = shoppingDatumCreateRes.data.id; // eslint-disable-line
-          const memosParams = {
-            memos: (formData.listForm || []).map((test: ListFormParams) => {
-              return {
-                user_id,
-                shop_id,
-                shopping_datum_id,
-                purchase_name: test.purchase_name,
-                price: test.price,
-                shopping_detail_memo: test.shopping_detail_memo,
-                amount: test.amount,
-                shopping_date,
-              };
-            }),
-          };
-
-          const memosCreateRes = await memosCreate(memosParams.memos);
-          console.log("Memoのレスポンス", memosCreateRes);
-          setLoading(false);
-          history.push("/okaimono");
-          if (formData.listForm) {
-            showMessage({ title: `${memosCreateRes.data.length}件のメモを登録しました`, status: "success" });
-          }
-        }
-      }
-    } catch (err: any) {
-      showMessage({ title: "エラーが発生し、登録ができませんでした。", status: "error" });
-      console.error(err.response);
-      setLoading(false);
-    }
-  };
   useEffect(() => {
     if (fields.length === 20) {
       showMessage({ title: "メモは最大20件までの追加が可能です。", status: "warning" });
     }
   }, [fields.length]);
+  // ---------------------------------------------------------------------------
+  // ここでフォームデータの送信処理を行っている。詳細はuseMemoCreateを参照。
+  const props = { setLoading, total_budget };
+  const sendDataToAPI = useMemoCreate(props);
+
+  const onSubmit = (formData: MergeParams) => {
+    sendDataToAPI(formData);
+  };
+  // ---------------------------------------------------------------------------
 
   return loading ? (
     <Box h="50rem" display="flex" justifyContent="center" alignItems="center">
@@ -195,7 +139,9 @@ export const OkaimonoMemo: VFC = memo(() => {
                   size="md"
                   w="90%"
                   fontSize={{ base: "sm", md: "md" }}
-                  {...register("shopping_memo")}
+                  {...register("shopping_memo", {
+                    maxLength: { value: 150, message: "最大文字数は150文字です。" },
+                  })}
                 />
               </Stack>
             </Box>
@@ -238,11 +184,13 @@ export const OkaimonoMemo: VFC = memo(() => {
                         w="100%"
                         {...register(`listForm.${index}.purchase_name`, {
                           required: { value: true, message: "商品名が入力されていません" },
+                          maxLength: { value: 50, message: "最大文字数は50文字までです。" },
                         })}
                       />
                       {errors.listForm && errors.listForm[index]?.purchase_name && (
                         <Box color="red" fontSize="sm">
                           {errors.listForm[index]?.purchase_name?.types?.required}
+                          {errors.listForm[index]?.purchase_name?.types?.maxLength}
                         </Box>
                       )}
                     </Box>
@@ -251,8 +199,15 @@ export const OkaimonoMemo: VFC = memo(() => {
                         placeholder="メモ"
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
-                        {...register(`listForm.${index}.shopping_detail_memo`)}
+                        {...register(`listForm.${index}.shopping_detail_memo`, {
+                          maxLength: { value: 150, message: "最大文字数は150文字です。" },
+                        })}
                       />
+                      {errors.listForm && errors.listForm[index]?.shopping_detail_memo && (
+                        <Box color="red" fontSize="sm">
+                          {errors.listForm[index]?.shopping_detail_memo?.types?.maxLength}
+                        </Box>
+                      )}
                     </Box>
                   </VStack>
                   <VStack w="30%">
@@ -263,21 +218,37 @@ export const OkaimonoMemo: VFC = memo(() => {
                       w="100%"
                       type="number"
                       min="1"
-                      {...register(`listForm.${index}.amount`)}
+                      {...register(`listForm.${index}.amount`, {
+                        max: { value: 99, message: "上限は99までです。" },
+                        pattern: { value: validationNumber, message: "半角整数で入力してください。" }
+                      })}
                     />
+                    {errors.listForm && errors.listForm[index]?.amount && (
+                      <Box color="red" fontSize="sm">
+                        {errors.listForm[index]?.amount?.types?.max}
+                        {errors.listForm[index]?.amount?.types?.pattern}
+                      </Box>
+                    )}
                     <Box w="100%">
                       <InputGroup>
                         <Input
                           placeholder="いくら？"
-                          type="number"
+                          // type="number"
                           fontSize={{ base: "sm", md: "md" }}
-                          {...register(`listForm.${index}.price`)}
+                          {...register(`listForm.${index}.price`, {
+                            pattern: { value: validationNumber, message: "半角整数で入力してください。" }
+                          })}
                         />
                         <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
                           円
                         </InputRightElement>
                       </InputGroup>
                     </Box>
+                    {errors.listForm && errors.listForm[index]?.price && (
+                      <Box color="red" fontSize="sm">
+                        {errors.listForm[index]?.price?.types?.pattern}
+                      </Box>
+                    )}
                   </VStack>
                 </HStack>
               ))}

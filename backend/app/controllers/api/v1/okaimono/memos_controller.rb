@@ -22,7 +22,6 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   private
 
   def memo_params
-    binding.pry
     params.require(:memos).map do | memo_param |
       memo_param.permit(
         :user_id,
