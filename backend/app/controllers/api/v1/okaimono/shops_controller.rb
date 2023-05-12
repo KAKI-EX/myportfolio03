@@ -12,7 +12,7 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
 
     if existing_shop.exists?
       render json: existing_shop.first
-    elsif shop.save
+    elsif shop.save!
       render json: shop
     else
       render json: shop.errors

@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { ListFormParams, OkaimonoParams } from "interfaces";
+import { ListFormParams, MergeParams } from "interfaces";
 import { memo, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
@@ -42,7 +42,7 @@ export const OkaimonoMemo: VFC = memo(() => {
     control,
     watch,
     formState: { errors, isValid },
-  } = useForm<OkaimonoParams>({
+  } = useForm<MergeParams>({
     defaultValues: {
       shopping_date: formattedDefaultShoppingDate,
     },
@@ -78,22 +78,26 @@ export const OkaimonoMemo: VFC = memo(() => {
     }
   }, [append]);
 
-  const onSubmit = async (formData: OkaimonoParams) => {
+  const onSubmit = async (formData: MergeParams) => {
     const user_id = separateCookies("_user_id"); // eslint-disable-line
     const {
       shop_name, // eslint-disable-line
       shopping_date, // eslint-disable-line
       shopping_memo, // eslint-disable-line
       estimated_budget, // eslint-disable-line
+      purchase_name, // eslint-disable-line
+      price,
+      shopping_detail_memo, // eslint-disable-line
+      amount,
     } = formData; // eslint-disable-line
-    const shopParams: OkaimonoParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
+    const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
 
     try {
       setLoading(true);
       const shopCreateRes = await shopCreate(shopParams);
       if (shopCreateRes.status === 200) {
         const shop_id = shopCreateRes.data.id; // eslint-disable-line
-        const shoppingDataParams: OkaimonoParams = {
+        const shoppingDataParams: MergeParams = {
           user_id,
           shop_id,
           shopping_date,
@@ -104,23 +108,27 @@ export const OkaimonoMemo: VFC = memo(() => {
         const shoppingDatumCreateRes = await shoppingDatumCreate(shoppingDataParams);
         if (shoppingDatumCreateRes.status === 200) {
           const shopping_datum_id = shoppingDatumCreateRes.data.id; // eslint-disable-line
-          formData.listForm?.forEach(async (listFormItem, index) => {
-            const memoParams: ListFormParams = {
-              user_id,
-              shop_id,
-              shopping_datum_id,
-              purchase_name: listFormItem.purchase_name,
-              price: listFormItem.price,
-              shopping_detail_memo: listFormItem.shopping_detail_memo,
-              amount: listFormItem.amount || "1",
-              shopping_date,
-            };
-            const memosCreateRes = await memosCreate(memoParams);
-          });
+          const memosParams = {
+            memos: (formData.listForm || []).map((test: ListFormParams) => {
+              return {
+                user_id,
+                shop_id,
+                shopping_datum_id,
+                purchase_name: test.purchase_name,
+                price: test.price,
+                shopping_detail_memo: test.shopping_detail_memo,
+                amount: test.amount,
+                shopping_date,
+              };
+            }),
+          };
+
+          const memosCreateRes = await memosCreate(memosParams.memos);
+          console.log("Memoのレスポンス", memosCreateRes);
           setLoading(false);
           history.push("/okaimono");
           if (formData.listForm) {
-            showMessage({ title: `${formData.listForm.length}件のメモを登録しました`, status: "success" });
+            showMessage({ title: `${memosCreateRes.data.length}件のメモを登録しました`, status: "success" });
           }
         }
       }

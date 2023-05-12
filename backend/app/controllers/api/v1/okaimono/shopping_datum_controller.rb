@@ -7,7 +7,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def create
     shopping = ShoppingDatum.new(shopping_params)
-    if shopping.save
+    if shopping.save!
       render json: shopping
     else
       render json: shopping.errors

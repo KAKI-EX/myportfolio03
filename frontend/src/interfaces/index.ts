@@ -36,15 +36,30 @@ export interface ListFormParams {
   amount?: string;
   shopping_date?: string;
 }
+// export interface OkaimonoParams {
+//   user_id?: string;
+//   shop_id?: string;
+//   shop_name?: string;
+//   estimated_budget?: string;
+//   shopping_memo?: string;
+//   shopping_date?: string;
+//   total_budget?: number;
+//   shopping_datum_id?: string;
+//   listForm?: ListFormParams[];
+// }
 
-export interface OkaimonoParams {
-  user_id?: string;
-  shop_id?: string;
+export interface MergeParams {
   shop_name?: string;
   estimated_budget?: string;
   shopping_memo?: string;
-  shopping_date?: string;
   total_budget?: number;
+  user_id?: string;
+  shop_id?: string;
   shopping_datum_id?: string;
+  purchase_name?: string;
+  price?: string;
+  shopping_detail_memo?: string;
+  amount?: string;
+  shopping_date?: string;
   listForm?: ListFormParams[];
 }
