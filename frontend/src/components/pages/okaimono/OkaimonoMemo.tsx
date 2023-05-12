@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Stack, VStack, Spinner } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams } from "interfaces";
-import { memo, useEffect, useState, VFC } from "react";
+import { memo, useContext, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -11,11 +11,12 @@ import { useMessage } from "hooks/useToast";
 import { useMemoCreate } from "hooks/useMemoCreate";
 import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
+import { AuthContext } from "App";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
-  const [loading, setLoading] = useState(false);
+  const { setLoading, loading } = useContext(AuthContext);
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
