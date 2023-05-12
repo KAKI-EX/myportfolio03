@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useMessage } from "hooks/useToast";
 import { useMemoCreate } from "hooks/useMemoCreate";
+import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
@@ -97,54 +98,7 @@ export const OkaimonoMemo: VFC = memo(() => {
       <Flex align="center" justify="center" px={3}>
         <VStack w="100rem">
           <Box>
-            <Heading as="h2" size="lg" textAlign="center" pt={3}>
-              お買い物メモの作成
-            </Heading>
-            <Divider my={4} />
-            <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
-              お買い物情報
-            </Heading>
-            <Box bg="white" rounded="xl">
-              <Stack align="center" justify="center" py={6} spacing="3" {...register("shopping_date")}>
-                <Input size="md" type="date" w="90%" fontSize={{ base: "sm", md: "md" }} />
-                <Input
-                  placeholder="お店の名前"
-                  size="md"
-                  w="90%"
-                  fontSize={{ base: "sm", md: "md" }}
-                  {...register("shop_name")}
-                />
-                <InputGroup w="90%">
-                  <Input
-                    size="md"
-                    placeholder="お買い物の予算"
-                    type="number"
-                    fontSize={{ base: "sm", md: "md" }}
-                    {...register("estimated_budget", {
-                      pattern: {
-                        value: validationNumber,
-                        message: "半角整数で入力してください。",
-                      },
-                    })}
-                  />
-                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                    円
-                  </InputRightElement>
-                </InputGroup>
-                {errors.estimated_budget && errors.estimated_budget.types?.pattern && (
-                  <Box color="red">{errors.estimated_budget.types.pattern}</Box>
-                )}
-                <Input
-                  placeholder="一言メモ"
-                  size="md"
-                  w="90%"
-                  fontSize={{ base: "sm", md: "md" }}
-                  {...register("shopping_memo", {
-                    maxLength: { value: 150, message: "最大文字数は150文字です。" },
-                  })}
-                />
-              </Stack>
-            </Box>
+            <OkaimonoOverview register={register} validationNumber={validationNumber} errors={errors} />
             <Divider my={4} />
             <Box>
               <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
@@ -220,7 +174,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                       min="1"
                       {...register(`listForm.${index}.amount`, {
                         max: { value: 99, message: "上限は99までです。" },
-                        pattern: { value: validationNumber, message: "半角整数で入力してください。" }
+                        pattern: { value: validationNumber, message: "半角整数で入力してください。" },
                       })}
                     />
                     {errors.listForm && errors.listForm[index]?.amount && (
@@ -236,7 +190,7 @@ export const OkaimonoMemo: VFC = memo(() => {
                           // type="number"
                           fontSize={{ base: "sm", md: "md" }}
                           {...register(`listForm.${index}.price`, {
-                            pattern: { value: validationNumber, message: "半角整数で入力してください。" }
+                            pattern: { value: validationNumber, message: "半角整数で入力してください。" },
                           })}
                         />
                         <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
