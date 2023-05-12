@@ -15,7 +15,9 @@ export const Header: VFC = memo(() => {
   const onClickHome = useCallback(() => history.push("/"), [history]);
   const onClickSignIn = useCallback(() => history.push("/user/sign_in"), [history]);
   const onClickSignUp = useCallback(() => history.push("/user/sign_up"), [history]);
-  const { setLoading } = useContext(AuthContext);
+  const onClickMakeMemo = useCallback(() => history.push("/okaimono/okaimono_memo"), [history]);
+
+  const { setLoading, isSignedIn } = useContext(AuthContext);
 
   const props = { setLoading };
   const { executionSignOut } = useSignOut(props);
@@ -34,13 +36,16 @@ export const Header: VFC = memo(() => {
         </Flex>
         <Flex align="center" fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }}>
           <Box pr={4}>
-            <Link onClick={onClickSignIn}>ログイン</Link>
+            <Link onClick={onClickSignIn} display={!isSignedIn ? "block" : "none"}>ログイン</Link>
           </Box>
-          <Box pr={4}>
+          <Box pr={4} display={!isSignedIn ? "block" : "none"}>
             <Link onClick={onClickSignUp}>アカウントの作成</Link>
           </Box>
-          <Box>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickSignOut}>サインアウト</Link>
+          </Box>
+          <Box display={isSignedIn ? "block" : "none"}>
+            <Link onClick={onClickMakeMemo}>お買い物メモの作成</Link>
           </Box>
         </Flex>
         <MenuIconButton onOpen={onOpen} />
