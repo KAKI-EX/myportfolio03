@@ -1,7 +1,6 @@
 import { ListFormParams, MergeParams } from "interfaces";
 import { memosCreate, shopCreate, shoppingDatumCreate } from "lib/api/post";
 import React from "react";
-import { FieldArrayWithId } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { useCookie } from "./useCookie";
 import { useMessage } from "./useToast";

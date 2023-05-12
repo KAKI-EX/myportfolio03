@@ -20,7 +20,7 @@ export const Header: VFC = memo(() => {
   const onClickSignUp = useCallback(() => history.push("/user/sign_up"), [history]);
   const { setLoading } = useContext(AuthContext);
 
-  const onClickSignOut = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const onClickSignOut = async () => {
     setLoading(true);
     console.log("onClickSignOutが走っています");
     try {
