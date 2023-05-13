@@ -29,6 +29,7 @@ export const useSignOut = (props: Props) => {
       }
       history.push("/");
       setIsSignedIn(false);
+
       showMessage({ title: "サインアウトしました。", status: "success" });
     } catch (err: any) {
       console.log(err.response);

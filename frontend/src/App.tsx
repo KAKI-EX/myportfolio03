@@ -3,7 +3,7 @@ import { Router } from "router/Router";
 import theme from "components/theme/theme";
 import { BrowserRouter, Redirect } from "react-router-dom";
 import { User } from "interfaces";
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
 import { getCurrentUser } from "lib/api/auth";
 import Cookies from "js-cookie";
 import { useGetCurrentUser } from "hooks/useGetCurrentUser";
@@ -35,12 +35,18 @@ export function Private({
   isSignedIn: boolean;
 }) {
   const { showMessage } = useMessage();
+  const toastCount = useRef(0);
+
   console.log("Privateが走っています");
+
   if (!loading) {
     if (isSignedIn) {
       return children;
     }
-    showMessage({ title: "ログインが必要です。", status: "warning" });
+    if (toastCount.current === 0) {
+      showMessage({ title: "ログインが必要です。", status: "warning" });
+      toastCount.current++;
+    }
     return <Redirect to="/user/sign_in" />;
   }
   return null;

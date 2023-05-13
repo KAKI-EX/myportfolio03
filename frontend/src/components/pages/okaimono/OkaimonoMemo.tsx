@@ -30,6 +30,7 @@ export const OkaimonoMemo: VFC = memo(() => {
   } = useForm<MergeParams>({
     defaultValues: {
       shopping_date: formattedDefaultShoppingDate,
+      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -56,12 +57,6 @@ export const OkaimonoMemo: VFC = memo(() => {
   const insertInputForm = (index: number) => {
     insert(index + 1, { purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
   };
-
-  useEffect(() => {
-    for (let i = 0; i < 1; i++) {
-      append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
-    }
-  }, [append]);
 
   useEffect(() => {
     if (fields.length === 20) {
@@ -121,7 +116,7 @@ export const OkaimonoMemo: VFC = memo(() => {
               </Box>
             </Box>
             <Stack w="80%" py="3%">
-              <PrimaryButtonForReactHookForm disabled={!isValid}>お買い物リストを確定</PrimaryButtonForReactHookForm>
+              <PrimaryButtonForReactHookForm disabled={!isValid}>保存</PrimaryButtonForReactHookForm>
               <DeleteButton>保存しない</DeleteButton>
             </Stack>
           </VStack>

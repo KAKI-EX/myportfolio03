@@ -60,6 +60,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
           <VStack w="60%">
             <Box w="100%">
               <Input
+                autoFocus={false}
                 placeholder="買う商品のなまえ"
                 fontSize={{ base: "sm", md: "md" }}
                 size="md"
