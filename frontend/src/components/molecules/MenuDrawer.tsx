@@ -10,10 +10,11 @@ type Props = {
   onClickSignUp: () => void;
   onClickMakeMemo: () => void;
   onClickSignOut: () => void;
+  onClickMemoIndex: () => void;
 };
 
 export const MenuDrawer: VFC<Props> = memo((props) => {
-  const { onClose, isOpen, onClickHome, onClickSignIn, onClickSignUp, onClickMakeMemo, onClickSignOut } = props;
+  const { onClose, isOpen, onClickHome, onClickSignIn, onClickSignUp, onClickMakeMemo, onClickSignOut, onClickMemoIndex } = props;
   const { isSignedIn } = useContext(AuthContext);
   return (
     <Drawer placement="left" size="xs" onClose={onClose} isOpen={isOpen}>
@@ -34,6 +35,9 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
             </Button>
             <Button onClick={onClickMakeMemo} w="100%" display={isSignedIn ? "block" : "none"}>
               お買物メモの作成
+            </Button>
+            <Button onClick={onClickMemoIndex} w="100%" display={isSignedIn ? "block" : "none"}>
+              お買物メモ一覧
             </Button>
           </DrawerBody>
         </DrawerContent>

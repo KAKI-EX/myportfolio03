@@ -16,6 +16,7 @@ export const Header: VFC = memo(() => {
   const onClickSignIn = useCallback(() => history.push("/user/sign_in"), [history]);
   const onClickSignUp = useCallback(() => history.push("/user/sign_up"), [history]);
   const onClickMakeMemo = useCallback(() => history.push("/okaimono/okaimono_memo"), [history]);
+  const onClickMemoIndex = useCallback(() => history.push("/okaimono"), [history]);
 
   const { setLoading, isSignedIn, loading } = useContext(AuthContext);
 
@@ -49,8 +50,11 @@ export const Header: VFC = memo(() => {
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickSignOut}>サインアウト</Link>
           </Box>
-          <Box display={isSignedIn ? "block" : "none"}>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickMakeMemo}>お買い物メモの作成</Link>
+          </Box>
+          <Box display={isSignedIn ? "block" : "none"}>
+            <Link onClick={onClickMemoIndex}>お買物メモ一覧</Link>
           </Box>
         </Flex>
         <MenuIconButton onOpen={onOpen} />
@@ -63,6 +67,7 @@ export const Header: VFC = memo(() => {
         onClickSignUp={onClickSignUp}
         onClickMakeMemo={onClickMakeMemo}
         onClickSignOut={onClickSignOut}
+        onClickMemoIndex={onClickMemoIndex}
       />
     </>
   );
