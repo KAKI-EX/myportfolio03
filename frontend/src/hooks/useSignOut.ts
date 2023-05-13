@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { signOut } from "lib/api/auth";
+import { AuthContext } from "App";
+import { useHistory } from "react-router-dom";
 import { useMessage } from "./useToast";
 
 type Props = {
@@ -10,6 +12,8 @@ type Props = {
 export const useSignOut = (props: Props) => {
   const { showMessage } = useMessage();
   const { setLoading } = props;
+  const history = useHistory();
+  const { setIsSignedIn } = useContext(AuthContext);
 
   const executionSignOut = useCallback(async () => {
     setLoading(true);
@@ -22,8 +26,10 @@ export const useSignOut = (props: Props) => {
         Cookies.remove("_uid");
         Cookies.remove("_user_id");
         Cookies.remove("_isLogin");
-        showMessage({ title: "ログアウトしました。", status: "success" });
       }
+      history.push("/");
+      setIsSignedIn(false);
+      showMessage({ title: "サインアウトしました。", status: "success" });
     } catch (err: any) {
       console.log(err.response);
       if (err.response && err.response.data && err.response.data.errors) {
@@ -32,10 +38,10 @@ export const useSignOut = (props: Props) => {
           status: "error",
         });
       } else {
-        showMessage({ title: "ログアウトできませんでした。", status: "error" });
+        showMessage({ title: "サインアウトできませんでした。", status: "error" });
       }
-      setLoading(false);
     }
+    setLoading(false);
   }, [setLoading, showMessage]);
   return { executionSignOut };
 };

@@ -64,7 +64,6 @@ export const useMemoCreate = (props: Props) => {
 
           const memosCreateRes = await memosCreate(memosParams.memos);
           console.log("Memoのレスポンス", memosCreateRes);
-          setLoading(false);
           history.push("/okaimono");
           if (formData.listForm) {
             showMessage({ title: `${memosCreateRes.data.length}件のメモを登録しました`, status: "success" });
@@ -75,8 +74,8 @@ export const useMemoCreate = (props: Props) => {
       showMessage({ title: err.response.data.error, status: "error" });
       console.error(err.response);
       console.log(err.response.data.error);
-      setLoading(false);
     }
+    setLoading(false);
   };
   return sendDataToAPI;
 };

@@ -17,7 +17,7 @@ export const Header: VFC = memo(() => {
   const onClickSignUp = useCallback(() => history.push("/user/sign_up"), [history]);
   const onClickMakeMemo = useCallback(() => history.push("/okaimono/okaimono_memo"), [history]);
 
-  const { setLoading, isSignedIn } = useContext(AuthContext);
+  const { setLoading, isSignedIn, loading } = useContext(AuthContext);
 
   const props = { setLoading };
   const { executionSignOut } = useSignOut(props);
@@ -25,6 +25,9 @@ export const Header: VFC = memo(() => {
   const onClickSignOut = () => {
     executionSignOut();
   };
+
+  console.log("isSignedIn", isSignedIn);
+  console.log("loading", loading);
 
   return (
     <>
@@ -36,7 +39,9 @@ export const Header: VFC = memo(() => {
         </Flex>
         <Flex align="center" fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }}>
           <Box pr={4}>
-            <Link onClick={onClickSignIn} display={!isSignedIn ? "block" : "none"}>ログイン</Link>
+            <Link onClick={onClickSignIn} display={!isSignedIn ? "block" : "none"}>
+              ログイン
+            </Link>
           </Box>
           <Box pr={4} display={!isSignedIn ? "block" : "none"}>
             <Link onClick={onClickSignUp}>アカウントの作成</Link>
@@ -56,6 +61,8 @@ export const Header: VFC = memo(() => {
         onClickHome={onClickHome}
         onClickSignIn={onClickSignIn}
         onClickSignUp={onClickSignUp}
+        onClickMakeMemo={onClickMakeMemo}
+        onClickSignOut={onClickSignOut}
       />
     </>
   );

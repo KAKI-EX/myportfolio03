@@ -57,7 +57,6 @@ export const AccountUpdate: VFC = memo(() => {
       console.log(document.cookie);
       setIsSignedIn(true);
       setCurrentUser(res?.data.data);
-      setLoading(false);
       history.push("/");
       const signUpMessage = `${res.data.message} ,ログインしました。`;
       showMessage({ title: signUpMessage, status: "success" });
@@ -70,8 +69,8 @@ export const AccountUpdate: VFC = memo(() => {
       } else {
         showMessage({ title: "アカウントが作成できませんでした。", status: "error" });
       }
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   // -------------------------------------------------------------------------------------------

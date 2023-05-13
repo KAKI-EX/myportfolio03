@@ -57,7 +57,6 @@ export const SignIn: VFC = memo(() => {
         // console.log(document.cookie);
         setIsSignedIn(true);
         setCurrentUser(res?.data.data);
-        setLoading(false);
         history.push("/");
         showMessage({ title: res.data.message, status: "success" });
       }
