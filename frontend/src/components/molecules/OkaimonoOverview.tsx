@@ -22,7 +22,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
       </Heading>
       <Box bg="white" rounded="xl">
         <Stack align="center" justify="center" py={6} spacing="3" {...register("shopping_date")}>
-          <Input autoFocus size="md" type="date" w="90%" fontSize={{ base: "sm", md: "md" }} />
+          <Input size="md" type="date" w="90%" fontSize={{ base: "sm", md: "md" }} />
           <Input
             placeholder="お店の名前"
             size="md"

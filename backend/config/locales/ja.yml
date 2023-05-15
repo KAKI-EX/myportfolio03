@@ -9,6 +9,7 @@ ja:
               blank: "が入力されていません。"
             email:
               blank: "が入力されていません。"
+              taken: "%{value}は既に使用されています。"
         memo:
           attributes:
             shopping_datum:

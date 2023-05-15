@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, Input, Spinner, Stack, Text } from "@chakra-ui/react";
 import { appInfo } from "consts/appconst";
 import { SignUpParams } from "interfaces";
 import Cookies from "js-cookie";
@@ -62,6 +62,7 @@ export const SignUp: VFC = memo(() => {
           title: `${err.response.data.errors.fullMessages}`,
           status: "error",
         });
+        console.error(err.response);
       } else {
         showMessage({ title: "アカウントが作成できませんでした。", status: "error" });
       }
@@ -71,7 +72,11 @@ export const SignUp: VFC = memo(() => {
 
   // -------------------------------------------------------------------------------------------
 
-  return (
+  return loading ? (
+    <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
+      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+    </Box>
+  ) : (
     <Flex align="center" justify="center" height="90vh" px={3}>
       <Box bg="white" w="md" p={4} borderRadius="md" shadow="md">
         <Heading as="h1" size="lg" textAlign="center">
