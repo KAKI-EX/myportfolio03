@@ -1,8 +1,11 @@
 class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def index
-    shopping = User.find(params[:id]).shopping_datum
-    render json: shopping
+    shopping = User.find(params[:id]).shopping_data
+    test_data = shopping.map do |s_data|
+      s_data.attributes.merge({ 'memos_count': s_data.memos.count })
+    end
+    render json: test_data
   end
 
   def create
