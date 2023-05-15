@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { ChevronDownIcon, DeleteIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -23,16 +21,14 @@ import { useGetOkaimonoIndex } from "lib/api/get";
 import { memo, useEffect, useState, VFC } from "react";
 
 export const OkaimonoIndex: VFC = memo(() => {
-  const [memo, setMemo] = useState<{ data: any } | null>();
+  const [okaimonoMemo, setOkaimonoMemo] = useState<{ data: any } | null>();
   const getOkaimonoIndex = useGetOkaimonoIndex();
   useEffect(() => {
     const getIndex = async () => {
       try {
         const res = await getOkaimonoIndex();
-        console.log("ここもだよ", res);
         if (res) {
-          console.log("げっと", res.data);
-          setMemo(res);
+          setOkaimonoMemo(res);
         }
       } catch (err: any) {
         console.error(err);
@@ -40,12 +36,6 @@ export const OkaimonoIndex: VFC = memo(() => {
     };
     getIndex();
   }, []);
-  console.log("indexだよ", memo?.data);
-  console.log(memo?.data?.length === 0);
-  console.log("ここだよ", memo?.data?.[0]?.shoppingDate);
-  // memo?.data.map((e) => {
-  //   console.log(e.id)
-  // })
 
   return (
     <Flex align="center" justify="center" px={3}>
@@ -113,7 +103,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                 />
               </Tr>
             </Thead>
-            {memo?.data.map((i: any) => {
+            {okaimonoMemo?.data.map((i: any) => {
               return (
                 <Tbody key={i.id}>
                   <Tr>
@@ -185,7 +175,7 @@ export const OkaimonoIndex: VFC = memo(() => {
               );
             })}
           </Table>
-          {memo?.data?.length === 0 ? (
+          {okaimonoMemo?.data?.length === 0 ? (
             <Flex align="center" justify="center">
               <Box p="5%" my="10%" bg="teal.500" rounded={10} color="white">
                 お買い物メモがまだ登録されていないようです・・・。
