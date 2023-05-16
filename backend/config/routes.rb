@@ -4,11 +4,13 @@ Rails.application.routes.draw do
       namespace :okaimono do
         get   'memo/index/:id',           to: 'memos#index'
         post  'memo/create',              to: 'memos#create'
+        get   'memo/show',                to: 'memos#show'
         get   'shoppingdatum/index/:id',  to: 'shopping_datum#index'
         post  'shoppingdatum/create',     to: 'shopping_datum#create'
         get   'shoppingdatum/show',       to: 'shopping_datum#show'
         get   'shops/index/:id',          to: 'shops#index'
         post  'shops/create',             to: 'shops#create'
+        get   'shops/show',               to: 'shops#show'
       end
     end
   end

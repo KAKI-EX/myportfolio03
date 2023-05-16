@@ -19,6 +19,11 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
     end
   end
 
+  def show
+    shop = User.find(params[:user_id]).shops.find(params[:shop_id])
+    render json: shop
+  end
+
   private
 
   def shop_params

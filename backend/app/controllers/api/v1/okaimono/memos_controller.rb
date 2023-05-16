@@ -19,6 +19,11 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  def show
+    memos = User.find(params[:user_id]).shopping_data.find(params[:shopping_id]).memos
+    render json: memos
+  end
+
   private
 
   def memo_params

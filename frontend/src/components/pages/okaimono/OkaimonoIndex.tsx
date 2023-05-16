@@ -11,7 +11,6 @@ import {
   MenuList,
   Tab,
   Table,
-  TableCaption,
   TabList,
   TabPanel,
   TabPanels,
@@ -46,7 +45,7 @@ export const OkaimonoIndex: VFC = memo(() => {
 
   const onClickShowMemo = (id: any) => (event: React.MouseEvent) => {
     event.preventDefault();
-    alert(id);
+    console.log("OkaimonoIndexでのid", id);
     history.push(`/okaimono/okaimono_show/${id}`);
   };
 
