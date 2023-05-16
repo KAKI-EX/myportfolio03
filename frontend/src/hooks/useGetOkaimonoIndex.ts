@@ -1,6 +1,6 @@
 import { useCookie } from "hooks/useCookie";
 import Cookies from "js-cookie";
-import client from "./client";
+import client from "../lib/api/client";
 
 // 関数
 

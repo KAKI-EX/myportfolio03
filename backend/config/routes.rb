@@ -6,6 +6,7 @@ Rails.application.routes.draw do
         post  'memo/create',              to: 'memos#create'
         get   'shoppingdatum/index/:id',  to: 'shopping_datum#index'
         post  'shoppingdatum/create',     to: 'shopping_datum#create'
+        get   'shoppingdatum/show',       to: 'shopping_datum#show'
         get   'shops/index/:id',          to: 'shops#index'
         post  'shops/create',             to: 'shops#create'
       end

@@ -2,10 +2,10 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def index
     shopping = User.find(params[:id]).shopping_data
-    test_data = shopping.map do |s_data|
+    shapping = shopping.map do |s_data|
       s_data.attributes.merge({ 'memos_count': s_data.memos.count })
     end
-    render json: test_data
+    render json: shapping
   end
 
   def create
@@ -15,6 +15,11 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     else
       render json: shopping.errors
     end
+  end
+
+  def show
+    shopping = User.find(params[:user_id]).shopping_data.find(params[:shopping_data])
+    render json: shopping
   end
 
   private
