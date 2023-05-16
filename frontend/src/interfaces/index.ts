@@ -70,4 +70,56 @@ export interface OkaimonoMemoResponse {
   data: OkaimonoMemoData[];
   status: number;
 }
-// --------------------------------------------------------
+// ------------------okaimono showページ---------------------
+
+export interface OkaimonoMemoDataShow {
+  createdAt: string;
+  estimatedBudget: string;
+  id: number;
+  memosCount: number;
+  shopId: number;
+  shoppingDate: string;
+  shoppingMemo: string;
+  totalBudget: string;
+  updatedAt: string;
+  userId: number;
+}
+
+export interface OkaimonoMemoDataShowResponse {
+  data: OkaimonoMemoData;
+  status: number;
+}
+
+export interface OkaimonoShopData {
+  id: number;
+  createdAt: string;
+  shopMemo: string;
+  shopName: string;
+  updatedAt: string;
+  userId: number
+}
+
+export interface OkaimonoShopDataResponse {
+  data: OkaimonoShopData;
+  status: number;
+}
+
+export interface OkaimonoMemosData {
+amount: string;
+createdAt: string;
+id: number;
+memoType: string;
+price: string;
+purchaseName: string;
+shopId: number;
+shoppingDate: string;
+shoppingDatumId: number;
+shoppingDetailMemo: string;
+updatedAt: string;
+userId: number;
+}
+
+export interface OkaimonoMemosDataResponse {
+  data: OkaimonoMemosData[];
+  status: number;
+}

@@ -1,25 +1,33 @@
 import client from "lib/api/client";
 
-type shopProps = {
-  userId: string;
-  shopId: string;
+export type shopPropsType = {
+  userId: number;
+  shopId: number;
 };
 
-type memoProps = {
-  userId: string;
-  shoppingDataId: string;
+export type memoProps = {
+  userId: number;
+  shoppingDataId: number;
 };
 
 // お店情報確認
-export const shopShow = (props: shopProps) => {
+export const shopShow = async (props: shopPropsType) => {
   const { userId, shopId } = props;
   console.log("shopShowが走っています。");
-  return client.get(`okaimono/shops/show?user_id=${userId}&shop_id=${shopId}`);
+  const shopShowRes = await client.get(`okaimono/shops/show?user_id=${userId}&shop_id=${shopId}`);
+  return {
+    data: shopShowRes.data,
+    status: shopShowRes.status,
+  };
 };
 
 // メモ確認
-export const memosShow = (props: memoProps) => {
+export const memosShow = async (props: memoProps) => {
   const { userId, shoppingDataId } = props;
   console.log("shopShowが走っています。");
-  return client.get(`okaimono/memo/show?user_id=${userId}&shopping_id=${shoppingDataId}`);
+  const memosShowRes = await client.get(`okaimono/memo/show?user_id=${userId}&shopping_id=${shoppingDataId}`);
+  return {
+    data: memosShowRes.data,
+    status: memosShowRes.status,
+  };
 };

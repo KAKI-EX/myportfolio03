@@ -2,7 +2,7 @@ import { useCookie } from "hooks/useCookie";
 import Cookies from "js-cookie";
 import client from "../lib/api/client";
 
-export const useGetOkaimonoShow = (params: string) => {
+export const useGetOkaimonoShow = (params: string | undefined) => {
   const { separateCookies } = useCookie();
   const id = params;
   console.log("useGetOkaimonoShow", id);
@@ -13,7 +13,10 @@ export const useGetOkaimonoShow = (params: string) => {
     }
     const userId = separateCookies("_user_id");
     const res = await client.get(`/okaimono/shoppingdatum/show?user_id=${userId}&shopping_data=${id}`);
-    return res;
+    return {
+      data: res.data,
+      status: res.status
+    };
   };
 
   return getOkaimonoShow;

@@ -50,7 +50,6 @@ export const OkaimonoIndex: VFC = memo(() => {
   console.log("watch okaimonomemo", okaimonoMemo);
   const onClickShowMemo = (id: number) => (event: React.MouseEvent) => {
     event.preventDefault();
-    console.log("OkaimonoIndexでのid", id);
     history.push(`/okaimono/okaimono_show/${id}`);
   };
 
