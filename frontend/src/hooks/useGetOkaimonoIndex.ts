@@ -13,7 +13,10 @@ export const useGetOkaimonoIndex = () => {
     }
     const userId = separateCookies("_user_id");
     const res = await client.get(`okaimono/shoppingdatum/index/${userId}`);
-    return res;
+    return {
+      data: res.data,
+      status: res.status,
+    };
   };
 
   return getOkaimonoIndex;

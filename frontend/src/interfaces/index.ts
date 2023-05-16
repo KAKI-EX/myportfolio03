@@ -36,17 +36,6 @@ export interface ListFormParams {
   amount?: string;
   shopping_date?: string;
 }
-// export interface OkaimonoParams {
-//   user_id?: string;
-//   shop_id?: string;
-//   shop_name?: string;
-//   estimated_budget?: string;
-//   shopping_memo?: string;
-//   shopping_date?: string;
-//   total_budget?: number;
-//   shopping_datum_id?: string;
-//   listForm?: ListFormParams[];
-// }
 
 export interface MergeParams {
   shop_name?: string;
@@ -63,3 +52,22 @@ export interface MergeParams {
   shopping_date?: string;
   listForm?: ListFormParams[];
 }
+// --------------------indexページのtype---------------------
+export interface OkaimonoMemoData {
+  createdAt: string;
+  estimatedBudget: string;
+  id: number;
+  memosCount: number;
+  shopId: number;
+  shoppingDate: string;
+  shoppingMemo: string;
+  totalBudget: string;
+  updatedAt: string;
+  userId: number;
+}
+
+export interface OkaimonoMemoResponse {
+  data: OkaimonoMemoData[];
+  status: number;
+}
+// --------------------------------------------------------

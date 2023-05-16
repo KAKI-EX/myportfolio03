@@ -1,7 +1,6 @@
 import { ChevronDownIcon, DeleteIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Flex,
   Heading,
   Icon,
@@ -22,13 +21,17 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
+import { useMessage } from "hooks/useToast";
 import React, { memo, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
+import { AxiosError } from "axios";
+import { OkaimonoMemoData, OkaimonoMemoResponse } from "interfaces";
 
 export const OkaimonoIndex: VFC = memo(() => {
   const history = useHistory();
-  const [okaimonoMemo, setOkaimonoMemo] = useState<{ data: any } | null>();
+  const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
   const getOkaimonoIndex = useGetOkaimonoIndex();
+  const { showMessage } = useMessage();
   useEffect(() => {
     const getIndex = async () => {
       try {
@@ -36,14 +39,16 @@ export const OkaimonoIndex: VFC = memo(() => {
         if (res) {
           setOkaimonoMemo(res);
         }
-      } catch (err: any) {
-        console.error(err);
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
       }
     };
     getIndex();
   }, []);
-
-  const onClickShowMemo = (id: any) => (event: React.MouseEvent) => {
+  console.log("watch okaimonomemo", okaimonoMemo);
+  const onClickShowMemo = (id: number) => (event: React.MouseEvent) => {
     event.preventDefault();
     console.log("OkaimonoIndexでのid", id);
     history.push(`/okaimono/okaimono_show/${id}`);
@@ -125,7 +130,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                       />
                     </Tr>
                   </Thead>
-                  {okaimonoMemo?.data.map((i: any) => {
+                  {okaimonoMemo?.data.map((i: OkaimonoMemoData) => {
                     return (
                       <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
                         <Tr>
@@ -211,7 +216,7 @@ export const OkaimonoIndex: VFC = memo(() => {
             </TabPanels>
           </Tabs>
 
-          {okaimonoMemo?.data?.length === 0 ? (
+          {okaimonoMemo?.data.length === 0 ? (
             <Flex align="center" justify="center">
               <Box p="5%" my="10%" bg="teal.500" rounded={10} color="white">
                 お買い物メモがまだ登録されていないようです・・・。
