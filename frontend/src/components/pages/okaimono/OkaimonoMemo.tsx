@@ -1,5 +1,5 @@
 import { SmallCloseIcon } from "@chakra-ui/icons";
-import { Box, Divider, Flex, Stack, VStack, Spinner } from "@chakra-ui/react";
+import { Box, Divider, Flex, Stack, VStack, Spinner, Heading } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams } from "interfaces";
@@ -81,6 +81,13 @@ export const OkaimonoMemo: VFC = memo(() => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Flex align="center" justify="center" px={3}>
         <VStack w="100rem">
+          <Heading as="h2" size="lg" textAlign="center" pt={3}>
+            お買い物メモの作成
+          </Heading>
+          <Divider my={4} />
+          <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
+            お買い物情報
+          </Heading>
           <Box>
             <OkaimonoOverview register={register} validationNumber={validationNumber} errors={errors} />
             <Divider my={4} />
