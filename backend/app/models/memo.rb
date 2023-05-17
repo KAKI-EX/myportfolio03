@@ -6,7 +6,7 @@ class Memo < ApplicationRecord
   validates :amount, numericality: { only_integer: true, less_than_or_equal_to: 1000, message: "数字のみ入力してください。1000以上は入力できません" }, allow_blank: true
   validates :price, numericality: { only_integer: true, message: "金額は数字のみ入力してください。" }, allow_blank: true
 
-  belongs_to :user
+  belongs_to :user, foreign_key: 'user_id', primary_key: 'id'
   belongs_to :shop
   belongs_to :shopping_datum
 end

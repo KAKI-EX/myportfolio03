@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class User < ActiveRecord::Base
+  before_create :set_uuid
+
   has_many :shops
   has_many :shopping_data
   has_many :memos
@@ -18,4 +20,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
+
+  private
+  def set_uuid
+    while self.id.blank? || User.find_by(id: self.id).present? do
+      self.id = SecureRandom.uuid
+    end
+  end
 end

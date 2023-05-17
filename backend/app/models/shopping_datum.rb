@@ -4,7 +4,7 @@ class ShoppingDatum < ApplicationRecord
   validates :estimated_budget, :total_budget, numericality: { only_integer: true, message: "お買い物の予算は数字のみ入力してください。" }, allow_blank: true
 
 
-  belongs_to :user
+  belongs_to :user, foreign_key: 'user_id', primary_key: 'id'
   belongs_to :shop
   has_many :memos, dependent: :destroy
 end
