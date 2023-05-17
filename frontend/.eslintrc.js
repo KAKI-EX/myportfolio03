@@ -35,6 +35,9 @@ module.exports = {
     "no-unused-vars": "warn",
     "react/jsx-props-no-spreading": "off",
     "no-plusplus": "off",
-    'react/jsx-one-expression-per-line': 'off'
+    'react/jsx-one-expression-per-line': 'off',
+    "operator-linebreak": "off",
+    "indent": "off",
+    "react/jsx-indent-props": "off"
   },
 };

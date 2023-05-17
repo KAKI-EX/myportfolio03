@@ -23,10 +23,20 @@ type Props = {
   register: UseFormRegister<MergeParams>;
   errors: FieldErrors<MergeParams>;
   validationNumber: RegExp;
+  readOnly?: boolean;
 };
 
 export const OkaimonoDetail: VFC<Props> = memo((props) => {
-  const { fields, insertInputForm, SmallCloseIcon, remove, register, errors, validationNumber } = props;
+  const {
+    fields,
+    insertInputForm,
+    SmallCloseIcon,
+    remove,
+    register,
+    errors,
+    validationNumber,
+    readOnly = false,
+  } = props;
   return (
     <Box>
       <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
@@ -35,13 +45,17 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
       {fields.map((field, index) => (
         <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
           <VStack spacing={1} w="5%">
-            <Box display={fields.length < 20 ? "block" : "none"}>
+            <Box display={fields.length < 20 || readOnly ? "block" : "none"}>
               <SmallAddIcon
                 bg="teal.500"
                 rounded="full"
                 color="white"
                 onClick={(event) => {
-                  event.preventDefault();
+                  if (readOnly) {
+                    event.preventDefault();
+                    alert("確認画面では使用できません。");
+                    return;
+                  }
                   insertInputForm(index);
                 }}
               />
@@ -53,15 +67,23 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                 color="white"
                 rounded="full"
                 boxSize={4}
-                onClick={() => remove(index)}
+                onClick={() => {
+                  if (readOnly) {
+                    alert("確認画面では使用できません。");
+                    return;
+                  }
+                  remove(index);
+                }}
               />
             </Box>
           </VStack>
           <VStack w="60%">
             <Box w="100%">
               <Input
+                isReadOnly={readOnly}
+                bg={readOnly ? "blackAlpha.200" : "white"}
                 autoFocus={false}
-                placeholder="買う商品のなまえ"
+                placeholder={!readOnly ? "買う商品のなまえ" : ""}
                 fontSize={{ base: "sm", md: "md" }}
                 size="md"
                 w="100%"
@@ -79,7 +101,9 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
             </Box>
             <Box w="100%">
               <Input
-                placeholder="メモ"
+                isReadOnly={readOnly}
+                bg={readOnly ? "blackAlpha.200" : "white"}
+                placeholder={!readOnly ? "メモ" : ""}
                 fontSize={{ base: "sm", md: "md" }}
                 size="md"
                 {...register(`listForm.${index}.shopping_detail_memo`, {
@@ -95,7 +119,9 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
           </VStack>
           <VStack w="30%">
             <Input
-              placeholder="個数"
+              isReadOnly={readOnly}
+              bg={readOnly ? "blackAlpha.200" : "white"}
+              placeholder={!readOnly ? "個数" : ""}
               fontSize={{ base: "sm", md: "md" }}
               size="md"
               w="100%"
@@ -115,8 +141,10 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
             <Box w="100%">
               <InputGroup>
                 <Input
-                  placeholder="いくら？"
-                  // type="number"
+                  isReadOnly={readOnly}
+                  bg={readOnly ? "blackAlpha.200" : "white"}
+                  placeholder={!readOnly ? "いくら？" : ""}
+                  type="number"
                   fontSize={{ base: "sm", md: "md" }}
                   {...register(`listForm.${index}.price`, {
                     pattern: { value: validationNumber, message: "半角整数で入力してください。" },

@@ -7,16 +7,27 @@ type Props = {
   register: UseFormRegister<MergeParams>;
   validationNumber: RegExp;
   errors: FieldErrors<MergeParams>;
+  readOnly?: boolean;
 };
 
 export const OkaimonoOverview: VFC<Props> = memo((props) => {
-  const { register, validationNumber, errors } = props;
+  const { register, validationNumber, errors, readOnly = false } = props;
   return (
     <Box bg="white" rounded="xl">
       <Stack align="center" justify="center" py={6} spacing="3">
-        <Input size="md" type="date" w="90%" fontSize={{ base: "sm", md: "md" }} {...register("shopping_date")} />
         <Input
-          placeholder="お店の名前"
+          isReadOnly={readOnly}
+          bg={readOnly ? "blackAlpha.200" : "white"}
+          size="md"
+          type="date"
+          w="90%"
+          fontSize={{ base: "sm", md: "md" }}
+          {...register("shopping_date")}
+        />
+        <Input
+          isReadOnly={readOnly}
+          bg={readOnly ? "blackAlpha.200" : "white"}
+          placeholder={!readOnly ? "お店の名前" : ""}
           size="md"
           w="90%"
           fontSize={{ base: "sm", md: "md" }}
@@ -24,8 +35,10 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
         />
         <InputGroup w="90%">
           <Input
+            isReadOnly={readOnly}
+            bg={readOnly ? "blackAlpha.200" : "white"}
             size="md"
-            placeholder="お買い物の予算"
+            placeholder={!readOnly ? "お買い物の予算" : ""}
             type="number"
             fontSize={{ base: "sm", md: "md" }}
             {...register("estimated_budget", {
@@ -43,7 +56,9 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           <Box color="red">{errors.estimated_budget.types.pattern}</Box>
         )}
         <Input
-          placeholder="一言メモ"
+          isReadOnly={readOnly}
+          bg={readOnly ? "blackAlpha.200" : "white"}
+          placeholder={!readOnly ? "一言メモ" : ""}
           size="md"
           w="90%"
           fontSize={{ base: "sm", md: "md" }}

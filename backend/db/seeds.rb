@@ -31,7 +31,7 @@ ShoppingDatum.create(
   id: "1",
   shop_id: "1",
   user_id: "1",
-  shopping_date: "20230901",
+  shopping_date: "2023-09-01",
   shopping_memo: "testUser_id1",
   estimated_budget: "2000",
   total_budget: "1900"
@@ -41,7 +41,7 @@ ShoppingDatum.create(
   id: "2",
   shop_id: "2",
   user_id: "1",
-  shopping_date: "20230902",
+  shopping_date: "2023-09-02",
   shopping_memo: "testUser_id1",
   estimated_budget: "2100",
   total_budget: "2000"
@@ -56,7 +56,7 @@ Memo.create(
   shopping_detail_memo: "test1_user_purChase1メモ1",
   amount: "1",
   price: "1000",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 
@@ -81,7 +81,7 @@ Memo.create(
   shopping_detail_memo: "test1_user_purChase1メモ1",
   amount: "1",
   price: "1000",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 
@@ -94,7 +94,7 @@ Memo.create(
   shopping_detail_memo: "test1_user_purchase2_メモ2",
   amount: "1",
   price: "1000",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 # -------------------------------------------
@@ -134,7 +134,7 @@ ShoppingDatum.create(
   id: "4",
   shop_id: "4",
   user_id: "2",
-  shopping_date: "20231002",
+  shopping_date: "2023-10-02",
   shopping_memo: "testUser_id2",
   estimated_budget: "2100",
   total_budget: "2000"
@@ -149,7 +149,7 @@ Memo.create(
   shopping_detail_memo: "test2_user_purchase1メモ1",
   amount: "1",
   price: "1000",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 
@@ -162,7 +162,7 @@ Memo.create(
   shopping_detail_memo: "test2_user_purchase1メモ2",
   amount: "1",
   price: "900",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 
@@ -175,7 +175,7 @@ Memo.create(
   shopping_detail_memo: "test2_user_purchase2メモ1",
   amount: "1",
   price: "1000",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 
@@ -188,6 +188,6 @@ Memo.create(
   shopping_detail_memo: "test2_user_purchase2メモ2",
   amount: "1",
   price: "1000",
-  shopping_date: "2023/06/17",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )

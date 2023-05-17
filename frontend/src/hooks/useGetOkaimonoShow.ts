@@ -5,7 +5,6 @@ import client from "../lib/api/client";
 export const useGetOkaimonoShow = (params: string | undefined) => {
   const { separateCookies } = useCookie();
   const id = params;
-  console.log("useGetOkaimonoShow", id);
 
   const getOkaimonoShow = async () => {
     if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {

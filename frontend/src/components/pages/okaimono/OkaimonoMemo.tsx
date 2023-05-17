@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Stack, VStack, Spinner, Heading } from "@chakra-ui/
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams } from "interfaces";
-import { memo, useContext, useEffect, useState, VFC } from "react";
+import { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -12,6 +12,7 @@ import { useMemoCreate } from "hooks/useMemoCreate";
 import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
 import { AuthContext } from "App";
+import { useHistory } from "react-router-dom";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
@@ -72,6 +73,8 @@ export const OkaimonoMemo: VFC = memo(() => {
     sendDataToAPI(formData);
   };
   // ---------------------------------------------------------------------------
+  const history = useHistory();
+  const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -124,7 +127,7 @@ export const OkaimonoMemo: VFC = memo(() => {
             </Box>
             <Stack w="80%" py="3%">
               <PrimaryButtonForReactHookForm disabled={!isValid}>保存</PrimaryButtonForReactHookForm>
-              <DeleteButton>保存しない</DeleteButton>
+              <DeleteButton onClick={onClickBack}>保存しない</DeleteButton>
             </Stack>
           </VStack>
           <Box h="12.5rem" />
