@@ -16,6 +16,7 @@ export const MenuIconButton: VFC<Props> = memo((props) => {
       variant="unstyled"
       display={{ base: "block", md: "none" }}
       onClick={onOpen}
+      _focus={{ outline: "none" }}
     />
   );
 });

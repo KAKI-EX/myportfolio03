@@ -8,6 +8,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Tab,
   Table,
   TabList,
@@ -32,9 +33,13 @@ export const OkaimonoIndex: VFC = memo(() => {
   const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
   const getOkaimonoIndex = useGetOkaimonoIndex();
   const { showMessage } = useMessage();
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
+    console.log("loading", loading);
     const getIndex = async () => {
       try {
+        setLoading(true);
         const res = await getOkaimonoIndex();
         if (res) {
           setOkaimonoMemo(res);
@@ -45,15 +50,21 @@ export const OkaimonoIndex: VFC = memo(() => {
         showMessage({ title: "エラーが発生しました。", status: "error" });
       }
     };
+    setLoading(false);
     getIndex();
   }, []);
+
   console.log("watch okaimonomemo", okaimonoMemo);
   const onClickShowMemo = (id: number) => (event: React.MouseEvent) => {
     event.preventDefault();
     history.push(`/okaimono/okaimono_show/${id}`);
   };
 
-  return (
+  return !loading ? (
+    <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
+      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+    </Box>
+  ) : (
     <Flex align="center" justify="center" px={2}>
       <Box w="100rem">
         <Heading as="h1" size="lg" textAlign="center" my={5}>
