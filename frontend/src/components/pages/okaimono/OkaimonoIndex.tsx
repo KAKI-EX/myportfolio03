@@ -17,6 +17,7 @@ import {
   Tabs,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -43,6 +44,9 @@ export const OkaimonoIndex: VFC = memo(() => {
         const res = await getOkaimonoIndex();
         if (res) {
           setOkaimonoMemo(res);
+        }
+        if (res?.data.length === 0) {
+          showMessage({ title: "まだメモが登録されていません", status: "info" });
         }
       } catch (err) {
         const axiosError = err as AxiosError;
@@ -228,8 +232,8 @@ export const OkaimonoIndex: VFC = memo(() => {
 
           {okaimonoMemo?.data.length === 0 ? (
             <Flex align="center" justify="center">
-              <Box p="5%" my="10%" bg="teal.500" rounded={10} color="white">
-                お買い物メモがまだ登録されていないようです・・・。
+              <Box p="5%" my="10%" bg="teal.400" rounded={10} color="white">
+                <Text as="b">メモが未登録です。</Text>
               </Box>
             </Flex>
           ) : (

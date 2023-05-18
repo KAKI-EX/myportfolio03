@@ -6,41 +6,36 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.create(
-  id: "1",
+user1 = User.create(
   name: "testUser1",
   email: "test1@gmail.com",
   password: "password"
 )
 
-Shop.create(
-  id: "1",
-  user_id: "1",
+user1shop1 = Shop.create(
+  user_id: user1.id,
   shop_name: "test1_user_Shop1",
   shop_memo: "test1_user_Shop1メモ"
 )
 
-Shop.create(
-  id: "2",
-  user_id: "1",
+user1shop2 = Shop.create(
+  user_id: user1.id,
   shop_name: "test1_user_Shop2",
   shop_memo: "test1_user_shop2Shopメモ2"
 )
 
-ShoppingDatum.create(
-  id: "1",
-  shop_id: "1",
-  user_id: "1",
+user1shop1data1 = ShoppingDatum.create(
+  shop_id: user1shop1.id,
+  user_id: user1.id,
   shopping_date: "2023-09-01",
   shopping_memo: "testUser_id1",
   estimated_budget: "2000",
   total_budget: "1900"
 )
 
-ShoppingDatum.create(
-  id: "2",
-  shop_id: "2",
-  user_id: "1",
+user1shop2data2 = ShoppingDatum.create(
+  shop_id: user1shop2.id,
+  user_id: user1.id,
   shopping_date: "2023-09-02",
   shopping_memo: "testUser_id1",
   estimated_budget: "2100",
@@ -48,12 +43,11 @@ ShoppingDatum.create(
 )
 
 Memo.create(
-  id: "1",
-  shopping_datum_id: "1",
-  user_id: "1",
-  shop_id: "1",
-  purchase_name: "test1_user_purchase1",
-  shopping_detail_memo: "test1_user_purChase1メモ1",
+  shopping_datum_id: user1shop1data1.id,
+  user_id: user1.id,
+  shop_id: user1shop1.id,
+  purchase_name: "test1ユーザー、shop1、メモ1",
+  shopping_detail_memo: "test1ユーザー、shop1、メモ1",
   amount: "1",
   price: "1000",
   shopping_date: "2023-06-17",
@@ -61,24 +55,23 @@ Memo.create(
 )
 
 Memo.create(
-  id: "2",
-  shopping_datum_id: "1",
-  user_id: "1",
-  shop_id: "1",
-  purchase_name: "test1_user_purchase2",
-  shopping_detail_memo: "test1_user_purchase2_メモ2",
+  shopping_datum_id: user1shop1data1.id,
+  user_id: user1.id,
+  shop_id: user1shop1.id,
+  purchase_name: "test1ユーザー、shop1、メモ2",
+  shopping_detail_memo: "test1ユーザー、shop1、メモ2",
   amount: "1",
   price: "900",
+  shopping_date: "2023-06-17",
   memo_type: "",
 )
 
 Memo.create(
-  id: "5",
-  shopping_datum_id: "2",
-  user_id: "1",
-  shop_id: "2",
-  purchase_name: "test1_user_purchase1",
-  shopping_detail_memo: "test1_user_purChase1メモ1",
+  shopping_datum_id: user1shop2data2.id,
+  user_id: user1.id,
+  shop_id: user1shop2.id,
+  purchase_name: "test1ユーザー、shop2、メモ1",
+  shopping_detail_memo: "test1ユーザー、shop2、メモ1",
   amount: "1",
   price: "1000",
   shopping_date: "2023-06-17",
@@ -86,12 +79,11 @@ Memo.create(
 )
 
 Memo.create(
-  id: "6",
-  shopping_datum_id: "2",
-  user_id: "1",
-  shop_id: "2",
-  purchase_name: "test1_user_purchase2",
-  shopping_detail_memo: "test1_user_purchase2_メモ2",
+  shopping_datum_id: user1shop2data2.id,
+  user_id: user1.id,
+  shop_id: user1shop2.id,
+  purchase_name: "test1ユーザー、shop2、メモ2",
+  shopping_detail_memo: "test1ユーザー、shop2、メモ2",
   amount: "1",
   price: "1000",
   shopping_date: "2023-06-17",
@@ -99,41 +91,36 @@ Memo.create(
 )
 # -------------------------------------------
 
-User.create(
-  id: "2",
+user2 = User.create(
   name: "testUser2",
   email: "test2@gmail.com",
   password: "password"
 )
 
-Shop.create(
-  id: "3",
-  user_id: "2",
+user2shop1 = Shop.create(
+  user_id: user2.id,
   shop_name: "test2_user_Shop1",
   shop_memo: "test2_user_Shop1メモ1"
 )
 
-Shop.create(
-  id: "4",
-  user_id: "2",
+user2shop2 = Shop.create(
+  user_id: user2.id,
   shop_name: "test2_user_Shop2",
   shop_memo: "test2_user_Shop2メモ2"
 )
 
-ShoppingDatum.create(
-  id: "3",
-  shop_id: "3",
-  user_id: "2",
-  shopping_date: "20231001",
+user2shop1data1 = ShoppingDatum.create(
+  shop_id: user2shop1.id,
+  user_id: user2.id,
+  shopping_date: "2023-10-01",
   shopping_memo: "testUser_id2",
   estimated_budget: "2000",
   total_budget: "1900"
 )
 
-ShoppingDatum.create(
-  id: "4",
-  shop_id: "4",
-  user_id: "2",
+user2shop2data2 = ShoppingDatum.create(
+  shop_id: user2shop2.id,
+  user_id: user2.id,
   shopping_date: "2023-10-02",
   shopping_memo: "testUser_id2",
   estimated_budget: "2100",
@@ -141,12 +128,11 @@ ShoppingDatum.create(
 )
 
 Memo.create(
-  id: "3",
-  shopping_datum_id: "3",
-  shop_id: "3",
-  user_id: "2",
-  purchase_name: "test2_user_purchase1",
-  shopping_detail_memo: "test2_user_purchase1メモ1",
+  shopping_datum_id: user2shop1data1.id,
+  shop_id: user2shop1.id,
+  user_id: user2.id,
+  purchase_name: "test2ユーザー、shop1、メモ1",
+  shopping_detail_memo: "test2ユーザー、shop1、メモ1",
   amount: "1",
   price: "1000",
   shopping_date: "2023-06-17",
@@ -154,12 +140,11 @@ Memo.create(
 )
 
 Memo.create(
-  id: "4",
-  user_id: "2",
-  shop_id: "3",
-  shopping_datum_id: "3",
-  purchase_name: "test2_user_purchase1",
-  shopping_detail_memo: "test2_user_purchase1メモ2",
+  shopping_datum_id: user2shop1data1.id,
+  shop_id: user2shop1.id,
+  user_id: user2.id,
+  purchase_name: "test2ユーザー、shop1、メモ2",
+  shopping_detail_memo: "test2ユーザー、shop1、メモ2",
   amount: "1",
   price: "900",
   shopping_date: "2023-06-17",
@@ -167,12 +152,11 @@ Memo.create(
 )
 
 Memo.create(
-  id: "7",
-  shopping_datum_id: "4",
-  shop_id: "4",
-  user_id: "2",
-  purchase_name: "test2_user_purchase2",
-  shopping_detail_memo: "test2_user_purchase2メモ1",
+  shopping_datum_id: user2shop2data2.id,
+  shop_id: user2shop2.id,
+  user_id: user2.id,
+  purchase_name: "test2ユーザー、shop2、メモ1",
+  shopping_detail_memo: "test2ユーザー、shop2、メモ1",
   amount: "1",
   price: "1000",
   shopping_date: "2023-06-17",
@@ -180,12 +164,11 @@ Memo.create(
 )
 
 Memo.create(
-  id: "8",
-  shopping_datum_id: "4",
-  shop_id: "4",
-  user_id: "2",
-  purchase_name: "test2_user_purchase2",
-  shopping_detail_memo: "test2_user_purchase2メモ2",
+  shopping_datum_id: user2shop2data2.id,
+  shop_id: user2shop2.id,
+  user_id: user2.id,
+  purchase_name: "test2ユーザー、shop2、メモ2",
+  shopping_detail_memo: "test2ユーザー、shop2、メモ2",
   amount: "1",
   price: "1000",
   shopping_date: "2023-06-17",
