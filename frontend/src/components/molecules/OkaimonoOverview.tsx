@@ -66,6 +66,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
             maxLength: { value: 150, message: "最大文字数は150文字です。" },
           })}
         />
+        <Input type="hidden" {...register(`shopping_datum_id`)} />
       </Stack>
     </Box>
   );

@@ -160,6 +160,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                 {errors.listForm[index]?.price?.types?.pattern}
               </Box>
             )}
+            <Input type="hidden" {...register(`listForm.${index}.id`)} />
           </VStack>
         </HStack>
       ))}

@@ -7,7 +7,7 @@ export type shopPropsType = {
 
 export type memoProps = {
   userId: number;
-  shoppingDataId: number;
+  shoppingDataId: string;
 };
 
 // お店情報確認

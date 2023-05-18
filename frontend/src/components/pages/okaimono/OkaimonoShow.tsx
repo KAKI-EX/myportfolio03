@@ -19,6 +19,7 @@ import { useGetOkaimonoShow } from "hooks/useGetOkaimonoShow";
 import { useHistory, useParams } from "react-router-dom";
 import { memoProps, memosShow, shopPropsType, shopShow } from "lib/api/show";
 import { AxiosError } from "axios";
+import { useMemoUpdate } from "hooks/useMemoUpdate";
 
 export const OkaimonoShow: VFC = memo(() => {
   const defaultShoppingDate = new Date();
@@ -42,6 +43,7 @@ export const OkaimonoShow: VFC = memo(() => {
           setValue("shopping_date", shoppingRes.data.shoppingDate);
           setValue("estimated_budget", shoppingRes.data.estimatedBudget);
           setValue("shopping_memo", shoppingRes.data.shoppingMemo);
+          setValue("shopping_datum_id", shoppingRes.data.id);
           const shopProps: shopPropsType = {
             userId: shoppingRes.data.userId,
             shopId: shoppingRes.data.shopId,
@@ -62,6 +64,7 @@ export const OkaimonoShow: VFC = memo(() => {
               setValue(`listForm.${index}.price`, m.price);
               setValue(`listForm.${index}.shopping_detail_memo`, m.shoppingDetailMemo);
               setValue(`listForm.${index}.amount`, m.amount);
+              setValue(`listForm.${index}.id`, m.id);
             });
           }
         }
@@ -90,7 +93,7 @@ export const OkaimonoShow: VFC = memo(() => {
   } = useForm<MergeParams>({
     defaultValues: {
       shopping_date: formattedDefaultShoppingDate,
-      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" }],
+      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "" }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -140,10 +143,19 @@ export const OkaimonoShow: VFC = memo(() => {
   //   sendDataToAPI(formData);
   // };
   // ---------------------------------------------------------------------------
-  console.log("fieldsの値", fields);
-  const onSubmit = () => {
-    setReadOnly(!readOnly);
-  };
+
+  const props = { setLoading, total_budget };
+  const sendUpdateToAPI = useMemoUpdate(props);
+  const onSubmit = useCallback(
+    (formData: MergeParams) => {
+      setReadOnly(!readOnly);
+      if (!readOnly) {
+        sendUpdateToAPI(formData);
+      }
+    },
+    [readOnly, sendUpdateToAPI]
+  );
+
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />

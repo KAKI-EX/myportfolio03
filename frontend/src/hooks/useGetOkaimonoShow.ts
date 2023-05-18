@@ -11,7 +11,7 @@ export const useGetOkaimonoShow = (params: string | undefined) => {
       return undefined;
     }
     const userId = separateCookies("_user_id");
-    const res = await client.get(`/okaimono/shoppingdatum/show?user_id=${userId}&shopping_data=${id}`);
+    const res = await client.get(`/okaimono/shoppingdatum/show?user_id=${userId}&shopping_datum_id=${id}`);
     return {
       data: res.data,
       status: res.status
