@@ -1,5 +1,5 @@
 import { ListFormParams, MergeParams } from "interfaces";
-import { shopCreate } from "lib/api/post";
+import { memosCreate, shopCreate } from "lib/api/post";
 import { memosUpdate, shoppingDatumUpdate } from "lib/api/update";
 import React from "react";
 import { useHistory } from "react-router-dom";
@@ -66,8 +66,29 @@ export const useMemoUpdate = (props: Props) => {
               };
             }),
           };
-
-          const memosUpdateRes = await memosUpdate(memosParams.memos);
+          // ---------------------------------------------------------------
+          //show画面でフォームを追加した場合を検知して新規で登録する。(updateアクションで対応できないため)
+          const catchNewMemo = memosParams.memos
+            .filter((newMemo) => !newMemo.memo_id)
+            .map((newMemo) => {
+              const updateCreate: ListFormParams = {
+                user_id,
+                shop_id,
+                shopping_datum_id,
+                purchase_name: newMemo.purchase_name,
+                price: newMemo.price,
+                shopping_detail_memo: newMemo.shopping_detail_memo,
+                amount: newMemo.amount,
+                shopping_date,
+              };
+              return updateCreate;
+            });
+          await memosCreate(catchNewMemo);
+          // ---------------------------------------------------------------
+          // 上記で追加した配列を削除。(既存メモのupdateではないのでエラーが発生するため)
+          const existingMemos = memosParams.memos.filter((newMemo) => newMemo.memo_id);
+          // ---------------------------------------------------------------
+          const memosUpdateRes = await memosUpdate(existingMemos);
           console.log("Memoのレスポンス", memosUpdateRes);
           // history.push("/okaimono");
           if (formData.listForm) {
