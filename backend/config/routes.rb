@@ -2,17 +2,18 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :okaimono do
-        get   'memo/index/:id',           to: 'memos#index'
-        post  'memo/create',              to: 'memos#create'
-        get   'memo/show',                to: 'memos#show'
-        post  'memo/update',              to: 'memos#update'
-        get   'shoppingdatum/index/:id',  to: 'shopping_datum#index'
-        post  'shoppingdatum/create',     to: 'shopping_datum#create'
-        get   'shoppingdatum/show',       to: 'shopping_datum#show'
-        post  'shoppingdatum/update',     to: 'shopping_datum#update'
-        get   'shops/index/:id',          to: 'shops#index'
-        post  'shops/create',             to: 'shops#create'
-        get   'shops/show',               to: 'shops#show'
+        get    'memo/index/:id',           to: 'memos#index'
+        post   'memo/create',              to: 'memos#create'
+        get    'memo/show',                to: 'memos#show'
+        post   'memo/update',              to: 'memos#update'
+        post   'memo/delete',              to: 'memos#destroy'
+        get    'shoppingdatum/index/:id',  to: 'shopping_datum#index'
+        post   'shoppingdatum/create',     to: 'shopping_datum#create'
+        get    'shoppingdatum/show',       to: 'shopping_datum#show'
+        post   'shoppingdatum/update',     to: 'shopping_datum#update'
+        get    'shops/index/:id',          to: 'shops#index'
+        post   'shops/create',             to: 'shops#create'
+        get    'shops/show',               to: 'shops#show'
       end
     end
   end

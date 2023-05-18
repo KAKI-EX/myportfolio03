@@ -67,7 +67,7 @@ export const useMemoUpdate = (props: Props) => {
             }),
           };
           // ---------------------------------------------------------------
-          //show画面でフォームを追加した場合を検知して新規で登録する。(updateアクションで対応できないため)
+          // show画面でフォームを追加した場合を検知して新規で登録する。(updateアクションで対応できないため)
           const catchNewMemo = memosParams.memos
             .filter((newMemo) => !newMemo.memo_id)
             .map((newMemo) => {
