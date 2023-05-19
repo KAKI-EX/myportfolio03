@@ -22,6 +22,7 @@ import { AxiosError } from "axios";
 import { useMemoUpdate } from "hooks/useMemoUpdate";
 
 export const OkaimonoShow: VFC = memo(() => {
+  const [deleteIds, setDeleteIds] = useState<string[]>([]);
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
@@ -89,6 +90,7 @@ export const OkaimonoShow: VFC = memo(() => {
     handleSubmit,
     control,
     watch,
+    getValues,
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
@@ -150,7 +152,7 @@ export const OkaimonoShow: VFC = memo(() => {
     (formData: MergeParams) => {
       setReadOnly(!readOnly);
       if (!readOnly) {
-        sendUpdateToAPI(formData);
+        sendUpdateToAPI(formData, deleteIds, setDeleteIds);
       }
     },
     [readOnly, sendUpdateToAPI]
@@ -188,6 +190,9 @@ export const OkaimonoShow: VFC = memo(() => {
               errors={errors}
               validationNumber={validationNumber}
               readOnly={readOnly}
+              getValues={getValues}
+              deleteIds={deleteIds}
+              setDeleteIds={setDeleteIds}
             />
           </Box>
           <VStack

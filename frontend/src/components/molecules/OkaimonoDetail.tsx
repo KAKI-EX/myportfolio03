@@ -12,8 +12,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MergeParams } from "interfaces";
-import { memo, VFC } from "react";
-import { FieldArrayWithId, FieldErrors, UseFieldArrayRemove, UseFormRegister } from "react-hook-form";
+import { Dispatch, memo, SetStateAction, VFC } from "react";
+import { FieldArrayWithId, FieldErrors, UseFieldArrayRemove, UseFormGetValues, UseFormRegister } from "react-hook-form";
 
 type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
@@ -24,6 +24,9 @@ type Props = {
   errors: FieldErrors<MergeParams>;
   validationNumber: RegExp;
   readOnly?: boolean;
+  getValues?: UseFormGetValues<MergeParams>;
+  deleteIds?: string[];
+  setDeleteIds?: Dispatch<SetStateAction<string[]>>;
 };
 
 export const OkaimonoDetail: VFC<Props> = memo((props) => {
@@ -36,6 +39,8 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     errors,
     validationNumber,
     readOnly = false,
+    getValues,
+    setDeleteIds,
   } = props;
   return (
     <Box>
@@ -71,6 +76,14 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   if (readOnly) {
                     alert("確認画面では使用できません。");
                     return;
+                  }
+                  if (getValues) {
+                    const memoId = getValues(`listForm.${index}.id`);
+                    if (memoId) {
+                      if (setDeleteIds) {
+                        setDeleteIds((prevIds) => [...(prevIds || []), memoId]);
+                      }
+                    }
                   }
                   remove(index);
                 }}
