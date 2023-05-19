@@ -44,6 +44,7 @@ export const OkaimonoIndex: VFC = memo(() => {
         const res = await getOkaimonoIndex();
         if (res) {
           setOkaimonoMemo(res);
+          setLoading(false);
         }
         if (res?.data.length === 0) {
           showMessage({ title: "まだメモが登録されていません", status: "info" });
@@ -54,7 +55,6 @@ export const OkaimonoIndex: VFC = memo(() => {
         showMessage({ title: "エラーが発生しました。", status: "error" });
       }
     };
-    setLoading(false);
     getIndex();
   }, []);
 
@@ -64,7 +64,7 @@ export const OkaimonoIndex: VFC = memo(() => {
     history.push(`/okaimono/okaimono_show/${id}`);
   };
 
-  return !loading ? (
+  return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
     </Box>
