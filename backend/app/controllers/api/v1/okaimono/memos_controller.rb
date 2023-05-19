@@ -8,31 +8,31 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   def create
     memos = memos_params.map { |param| Memo.new(param) }
 
-    Memo.transaction do
+    created_memos = Memo.transaction do
       memos.each do |memo|
         memo.save!
       end
     end
 
-    render json: memos
+    render json: created_memos
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def show
-    memos = User.find(params[:user_id]).shopping_data.find(params[:shopping_id]).memos
+    memos = User.find(params[:user_id]).shopping_data.find(params[:shopping_id]).memos.order(:asc)
     render json: memos
   end
 
   def update
     Memo.transaction do
-      memos_params.each do |params|
+      update_memos = memos_params.each do |params|
         user = User.find(params[:user_id])
         shopping_data = user.shopping_data.find(params[:shopping_datum_id])
         exsisting_memo = shopping_data.memos.find(params[:memo_id])
         exsisting_memo.update!(params.except(:memo_id, :user_id))
       end
-        render json: memos_params
+        render json: update_memos
       rescue ActiveRecord::RecordInvalid => e
         render json: { error: e.message }, status: :unprocessable_entity
     end
@@ -66,7 +66,8 @@ end
         :price,
         :shopping_date,
         :memo_type,
-        :memo_id
+        :memo_id,
+        :asc
         )
     end
   end

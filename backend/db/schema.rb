@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.string "price"
     t.string "shopping_date", null: false
     t.string "memo_type"
+    t.integer "asc"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["shop_id"], name: "index_memos_on_shop_id"

@@ -42,6 +42,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     getValues,
     setDeleteIds,
   } = props;
+
   return (
     <Box>
       <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
@@ -173,7 +174,8 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                 {errors.listForm[index]?.price?.types?.pattern}
               </Box>
             )}
-            <Input type="hidden" {...register(`listForm.${index}.id`)} />
+            <Input {...register(`listForm.${index}.id`)} />
+            <Input {...register(`listForm.${index}.asc`)} />
           </VStack>
         </HStack>
       ))}

@@ -38,6 +38,7 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     "operator-linebreak": "off",
     "indent": "off",
-    "react/jsx-indent-props": "off"
+    "react/jsx-indent-props": "off",
+    "consistent-return": "off"
   },
 };

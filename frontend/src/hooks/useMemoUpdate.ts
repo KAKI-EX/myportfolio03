@@ -13,7 +13,6 @@ type Props = {
 
 export const useMemoUpdate = (props: Props) => {
   console.log("カスタムフックuseMemoUpdateが走っています");
-
   const { separateCookies } = useCookie();
   const history = useHistory();
   const { showMessage } = useMessage();
@@ -26,7 +25,6 @@ export const useMemoUpdate = (props: Props) => {
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     console.log("カスタムフックsendDataToAPIが走っています");
-
     const user_id = separateCookies("_user_id"); // eslint-disable-line
     const {
       shop_name, // eslint-disable-line
@@ -34,6 +32,7 @@ export const useMemoUpdate = (props: Props) => {
       shopping_memo, // eslint-disable-line
       estimated_budget, // eslint-disable-line
       shopping_datum_id, // eslint-disable-line
+      asc,
     } = formData; // eslint-disable-line
     const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
 
@@ -66,6 +65,7 @@ export const useMemoUpdate = (props: Props) => {
                 amount: data.amount,
                 shopping_date,
                 memo_id: data.id,
+                asc: data.asc,
               };
             }),
           };
@@ -85,6 +85,7 @@ export const useMemoUpdate = (props: Props) => {
                   shopping_detail_memo: newMemo.shopping_detail_memo,
                   amount: newMemo.amount,
                   shopping_date,
+                  asc: newMemo.asc,
                 };
                 return updateCreate;
               });
@@ -108,19 +109,19 @@ export const useMemoUpdate = (props: Props) => {
           }
           // ---------------------------------------------------------------
           const memosUpdateRes = await memosUpdate(existingMemos);
-          console.log("Memoのレスポンス", memosUpdateRes);
-          // history.push("/okaimono");
           if (formData.listForm) {
             showMessage({ title: `お買い物メモの修正が完了しました。`, status: "success" });
           }
+          setLoading(false);
+          return memosUpdateRes;
         }
       }
     } catch (err: any) {
       showMessage({ title: err.response.data.error, status: "error" });
       console.error(err.response);
       console.log(err.response.data.error);
+      setLoading(false);
     }
-    setLoading(false);
   };
   return sendUpdateToAPI;
 };

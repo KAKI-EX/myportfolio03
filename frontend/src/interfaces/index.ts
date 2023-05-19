@@ -30,6 +30,7 @@ export interface ListFormParams {
   user_id?: string;
   shop_id?: string;
   id?: string;
+  asc?: string;
   shopping_datum_id?: string;
   purchase_name?: string;
   price?: string;
@@ -52,6 +53,7 @@ export interface MergeParams {
   amount?: string;
   shopping_date?: string;
   shipping_datum_id?: string;
+  asc?: string;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------

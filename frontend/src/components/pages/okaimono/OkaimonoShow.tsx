@@ -39,7 +39,6 @@ export const OkaimonoShow: VFC = memo(() => {
       setLoading(true);
       try {
         const shoppingRes: OkaimonoMemoDataShowResponse | undefined = await getOkaimonoShow();
-        console.log(shoppingRes);
         if (shoppingRes?.status === 200) {
           setValue("shopping_date", shoppingRes.data.shoppingDate);
           setValue("estimated_budget", shoppingRes.data.estimatedBudget);
@@ -77,7 +76,6 @@ export const OkaimonoShow: VFC = memo(() => {
     };
     showMemo();
   }, []);
-
   const [readOnly, setReadOnly] = useState(true);
   const history = useHistory();
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
@@ -95,7 +93,7 @@ export const OkaimonoShow: VFC = memo(() => {
   } = useForm<MergeParams>({
     defaultValues: {
       shopping_date: formattedDefaultShoppingDate,
-      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "" }],
+      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -108,6 +106,12 @@ export const OkaimonoShow: VFC = memo(() => {
     name: "listForm",
     keyName: "key", // デフォルトではidだが、keyに変更。
   });
+
+  useEffect(() => {
+    fields.forEach((field, index) => {
+      setValue(`listForm.${index}.asc`, index.toString());
+    });
+  }, [fields]);
 
   // ----------------------------------------------------------------------------------------------------------
   // 予算計算
@@ -128,7 +132,7 @@ export const OkaimonoShow: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // フォーム追加機能
   const insertInputForm = (index: number) => {
-    insert(index + 1, { purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
+    insert(index + 1, { purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
   };
 
   useEffect(() => {
@@ -136,23 +140,35 @@ export const OkaimonoShow: VFC = memo(() => {
       showMessage({ title: "メモは最大20件までの追加が可能です。", status: "warning" });
     }
   }, [fields.length]);
-  // ---------------------------------------------------------------------------
-  // ここでフォームデータの送信処理を行っている。詳細はuseMemoCreateを参照。
-  // const props = { setLoading, total_budget };
-  // const sendDataToAPI = useMemoCreate(props);
 
-  // const onSubmit = (formData: MergeParams) => {
-  //   sendDataToAPI(formData);
-  // };
   // ---------------------------------------------------------------------------
-
+  // updateを行なうと、編集画面で追加した新規メモがあるとエラーを起こすため、新規メモを検知したのち、Createアクションへ該当メモを送信。
+  // Createアクション送信分はsendUpdateToAPIの中で削除している。その後にupdateアクションを行っているため、戻り値の中にCreateアクションの
+  // データがない。そのため、sendUpdataToAPIの戻り値の配列0番目のuserIdとshoppingDatumIdを元にShowアクションを実行してsetValueしている。
+  // 戻り値をsetValueせずに反映しない方法(リロードすると消える)もあるが、その状態でupdateアクションを再度送ると、仕様上、新規作成アクションで
+  // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をmemo_idの有無で検知しているため)
   const props = { setLoading, total_budget };
   const sendUpdateToAPI = useMemoUpdate(props);
   const onSubmit = useCallback(
-    (formData: MergeParams) => {
+    async (formData: MergeParams) => {
       setReadOnly(!readOnly);
       if (!readOnly) {
-        sendUpdateToAPI(formData, deleteIds, setDeleteIds);
+        const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
+        const memosProps: memoProps = {
+          userId: result?.data[0].userId,
+          shoppingDataId: result?.data[0].shoppingDatumId,
+        };
+        const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
+        for (let i = fields.length; i < memosRes.data.length; i++) {
+          append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
+        }
+        memosRes.data.forEach((m, index) => {
+          setValue(`listForm.${index}.purchase_name`, m.purchaseName);
+          setValue(`listForm.${index}.price`, m.price);
+          setValue(`listForm.${index}.shopping_detail_memo`, m.shoppingDetailMemo);
+          setValue(`listForm.${index}.amount`, m.amount);
+          setValue(`listForm.${index}.id`, m.id);
+        });
       }
     },
     [readOnly, sendUpdateToAPI]

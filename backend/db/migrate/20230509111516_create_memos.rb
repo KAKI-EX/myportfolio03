@@ -10,6 +10,7 @@ class CreateMemos < ActiveRecord::Migration[6.1]
       t.string :price
       t.string :shopping_date, null: false
       t.string :memo_type
+      t.integer :asc
       t.timestamps
     end
   end
