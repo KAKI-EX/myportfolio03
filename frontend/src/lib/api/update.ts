@@ -14,10 +14,3 @@ export const memosUpdate = (params: ListFormParams[]) => {
   console.log("memosUpdateParams", params);
   return client.post("okaimono/memo/update", { memos: params });
 };
-
-// eslint-disable-next-line
-export const memosDelete = (params: { memo_id: string }[]) => {
-  console.log("memosDeleteが走っています。");
-  console.log("memosDeleteParams", params);
-  return client.post("okaimono/memo/delete", { memos: params });
-};

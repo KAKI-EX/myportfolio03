@@ -1,5 +1,5 @@
 class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
-  before_action :find_shopping, only: [:show, :update]
+  before_action :find_shopping, only: [:show, :update, :destroy]
 
   def index
     shopping = User.find(params[:id]).shopping_data
@@ -24,6 +24,14 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def update
     if @shopping.update!(shopping_params)
+      render json: @shopping
+    else
+      render json: @shopping.errors
+    end
+  end
+
+  def destroy
+    if @shopping.destroy!
       render json: @shopping
     else
       render json: @shopping.errors

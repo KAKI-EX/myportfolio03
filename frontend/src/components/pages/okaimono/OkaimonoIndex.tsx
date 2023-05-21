@@ -1,6 +1,13 @@
 import { ChevronDownIcon, DeleteIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Flex,
   Heading,
   Icon,
@@ -21,13 +28,16 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
 import { useMessage } from "hooks/useToast";
-import React, { memo, useEffect, useState, VFC } from "react";
+import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { AxiosError } from "axios";
 import { OkaimonoMemoData, OkaimonoMemoResponse } from "interfaces";
+import { memosUpdate } from "lib/api/update";
+import { shoppingDataDelete } from "lib/api/destroy";
 
 export const OkaimonoIndex: VFC = memo(() => {
   const history = useHistory();
@@ -35,9 +45,11 @@ export const OkaimonoIndex: VFC = memo(() => {
   const getOkaimonoIndex = useGetOkaimonoIndex();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef(null);
+  const [deletePost, setDeletePost] = useState<string>("");
 
   useEffect(() => {
-    console.log("loading", loading);
     const getIndex = async () => {
       try {
         setLoading(true);
@@ -53,12 +65,31 @@ export const OkaimonoIndex: VFC = memo(() => {
         const axiosError = err as AxiosError;
         console.error(axiosError.response);
         showMessage({ title: "エラーが発生しました。", status: "error" });
+        setLoading(false);
       }
     };
     getIndex();
   }, []);
 
-  console.log("watch okaimonomemo", okaimonoMemo);
+  const onClickDelete = useCallback(
+    async (shoppingDataId: string) => {
+      onClose();
+      try {
+        if (okaimonoMemo) {
+          const shoppingDataDeleteRes = await shoppingDataDelete(okaimonoMemo?.data[0].userId, shoppingDataId);
+          console.log(shoppingDataDeleteRes);
+          const res = await getOkaimonoIndex();
+          setOkaimonoMemo(res);
+        }
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
+    },
+    [okaimonoMemo]
+  );
+
   const onClickShowMemo = (id: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     history.push(`/okaimono/okaimono_show/${id}`);
@@ -203,8 +234,15 @@ export const OkaimonoIndex: VFC = memo(() => {
                               <MenuList borderRadius="md" shadow="md">
                                 <MenuItem>お買い物で使ってみる！</MenuItem>
                                 <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                                <MenuItem>修正する</MenuItem>
-                                <MenuItem>削除する</MenuItem>
+                                <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
+                                <MenuItem
+                                  onClick={() => {
+                                    setDeletePost(i.id);
+                                    onOpen();
+                                  }}
+                                >
+                                  削除する
+                                </MenuItem>
                               </MenuList>
                             </Menu>
                           </Td>
@@ -240,6 +278,24 @@ export const OkaimonoIndex: VFC = memo(() => {
             ""
           )}
         </Box>
+        <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                メモを削除しますか？
+              </AlertDialogHeader>
+              <AlertDialogBody>削除したメモは元に戻せません。</AlertDialogBody>
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button colorScheme="red" onClick={() => onClickDelete(deletePost)} ml={3}>
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Box>
     </Flex>
   );

@@ -1,6 +1,7 @@
 import { ListFormParams, MergeParams } from "interfaces";
+import { memosDelete } from "lib/api/destroy";
 import { memosCreate, shopCreate } from "lib/api/post";
-import { memosDelete, memosUpdate, shoppingDatumUpdate } from "lib/api/update";
+import { memosUpdate, shoppingDatumUpdate } from "lib/api/update";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { useCookie } from "./useCookie";
