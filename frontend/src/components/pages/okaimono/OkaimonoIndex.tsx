@@ -36,8 +36,8 @@ import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { AxiosError } from "axios";
 import { OkaimonoMemoData, OkaimonoMemoResponse } from "interfaces";
-import { memosUpdate } from "lib/api/update";
 import { shoppingDataDelete } from "lib/api/destroy";
+import { useDateConversion } from "hooks/useDateConversion";
 
 export const OkaimonoIndex: VFC = memo(() => {
   const history = useHistory();
@@ -47,7 +47,8 @@ export const OkaimonoIndex: VFC = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
-  const [deletePost, setDeletePost] = useState<string>("");
+  const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
+  const { dateConversion } = useDateConversion();
 
   useEffect(() => {
     const getIndex = async () => {
@@ -72,11 +73,12 @@ export const OkaimonoIndex: VFC = memo(() => {
   }, []);
 
   const onClickDelete = useCallback(
-    async (shoppingDataId: string) => {
+    async (props: OkaimonoMemoData) => {
       onClose();
+      const { id } = props;
       try {
         if (okaimonoMemo) {
-          const shoppingDataDeleteRes = await shoppingDataDelete(okaimonoMemo?.data[0].userId, shoppingDataId);
+          const shoppingDataDeleteRes = await shoppingDataDelete(okaimonoMemo?.data[0].userId, id);
           console.log(shoppingDataDeleteRes);
           const res = await getOkaimonoIndex();
           setOkaimonoMemo(res);
@@ -185,8 +187,9 @@ export const OkaimonoIndex: VFC = memo(() => {
                             fontSize={{ base: "sm", md: "md" }}
                             textAlign="center"
                             onClick={onClickShowMemo(i.id)}
+                            px={0}
                           >
-                            {i.shoppingDate}
+                            {dateConversion(i.shoppingDate)}
                           </Td>
                           <Td
                             borderTop="1px"
@@ -237,7 +240,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                                 <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
                                 <MenuItem
                                   onClick={() => {
-                                    setDeletePost(i.id);
+                                    setDeletePost(i);
                                     onOpen();
                                   }}
                                 >
@@ -267,7 +270,6 @@ export const OkaimonoIndex: VFC = memo(() => {
               </TabPanel>
             </TabPanels>
           </Tabs>
-
           {okaimonoMemo?.data.length === 0 ? (
             <Flex align="center" justify="center">
               <Box p="5%" my="10%" bg="teal.400" rounded={10} color="white">
@@ -282,14 +284,14 @@ export const OkaimonoIndex: VFC = memo(() => {
           <AlertDialogOverlay>
             <AlertDialogContent>
               <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                メモを削除しますか？
+                {dateConversion(deletePost?.shoppingDate)} のメモを削除しますか？
               </AlertDialogHeader>
-              <AlertDialogBody>削除したメモは元に戻せません。</AlertDialogBody>
+              <AlertDialogBody>メモに保存されているリストも削除されます。</AlertDialogBody>
               <AlertDialogFooter>
                 <Button ref={cancelRef} onClick={onClose}>
                   Cancel
                 </Button>
-                <Button colorScheme="red" onClick={() => onClickDelete(deletePost)} ml={3}>
+                <Button colorScheme="red" onClick={() => (deletePost ? onClickDelete(deletePost) : undefined)} ml={3}>
                   Delete
                 </Button>
               </AlertDialogFooter>
