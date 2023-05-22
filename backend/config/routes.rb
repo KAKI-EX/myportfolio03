@@ -12,7 +12,7 @@ Rails.application.routes.draw do
         get    'shoppingdatum/show',                                to: 'shopping_datum#show'
         post   'shoppingdatum/update',                              to: 'shopping_datum#update'
         delete 'shoppingdatum/destroy/:user_id/:shopping_datum_id', to: 'shopping_datum#destroy'
-        get    'shops/index/:id',                                   to: 'shops#index'
+        get    'shops/index/:user_id',                              to: 'shops#index'
         post   'shops/create',                                      to: 'shops#create'
         get    'shops/show',                                        to: 'shops#show'
       end

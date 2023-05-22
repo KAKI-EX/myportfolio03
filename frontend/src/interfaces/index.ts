@@ -100,7 +100,7 @@ export interface OkaimonoShopData {
   shopMemo: string;
   shopName: string;
   updatedAt: string;
-  userId: number
+  userId: number;
 }
 
 export interface OkaimonoShopDataResponse {
@@ -109,21 +109,36 @@ export interface OkaimonoShopDataResponse {
 }
 
 export interface OkaimonoMemosData {
-amount: string;
-createdAt: string;
-id: string;
-memoType: string;
-price: string;
-purchaseName: string;
-shopId: number;
-shoppingDate: string;
-shoppingDatumId: string;
-shoppingDetailMemo: string;
-updatedAt: string;
-userId: number;
+  amount: string;
+  createdAt: string;
+  id: string;
+  memoType: string;
+  price: string;
+  purchaseName: string;
+  shopId: number;
+  shoppingDate: string;
+  shoppingDatumId: string;
+  shoppingDetailMemo: string;
+  updatedAt: string;
+  userId: number;
 }
 
 export interface OkaimonoMemosDataResponse {
   data: OkaimonoMemosData[];
+  status: number;
+}
+
+export interface OkaimonoShopsIndexData {
+  createdAt: string;
+  id: string;
+  shopMemo: string;
+  shopName: string;
+  shoppingDataCount: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface OkaimonoShopsDataResponse {
+  data: OkaimonoShopsIndexData[];
   status: number;
 }

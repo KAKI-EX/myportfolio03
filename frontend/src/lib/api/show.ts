@@ -21,6 +21,15 @@ export const shopShow = async (props: shopPropsType) => {
   };
 };
 
+export const shopsShow = async (userId: string) => {
+  console.log("shopShowが走っています。");
+  const shopsShowRes = await client.get(`okaimono/shops/index/${userId}`);
+  return {
+    data: shopsShowRes.data,
+    status: shopsShowRes.status,
+  };
+};
+
 // メモ確認
 export const memosShow = async (props: memoProps) => {
   const { userId, shoppingDataId } = props;

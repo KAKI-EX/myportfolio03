@@ -124,7 +124,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                         color="white"
                         bg="teal.500"
                         w={{ base: "35%", md: "20%" }}
-                        borderBottomRadius="1px"
+                        borderBottom="1px"
                         borderColor="gray.400"
                         textAlign="center"
                         fontSize={{ base: "sm", md: "md" }}
@@ -136,19 +136,19 @@ export const OkaimonoIndex: VFC = memo(() => {
                         color="white"
                         bg="teal.500"
                         w={{ base: "15%", md: "10%" }}
-                        borderBottomRadius="1px"
+                        borderBottom="1px"
                         borderColor="gray.400"
                         textAlign="center"
                         fontSize={{ base: "sm", md: "md" }}
                         // display={{ base: "none", md: "table-cell" }}
                       >
-                        メモ
+                        リスト数
                       </Th>
                       <Th
                         color="white"
                         bg="teal.500"
                         w={{ base: "", md: "13%" }}
-                        borderBottomRadius="1px"
+                        borderBottom="1px"
                         borderColor="gray.400"
                         textAlign="center"
                         fontSize={{ base: "sm", md: "md" }}
@@ -161,7 +161,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                         bg="teal.500"
                         px="17px"
                         w={{ base: "43%", md: "22%" }}
-                        borderBottomRadius="1px"
+                        borderBottom="1px"
                         borderColor="gray.400"
                         textAlign="center"
                         fontSize={{ base: "sm", md: "md" }}
@@ -172,7 +172,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                         bg="teal.500"
                         px="0"
                         w={{ base: "7%", md: "8%" }}
-                        borderBottomRadius="1px"
+                        borderBottom="1px"
                         borderColor="gray.400"
                       />
                     </Tr>

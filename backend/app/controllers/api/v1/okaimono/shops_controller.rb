@@ -2,8 +2,9 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
   # before_action :set_shop, only: %i[show destroy update]
 
   def index
-    shops = User.find(params[:id]).shops
-    render json: shops
+    shops = User.find(params[:user_id]).shops
+    add_count = shops.map{ |shop| shop.attributes.merge({ "shopping_data_count": shop.shopping_datum.count })}
+    render json: add_count
   end
 
   def create
