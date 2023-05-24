@@ -31,8 +31,13 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           size="md"
           w="90%"
           fontSize={{ base: "sm", md: "md" }}
-          {...register("shop_name")}
+          {...register("shop_name", {
+            maxLength: { value: 35, message: "最大文字数は35文字までです。" },
+          })}
         />
+        {errors.shop_name && errors.shop_name.types?.maxLength && (
+          <Box color="red">{errors.shop_name.types.maxLength}</Box>
+        )}
         <InputGroup w="90%">
           <Input
             isReadOnly={readOnly}

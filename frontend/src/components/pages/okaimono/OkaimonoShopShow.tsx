@@ -27,6 +27,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Box,
 } from "@chakra-ui/react";
 import { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
@@ -69,6 +70,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
     handleSubmit,
     formState: { errors, isValid },
     setValue,
+    reset,
   } = useForm<OkaimonoShopModifingData>({
     criteriaMode: "all",
     mode: "all",
@@ -115,12 +117,11 @@ export const OkaimonoShopShow: VFC = memo(() => {
     },
     [readOnly]
   );
-
-  // const { fields, append, insert, remove } = useFieldArray({
-  //   control,
-  //   name: "listForm",
-  //   keyName: "key", // デフォルトではidだが、keyに変更。
-  // });
+  const addActionOnClose = () => {
+    setReadOnly(true);
+    reset();
+    onClose();
+  };
 
   return (
     <Flex align="center" justify="center" px={3} rounded={10}>
@@ -173,6 +174,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
                       whiteSpace="nowrap"
                       maxWidth="100px"
                       px={2}
+                      onClick={() => openModal(shopData)}
                     >
                       {shopData.shopName}
                     </Td>
@@ -186,6 +188,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                       maxWidth="100px"
+                      onClick={() => openModal(shopData)}
                     >
                       {shopData.shopMemo}
                     </Td>
@@ -233,15 +236,25 @@ export const OkaimonoShopShow: VFC = memo(() => {
                 <ModalCloseButton />
                 <ModalBody>
                   <VStack>
-                    <Input bg={readOnly ? "blackAlpha.200" : "white"} {...register("shopName")} isReadOnly={readOnly} />
-                    <Input bg={readOnly ? "blackAlpha.200" : "white"} {...register("shopMemo")} isReadOnly={readOnly} />
+                    <Input
+                      bg={readOnly ? "blackAlpha.200" : "white"}
+                      isReadOnly={readOnly}
+                      {...register("shopName", {
+                        maxLength: { value: 35, message: "最大文字数は35文字までです" },
+                      })}
+                    />
+                    {errors.shopName && errors.shopName.types?.maxLength && (
+                      <Box color="red">{errors.shopName.types.maxLength}</Box>
+                    )}
+
+                    <Input bg={readOnly ? "blackAlpha.200" : "white"} isReadOnly={readOnly} {...register("shopMemo")} />
                     <Input type="hidden" {...register("shopId")} />
                     <Input type="hidden" {...register("userId")} />
                   </VStack>
                 </ModalBody>
                 <ModalFooter>
                   <HStack>
-                    <Button bg="gray.400" color="white" mr={3} onClick={onClose}>
+                    <Button bg="gray.400" color="white" mr={3} onClick={addActionOnClose}>
                       閉じる
                     </Button>
                     <PrimaryButtonForReactHookForm onClick={handleSubmit(onSubmit)}>

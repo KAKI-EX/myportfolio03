@@ -103,7 +103,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                 w="100%"
                 {...register(`listForm.${index}.purchase_name`, {
                   required: { value: true, message: "商品名が入力されていません" },
-                  maxLength: { value: 50, message: "最大文字数は50文字までです。" },
+                  maxLength: { value: 30, message: "最大文字数は30文字までです。" },
                 })}
               />
               {errors.listForm && errors.listForm[index]?.purchase_name && (
