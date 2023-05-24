@@ -13,10 +13,10 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
 
     if existing_shop.exists?
       render json: existing_shop.first
-    elsif shop.save!
+    elsif shop.save
       render json: shop
     else
-      render json: shop.errors
+      render json: { errors: shop.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -27,10 +27,10 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
 
   def update
     shop = User.find(shop_params[:user_id]).shops.find(shop_params[:id])
-    if shop.update!(shop_params)
+    if shop.update(shop_params)
       render json: shop
     else
-      render json: shop.errors, status: :unprocessable_entity
+      render json: { errors: shop.errors.full_messages }, status: :unprocessable_entity
     end
   end
   private

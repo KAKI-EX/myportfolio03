@@ -63,7 +63,6 @@ export const useMemoCreate = (props: Props) => {
           };
 
           const memosCreateRes = await memosCreate(memosParams.memos);
-          console.log("Memoのレスポンス", memosCreateRes);
           history.push("/okaimono");
           if (formData.listForm) {
             showMessage({ title: `${memosCreateRes.data.length}件のメモを登録しました`, status: "success" });
@@ -71,7 +70,7 @@ export const useMemoCreate = (props: Props) => {
         }
       }
     } catch (err: any) {
-      showMessage({ title: err.response.data.error, status: "error" });
+      showMessage({ title: err.response.data.errors, status: "error" });
       console.error(err.response);
       console.log(err.response.data.error);
     }

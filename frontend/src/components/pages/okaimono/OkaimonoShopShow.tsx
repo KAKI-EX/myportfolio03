@@ -109,7 +109,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
           } catch (err) {
             const axiosError = err as AxiosError;
             console.error(axiosError.response);
-            showMessage({ title: "エラーが発生しました。", status: "error" });
+            showMessage({ title: axiosError.response?.data.errors, status: "error" });
           }
         }
       };
