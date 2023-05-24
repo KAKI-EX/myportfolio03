@@ -25,10 +25,18 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
     render json: shop
   end
 
+  def update
+    shop = User.find(shop_params[:user_id]).shops.find(shop_params[:id])
+    if shop.update!(shop_params)
+      render json: shop
+    else
+      render json: shop.errors, status: :unprocessable_entity
+    end
+  end
   private
 
   def shop_params
-    params.require(:shop).permit(:user_id, :shop_name, :shop_memo)
+    params.require(:shop).permit(:user_id, :shop_name, :shop_memo, :id)
 
   end
 

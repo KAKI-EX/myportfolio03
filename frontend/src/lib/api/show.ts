@@ -21,6 +21,7 @@ export const shopShow = async (props: shopPropsType) => {
   };
 };
 
+// お店一覧表示
 export const shopsShow = async (userId: string) => {
   console.log("shopShowが走っています。");
   const shopsShowRes = await client.get(`okaimono/shops/index/${userId}`);

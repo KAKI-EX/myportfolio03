@@ -28,19 +28,21 @@ import {
   Button,
   useDisclosure,
 } from "@chakra-ui/react";
-import { memo, useEffect, useState, VFC } from "react";
+import { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
 import { useCookie } from "hooks/useCookie";
 import { shopsShow } from "lib/api/show";
 import { AxiosError } from "axios";
-import { OkaimonoShopsDataResponse, OkaimonoShopsIndexData } from "interfaces";
+import { OkaimonoShopModifingData, OkaimonoShopsDataResponse, OkaimonoShopsIndexData } from "interfaces";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
+import { shopUpdate } from "lib/api/update";
 
 export const OkaimonoShopShow: VFC = memo(() => {
   const { separateCookies } = useCookie();
   const showMessage = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shopsindex, setShopsIndex] = useState<OkaimonoShopsDataResponse>();
+  const [readOnly, setReadOnly] = useState<boolean>(true);
 
   useEffect(() => {
     const getShopsIndex = async () => {
@@ -61,6 +63,64 @@ export const OkaimonoShopShow: VFC = memo(() => {
     };
     getShopsIndex();
   }, []);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setValue,
+  } = useForm<OkaimonoShopModifingData>({
+    criteriaMode: "all",
+    mode: "all",
+    reValidateMode: "onSubmit",
+  });
+
+  const openModal = (shopData: OkaimonoShopsIndexData) => {
+    console.log("チェック", shopData.shopName);
+    setValue("shopName", shopData.shopName);
+    setValue("shopMemo", shopData.shopMemo);
+    setValue("shopId", shopData.id);
+    setValue("userId", shopData.userId);
+    onOpen();
+  };
+
+  const onSubmit = useCallback(
+    (formData: OkaimonoShopModifingData) => {
+      setReadOnly(!readOnly);
+      const updateShopData = async () => {
+        if (!readOnly) {
+          try {
+            const makeCustomData: OkaimonoShopModifingData = {
+              shopName: formData.shopName,
+              shopMemo: formData.shopMemo,
+              userId: formData.userId,
+              id: formData.shopId,
+            };
+            const res = await shopUpdate(makeCustomData);
+            console.log("response", res.data.shopName);
+            setValue("shopName", res.data.shopName);
+            setValue("shopMemo", res.data.shopMemo);
+            setValue("shopId", res.data.id);
+            setValue("userId", res.data.userId);
+            const setResIndexPage = await shopsShow(res.data.userId);
+            setShopsIndex(setResIndexPage);
+          } catch (err) {
+            const axiosError = err as AxiosError;
+            console.error(axiosError.response);
+            showMessage({ title: "エラーが発生しました。", status: "error" });
+          }
+        }
+      };
+      updateShopData();
+    },
+    [readOnly]
+  );
+
+  // const { fields, append, insert, remove } = useFieldArray({
+  //   control,
+  //   name: "listForm",
+  //   keyName: "key", // デフォルトではidだが、keyに変更。
+  // });
 
   return (
     <Flex align="center" justify="center" px={3} rounded={10}>
@@ -139,7 +199,13 @@ export const OkaimonoShopShow: VFC = memo(() => {
                       <Menu>
                         <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
                         <MenuList borderRadius="md" shadow="md">
-                          <MenuItem onClick={onOpen}>確認する</MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              openModal(shopData);
+                            }}
+                          >
+                            確認する
+                          </MenuItem>
                           <MenuItem>削除する</MenuItem>
                         </MenuList>
                       </Menu>
@@ -159,27 +225,33 @@ export const OkaimonoShopShow: VFC = memo(() => {
               );
             })}
           </Table>
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent bg="gray.100">
-              <ModalHeader>お店の情報</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <VStack>
-                  <Input bg="white" />
-                  <Input bg="white" />
-                </VStack>
-              </ModalBody>
-              <ModalFooter>
-                <HStack>
-                  <Button bg="gray.400" color="white" mr={3} onClick={onClose}>
-                    閉じる
-                  </Button>
-                  <PrimaryButtonForReactHookForm> 保 存 </PrimaryButtonForReactHookForm>
-                </HStack>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent bg="gray.100">
+                <ModalHeader>お店の情報</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <VStack>
+                    <Input bg={readOnly ? "blackAlpha.200" : "white"} {...register("shopName")} isReadOnly={readOnly} />
+                    <Input bg={readOnly ? "blackAlpha.200" : "white"} {...register("shopMemo")} isReadOnly={readOnly} />
+                    <Input type="hidden" {...register("shopId")} />
+                    <Input type="hidden" {...register("userId")} />
+                  </VStack>
+                </ModalBody>
+                <ModalFooter>
+                  <HStack>
+                    <Button bg="gray.400" color="white" mr={3} onClick={onClose}>
+                      閉じる
+                    </Button>
+                    <PrimaryButtonForReactHookForm onClick={handleSubmit(onSubmit)}>
+                      {readOnly ? "編集" : "保存"}{" "}
+                    </PrimaryButtonForReactHookForm>
+                  </HStack>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </form>
         </VStack>
       </VStack>
     </Flex>

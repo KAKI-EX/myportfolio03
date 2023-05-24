@@ -142,3 +142,11 @@ export interface OkaimonoShopsDataResponse {
   data: OkaimonoShopsIndexData[];
   status: number;
 }
+
+export interface OkaimonoShopModifingData {
+  shopName: string;
+  shopMemo: string;
+  userId: string;
+  shopId?: string;
+  id?: string;
+}

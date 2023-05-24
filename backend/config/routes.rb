@@ -15,6 +15,7 @@ Rails.application.routes.draw do
         get    'shops/index/:user_id',                              to: 'shops#index'
         post   'shops/create',                                      to: 'shops#create'
         get    'shops/show',                                        to: 'shops#show'
+        post   'shops/update',                                      to: 'shops#update'
       end
     end
   end
