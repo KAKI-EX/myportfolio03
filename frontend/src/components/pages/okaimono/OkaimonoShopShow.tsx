@@ -28,8 +28,14 @@ import {
   Button,
   useDisclosure,
   Box,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
 } from "@chakra-ui/react";
-import { memo, useCallback, useEffect, useState, VFC } from "react";
+import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
 import { useCookie } from "hooks/useCookie";
 import { shopsShow } from "lib/api/show";
@@ -37,13 +43,19 @@ import { AxiosError } from "axios";
 import { OkaimonoShopModifingData, OkaimonoShopsDataResponse, OkaimonoShopsIndexData } from "interfaces";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { shopUpdate } from "lib/api/update";
+import { shopDelete } from "lib/api/destroy";
 
 export const OkaimonoShopShow: VFC = memo(() => {
   const { separateCookies } = useCookie();
   const showMessage = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shopsindex, setShopsIndex] = useState<OkaimonoShopsDataResponse>();
+  const [shopFormData, setShopFormData] = useState<OkaimonoShopsIndexData>();
   const [readOnly, setReadOnly] = useState<boolean>(true);
+  const cancelRef = React.useRef(null);
+  // modalを2つ使うため、競合防止のために記述。
+  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
+  const { isOpen: isDeleteDialogOpen, onOpen: onDeleteDialogOpen, onClose: onDeleteDialogClose } = useDisclosure();
 
   useEffect(() => {
     const getShopsIndex = async () => {
@@ -83,7 +95,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
     setValue("shopMemo", shopData.shopMemo);
     setValue("shopId", shopData.id);
     setValue("userId", shopData.userId);
-    onOpen();
+    onEditModalOpen();
   };
 
   const onSubmit = useCallback(
@@ -98,17 +110,15 @@ export const OkaimonoShopShow: VFC = memo(() => {
               userId: formData.userId,
               id: formData.shopId,
             };
-            const res = await shopUpdate(makeCustomData);
-            console.log("response", res.data.shopName);
-            setValue("shopName", res.data.shopName);
-            setValue("shopMemo", res.data.shopMemo);
-            setValue("shopId", res.data.id);
-            setValue("userId", res.data.userId);
-            const setResIndexPage = await shopsShow(res.data.userId);
+            const updatedShops = await shopUpdate(makeCustomData);
+            setValue("shopName", updatedShops.data.shopName);
+            setValue("shopMemo", updatedShops.data.shopMemo);
+            setValue("shopId", updatedShops.data.id);
+            setValue("userId", updatedShops.data.userId);
+            const setResIndexPage = await shopsShow(updatedShops.data.userId);
             setShopsIndex(setResIndexPage);
           } catch (err) {
             const axiosError = err as AxiosError;
-            console.error(axiosError.response);
             showMessage({ title: axiosError.response?.data.errors, status: "error" });
           }
         }
@@ -117,11 +127,33 @@ export const OkaimonoShopShow: VFC = memo(() => {
     },
     [readOnly]
   );
+
   const addActionOnClose = () => {
     setReadOnly(true);
     reset();
-    onClose();
+    onEditModalClose();
   };
+
+  const onClickDelete = useCallback(
+    (formData) => {
+      const { userId, id } = formData;
+      const deleteShopData = async () => {
+        onDeleteDialogClose();
+        try {
+          const updatedShop = await shopDelete(userId, id);
+          const setResIndexPage = await shopsShow(userId);
+          setShopsIndex(setResIndexPage);
+          showMessage({ title: updatedShop.data.message, status: "success" });
+        } catch (err) {
+          const axiosError = err as AxiosError;
+          console.error(axiosError.response);
+          showMessage({ title: axiosError.response?.data.errors, status: "error" });
+        }
+      };
+      deleteShopData();
+    },
+    [shopDelete]
+  );
 
   return (
     <Flex align="center" justify="center" px={3} rounded={10}>
@@ -209,7 +241,15 @@ export const OkaimonoShopShow: VFC = memo(() => {
                           >
                             確認する
                           </MenuItem>
-                          <MenuItem>削除する</MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              console.log("ttteeesssttt", shopData);
+                              setShopFormData(shopData);
+                              onDeleteDialogOpen();
+                            }}
+                          >
+                            削除する
+                          </MenuItem>
                         </MenuList>
                       </Menu>
                     </Td>
@@ -229,7 +269,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
             })}
           </Table>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
               <ModalOverlay />
               <ModalContent bg="gray.100">
                 <ModalHeader>お店の情報</ModalHeader>
@@ -265,6 +305,26 @@ export const OkaimonoShopShow: VFC = memo(() => {
               </ModalContent>
             </Modal>
           </form>
+          <AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={onDeleteDialogClose}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  お店の情報を削除しますか？
+                </AlertDialogHeader>
+                <AlertDialogBody>
+                  お店に紐づいている{shopFormData?.shoppingDataCount}件のお買い物記録も削除されます。
+                </AlertDialogBody>
+                <AlertDialogFooter>
+                  <Button ref={cancelRef} onClick={onDeleteDialogClose}>
+                    やっぱりやめる
+                  </Button>
+                  <Button colorScheme="red" onClick={() => onClickDelete(shopFormData)} ml={3}>
+                    削除する
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
         </VStack>
       </VStack>
     </Flex>

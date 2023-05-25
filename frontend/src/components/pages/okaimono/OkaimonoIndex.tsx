@@ -289,10 +289,10 @@ export const OkaimonoIndex: VFC = memo(() => {
               <AlertDialogBody>メモに保存されているリストも削除されます。</AlertDialogBody>
               <AlertDialogFooter>
                 <Button ref={cancelRef} onClick={onClose}>
-                  Cancel
+                  やっぱりやめる
                 </Button>
                 <Button colorScheme="red" onClick={() => (deletePost ? onClickDelete(deletePost) : undefined)} ml={3}>
-                  Delete
+                  削除する
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>

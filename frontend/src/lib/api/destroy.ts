@@ -8,7 +8,11 @@ export const memosDelete = (params: { memo_id: string }[]) => {
 };
 
 export const shoppingDataDelete = (userId: number, shoppingId: string) => {
-  console.log("kokoyaa", userId, shoppingId);
   console.log("shoppingDataDeleteが走っています。");
   return client.delete(`okaimono/shoppingdatum/destroy/${userId}/${shoppingId}`);
+};
+
+export const shopDelete = (userId: string, shopId: string) => {
+  console.log("shopDeleteが走っています。");
+  return client.delete(`okaimono/shops/destroy/${userId}/${shopId}`);
 };

@@ -33,6 +33,16 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
       render json: { errors: shop.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
+  def destroy
+    shop = User.find(params[:user_id]).shops.find(params[:id])
+    if shop.destroy
+      render json: {shop: shop, message: "正常に削除されました"}
+    else
+      render json: { errors: shop.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def shop_params
