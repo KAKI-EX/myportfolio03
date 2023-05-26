@@ -22,7 +22,6 @@ import {
   Th,
   Thead,
   Tr,
-  useToast,
   VStack,
   ModalFooter,
   Button,
@@ -37,18 +36,17 @@ import {
 } from "@chakra-ui/react";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
-import { useCookie } from "hooks/useCookie";
 import { shopsShow } from "lib/api/show";
 import { AxiosError } from "axios";
 import { OkaimonoShopModifingData, OkaimonoShopsDataResponse, OkaimonoShopsIndexData } from "interfaces";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { shopUpdate } from "lib/api/update";
 import { shopDelete } from "lib/api/destroy";
+import { useGetShopIndex } from "hooks/useGetShopIndex";
+import { useUpdateShopData } from "hooks/useUpdateShopData";
+import { useMessage } from "hooks/useToast";
+import { useDeleteShopData } from "hooks/useDeleteShopData";
 
 export const OkaimonoShopShow: VFC = memo(() => {
-  const { separateCookies } = useCookie();
-  const showMessage = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [shopsindex, setShopsIndex] = useState<OkaimonoShopsDataResponse>();
   const [shopFormData, setShopFormData] = useState<OkaimonoShopsIndexData>();
   const [readOnly, setReadOnly] = useState<boolean>(true);
@@ -56,31 +54,19 @@ export const OkaimonoShopShow: VFC = memo(() => {
   // modalを2つ使うため、競合防止のために記述。
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteDialogOpen, onOpen: onDeleteDialogOpen, onClose: onDeleteDialogClose } = useDisclosure();
+  const getShopsIndex = useGetShopIndex(setShopsIndex);
+  const { showMessage } = useMessage();
 
+  // -------------------------------------------------------------
+  // shop一覧の読み込み
   useEffect(() => {
-    const getShopsIndex = async () => {
-      const userId = separateCookies("_user_id");
-      try {
-        if (userId) {
-          const res = await shopsShow(userId);
-          setShopsIndex(res);
-          if (res?.data.length === 0) {
-            showMessage({ title: "まだメモが登録されていません", status: "info" });
-          }
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    };
     getShopsIndex();
   }, []);
-
+  // -------------------------------------------------------------
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     reset,
   } = useForm<OkaimonoShopModifingData>({
@@ -98,35 +84,17 @@ export const OkaimonoShopShow: VFC = memo(() => {
     onEditModalOpen();
   };
 
+  // -------------------------------------------------------------
+  // shop情報のupdate処理を記述
+  const updateShopData = useUpdateShopData({ readOnly, setValue, setShopsIndex });
   const onSubmit = useCallback(
     (formData: OkaimonoShopModifingData) => {
+      updateShopData(formData);
       setReadOnly(!readOnly);
-      const updateShopData = async () => {
-        if (!readOnly) {
-          try {
-            const makeCustomData: OkaimonoShopModifingData = {
-              shopName: formData.shopName,
-              shopMemo: formData.shopMemo,
-              userId: formData.userId,
-              id: formData.shopId,
-            };
-            const updatedShops = await shopUpdate(makeCustomData);
-            setValue("shopName", updatedShops.data.shopName);
-            setValue("shopMemo", updatedShops.data.shopMemo);
-            setValue("shopId", updatedShops.data.id);
-            setValue("userId", updatedShops.data.userId);
-            const setResIndexPage = await shopsShow(updatedShops.data.userId);
-            setShopsIndex(setResIndexPage);
-          } catch (err) {
-            const axiosError = err as AxiosError;
-            showMessage({ title: axiosError.response?.data.errors, status: "error" });
-          }
-        }
-      };
-      updateShopData();
     },
     [readOnly]
   );
+  // -------------------------------------------------------------
 
   const addActionOnClose = () => {
     setReadOnly(true);
@@ -134,43 +102,34 @@ export const OkaimonoShopShow: VFC = memo(() => {
     onEditModalClose();
   };
 
+  // -------------------------------------------------------------
+  // shop情報のdelete処理の記述
+  const deleteShopData = useDeleteShopData({ onDeleteDialogClose, setShopsIndex });
+
   const onClickDelete = useCallback(
-    (formData) => {
-      const { userId, id } = formData;
-      const deleteShopData = async () => {
-        onDeleteDialogClose();
-        try {
-          const updatedShop = await shopDelete(userId, id);
-          const setResIndexPage = await shopsShow(userId);
-          setShopsIndex(setResIndexPage);
-          showMessage({ title: updatedShop.data.message, status: "success" });
-        } catch (err) {
-          const axiosError = err as AxiosError;
-          console.error(axiosError.response);
-          showMessage({ title: axiosError.response?.data.errors, status: "error" });
-        }
-      };
-      deleteShopData();
+    (formData: OkaimonoShopModifingData) => {
+      deleteShopData(formData);
     },
     [shopDelete]
   );
+  // -------------------------------------------------------------
 
   return (
     <Flex align="center" justify="center" px={3} rounded={10}>
-      <VStack w="100rem" boxShadow="md">
+      <VStack w="100rem">
         <Heading as="h2" size="lg" textAlign="center" pt={3}>
           登録したお店情報一覧
         </Heading>
         <Divider my={4} />
         <VStack w="100%" borderRadius="md">
-          <Table variant="simple" w="100%" bg="white" rounded={10}>
+          <Table variant="simple" w="100%" bg="white" rounded={10} boxShadow="md">
             <Thead>
               <Tr>
                 <Th
                   px={0}
                   color="white"
                   bg="teal.500"
-                  w={{ base: "40%", md: "20%" }}
+                  w={{ base: "40%", md: "40%" }}
                   borderBottomRadius="1px"
                   borderColor="gray.400"
                   textAlign="center"
@@ -181,7 +140,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
                 <Th
                   color="white"
                   bg="teal.500"
-                  w={{ base: "55%", md: "10%" }}
+                  w={{ base: "55%", md: "40%" }}
                   borderBottomRadius="1px"
                   borderColor="gray.400"
                   textAlign="center"
@@ -189,7 +148,13 @@ export const OkaimonoShopShow: VFC = memo(() => {
                 >
                   お店情報管理用メモ
                 </Th>
-                <Th bg="teal.500" px="0" w={{ base: "5%", md: "8%" }} borderBottomRadius="1px" borderColor="gray.400" />
+                <Th
+                  bg="teal.500"
+                  px="0"
+                  w={{ base: "5%", md: "20%" }}
+                  borderBottomRadius="1px"
+                  borderColor="gray.400"
+                />
               </Tr>
             </Thead>
             {shopsindex?.data.map((shopData: OkaimonoShopsIndexData) => {
@@ -243,7 +208,6 @@ export const OkaimonoShopShow: VFC = memo(() => {
                           </MenuItem>
                           <MenuItem
                             onClick={() => {
-                              console.log("ttteeesssttt", shopData);
                               setShopFormData(shopData);
                               onDeleteDialogOpen();
                             }}
@@ -260,8 +224,24 @@ export const OkaimonoShopShow: VFC = memo(() => {
                       textAlign="center"
                       display={{ base: "none", md: "table-cell" }}
                     >
-                      <Icon as={DeleteIcon} bg="white" boxSize={4} mr="4" />
-                      <Icon as={EditIcon} bg="white" boxSize={4} />
+                      <Icon
+                        as={DeleteIcon}
+                        bg="white"
+                        boxSize={4}
+                        mr="4"
+                        onClick={() => {
+                          setShopFormData(shopData);
+                          onDeleteDialogOpen();
+                        }}
+                      />
+                      <Icon
+                        as={EditIcon}
+                        bg="white"
+                        boxSize={4}
+                        onClick={() => {
+                          openModal(shopData);
+                        }}
+                      />
                     </Td>
                   </Tr>
                 </Tbody>
@@ -286,7 +266,6 @@ export const OkaimonoShopShow: VFC = memo(() => {
                     {errors.shopName && errors.shopName.types?.maxLength && (
                       <Box color="red">{errors.shopName.types.maxLength}</Box>
                     )}
-
                     <Input bg={readOnly ? "blackAlpha.200" : "white"} isReadOnly={readOnly} {...register("shopMemo")} />
                     <Input type="hidden" {...register("shopId")} />
                     <Input type="hidden" {...register("userId")} />
@@ -318,7 +297,15 @@ export const OkaimonoShopShow: VFC = memo(() => {
                   <Button ref={cancelRef} onClick={onDeleteDialogClose}>
                     やっぱりやめる
                   </Button>
-                  <Button colorScheme="red" onClick={() => onClickDelete(shopFormData)} ml={3}>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => {
+                      if (shopFormData) {
+                        onClickDelete(shopFormData);
+                      }
+                    }}
+                    ml={3}
+                  >
                     削除する
                   </Button>
                 </AlertDialogFooter>
