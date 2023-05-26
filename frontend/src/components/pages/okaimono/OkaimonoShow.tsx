@@ -4,22 +4,19 @@ import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import {
   MergeParams,
-  OkaimonoMemoDataShowResponse,
   OkaimonoMemosDataResponse,
-  OkaimonoShopDataResponse,
 } from "interfaces";
-import { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
+import { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useMessage } from "hooks/useToast";
 import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
-import { useGetOkaimonoShow } from "hooks/useGetOkaimonoShow";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memosShow, shopPropsType, shopShow } from "lib/api/show";
-import { AxiosError } from "axios";
+import { memoProps, memosShow } from "lib/api/show";
 import { useMemoUpdate } from "hooks/useMemoUpdate";
+import { useSetOkaimonoShowIndex } from "hooks/useSetOkaimonoShowIndex";
 
 export const OkaimonoShow: VFC = memo(() => {
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
@@ -32,54 +29,9 @@ export const OkaimonoShow: VFC = memo(() => {
   const validationNumber = /^[0-9]+$/;
   // ----------------------------------------------------------------------------------------------------------
   const { id } = useParams<{ id?: string }>();
-  const getOkaimonoShow = useGetOkaimonoShow(id);
-
-  useEffect(() => {
-    const showMemo = async () => {
-      setLoading(true);
-      try {
-        const shoppingRes: OkaimonoMemoDataShowResponse | undefined = await getOkaimonoShow();
-        if (shoppingRes?.status === 200) {
-          setValue("shopping_date", shoppingRes.data.shoppingDate);
-          setValue("estimated_budget", shoppingRes.data.estimatedBudget);
-          setValue("shopping_memo", shoppingRes.data.shoppingMemo);
-          setValue("shopping_datum_id", shoppingRes.data.id);
-          const shopProps: shopPropsType = {
-            userId: shoppingRes.data.userId,
-            shopId: shoppingRes.data.shopId,
-          };
-          const shopRes: OkaimonoShopDataResponse = await shopShow(shopProps);
-          if (shopRes.status === 200) {
-            setValue("shop_name", shopRes.data.shopName);
-            const memosProps: memoProps = {
-              userId: shoppingRes.data.userId,
-              shoppingDataId: shoppingRes.data.id,
-            };
-            const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
-            for (let i = fields.length; i < memosRes.data.length; i++) {
-              append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
-            }
-            memosRes.data.forEach((m, index) => {
-              setValue(`listForm.${index}.purchase_name`, m.purchaseName);
-              setValue(`listForm.${index}.price`, m.price);
-              setValue(`listForm.${index}.shopping_detail_memo`, m.shoppingDetailMemo);
-              setValue(`listForm.${index}.amount`, m.amount);
-              setValue(`listForm.${index}.id`, m.id);
-            });
-          }
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-      }
-      setLoading(false);
-    };
-    showMemo();
-  }, []);
   const [readOnly, setReadOnly] = useState(true);
   const history = useHistory();
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
-
   // ----------------------------------------------------------------------------------------------------------
   // ReactHookFormの機能呼び出し、デフォルト値の設定。
   const {
@@ -106,6 +58,13 @@ export const OkaimonoShow: VFC = memo(() => {
     name: "listForm",
     keyName: "key", // デフォルトではidだが、keyに変更。
   });
+
+  // ----------------------------------------------------------------------------------------------------------
+  // メモのindexを取得
+  const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append });
+  useEffect(() => {
+    showMemo();
+  }, []);
 
   useEffect(() => {
     fields.forEach((field, index) => {
