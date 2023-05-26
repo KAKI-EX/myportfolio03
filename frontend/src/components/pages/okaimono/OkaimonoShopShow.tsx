@@ -36,14 +36,11 @@ import {
 } from "@chakra-ui/react";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
-import { shopsShow } from "lib/api/show";
-import { AxiosError } from "axios";
 import { OkaimonoShopModifingData, OkaimonoShopsDataResponse, OkaimonoShopsIndexData } from "interfaces";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { shopDelete } from "lib/api/destroy";
 import { useGetShopIndex } from "hooks/useGetShopIndex";
 import { useUpdateShopData } from "hooks/useUpdateShopData";
-import { useMessage } from "hooks/useToast";
 import { useDeleteShopData } from "hooks/useDeleteShopData";
 
 export const OkaimonoShopShow: VFC = memo(() => {
@@ -55,7 +52,6 @@ export const OkaimonoShopShow: VFC = memo(() => {
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteDialogOpen, onOpen: onDeleteDialogOpen, onClose: onDeleteDialogClose } = useDisclosure();
   const getShopsIndex = useGetShopIndex(setShopsIndex);
-  const { showMessage } = useMessage();
 
   // -------------------------------------------------------------
   // shop一覧の読み込み

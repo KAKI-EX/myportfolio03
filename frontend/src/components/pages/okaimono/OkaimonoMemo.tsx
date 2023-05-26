@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Stack, VStack, Spinner, Heading } from "@chakra-ui/
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams } from "interfaces";
-import { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
+import { memo, useCallback, useContext, useEffect, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
