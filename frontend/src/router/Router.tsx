@@ -28,21 +28,16 @@ export const Router: VFC = memo(() => {
           </Switch>
         )}
       />
-      <Private loading={loading} isSignedIn={isSignedIn}>
-        <Route
-          path="/okaimono"
-          render={({ match: { url } }) => (
-            <Switch>
-              {OkaimonoRoutes.map((route) => (
-                <Route key={route.path} exact={route.exact} path={`${url}${route.path}`}>
-                  <HeaderLayout>{route.children}</HeaderLayout>
-                </Route>
-              ))}
-            </Switch>
-          )}
-        />
-      </Private>
-      <Route path="*">
+      {OkaimonoRoutes.map((route) => (
+        <Route key={route.path} exact={route.exact} path={`/okaimono${route.path}`}>
+          <HeaderLayout>
+            <Private loading={loading} isSignedIn={isSignedIn}>
+              {route.children}
+            </Private>
+          </HeaderLayout>
+        </Route>
+      ))}
+      <Route>
         <Error404 />
       </Route>
     </Switch>
