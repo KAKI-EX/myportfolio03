@@ -12,6 +12,7 @@ type Props = {
   onClickSignOut: () => void;
   onClickMemoIndex: () => void;
   onClickShopShow: () => void;
+  onClickMemoUse: () => void;
 };
 
 export const MenuDrawer: VFC<Props> = memo((props) => {
@@ -24,7 +25,8 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
     onClickMakeMemo,
     onClickSignOut,
     onClickMemoIndex,
-    onClickShopShow
+    onClickShopShow,
+    onClickMemoUse,
   } = props;
   const { isSignedIn } = useContext(AuthContext);
   return (
@@ -76,6 +78,14 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
               _focus={{ outline: "none" }}
             >
               お店情報の確認と編集
+            </Button>
+            <Button
+              onClick={onClickMemoUse}
+              w="100%"
+              display={isSignedIn ? "block" : "none"}
+              _focus={{ outline: "none" }}
+            >
+              お買い物メモを使う
             </Button>
             <Button
               onClick={onClickSignOut}
