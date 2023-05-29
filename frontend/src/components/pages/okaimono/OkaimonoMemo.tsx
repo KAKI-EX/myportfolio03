@@ -31,7 +31,16 @@ export const OkaimonoMemo: VFC = memo(() => {
   } = useForm<MergeParams>({
     defaultValues: {
       shopping_date: formattedDefaultShoppingDate,
-      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" }],
+      listForm: [
+        {
+          purchase_name: "",
+          price: "",
+          shopping_detail_memo: "",
+          amount: "",
+          expiry_date_before: "",
+          expiry_date_after: "",
+        },
+      ],
     },
     criteriaMode: "all",
     mode: "all",
@@ -102,6 +111,7 @@ export const OkaimonoMemo: VFC = memo(() => {
               register={register}
               errors={errors}
               validationNumber={validationNumber}
+              watch={watch}
             />
           </Box>
           <VStack

@@ -37,6 +37,8 @@ export interface ListFormParams {
   shopping_detail_memo?: string;
   amount?: string;
   shopping_date?: string;
+  expiry_date_before?: string;
+  expiry_date_after?: string;
 }
 
 export interface MergeParams {
