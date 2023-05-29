@@ -37,8 +37,8 @@ export interface ListFormParams {
   shopping_detail_memo?: string;
   amount?: string;
   shopping_date?: string;
-  expiry_date_before?: string;
-  expiry_date_after?: string;
+  expiry_date_start?: string;
+  expiry_date_end?: string;
 }
 
 export interface MergeParams {
@@ -56,6 +56,8 @@ export interface MergeParams {
   shopping_date?: string;
   shipping_datum_id?: string;
   asc?: string;
+  expiry_date_start?: string;
+  expiry_date_end?: string;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------
@@ -123,6 +125,8 @@ export interface OkaimonoMemosData {
   shoppingDetailMemo: string;
   updatedAt: string;
   userId: number;
+  expiryDateStart: string;
+  expiryDateEnd: string;
 }
 
 export interface OkaimonoMemosDataResponse {

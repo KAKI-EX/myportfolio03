@@ -17,10 +17,11 @@ type Props = {
   setValue: UseFormSetValue<MergeParams>;
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
   append: UseFieldArrayAppend<MergeParams, "listForm">;
+  setExpiryDate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const useSetOkaimonoShowIndex = (props: Props) => {
-  const { setLoading, id, setValue, fields, append } = props;
+  const { setLoading, id, setValue, fields, append, setExpiryDate } = props;
   const getOkaimonoShow = useGetOkaimonoShow(id);
 
   const showMemo = async () => {
@@ -53,6 +54,11 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
             setValue(`listForm.${index}.shopping_detail_memo`, m.shoppingDetailMemo);
             setValue(`listForm.${index}.amount`, m.amount);
             setValue(`listForm.${index}.id`, m.id);
+            setValue(`listForm.${index}.expiry_date_start`, m.expiryDateStart);
+            setValue(`listForm.${index}.expiry_date_end`, m.expiryDateEnd);
+            if (m.expiryDateStart) {
+              setExpiryDate(true);
+            }
           });
         }
       }

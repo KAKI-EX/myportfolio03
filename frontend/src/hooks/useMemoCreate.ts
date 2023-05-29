@@ -28,6 +28,8 @@ export const useMemoCreate = (props: Props) => {
       shopping_date, // eslint-disable-line
       shopping_memo, // eslint-disable-line
       estimated_budget, // eslint-disable-line
+      expiry_date_start, // eslint-disable-line
+      expiry_date_end, // eslint-disable-line
     } = formData; // eslint-disable-line
     const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
 
@@ -58,10 +60,11 @@ export const useMemoCreate = (props: Props) => {
                 shopping_detail_memo: data.shopping_detail_memo,
                 amount: data.amount,
                 shopping_date,
+                expiry_date_start: data.expiry_date_start,
+                expiry_date_end: data.expiry_date_end,
               };
             }),
           };
-
           const memosCreateRes = await memosCreate(memosParams.memos);
           history.push("/okaimono");
           if (formData.listForm) {

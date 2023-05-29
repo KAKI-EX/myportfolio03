@@ -1,9 +1,26 @@
 import { SmallCloseIcon } from "@chakra-ui/icons";
-import { Box, Divider, Flex, Stack, VStack, Spinner, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Stack,
+  VStack,
+  Spinner,
+  Heading,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams } from "interfaces";
-import { memo, useCallback, useContext, useEffect, VFC } from "react";
+import { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -18,6 +35,8 @@ export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
   const { setLoading, loading } = useContext(AuthContext);
+  const [expiryData, setExpiryDate] = useState<boolean>(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -37,8 +56,10 @@ export const OkaimonoMemo: VFC = memo(() => {
           price: "",
           shopping_detail_memo: "",
           amount: "",
-          expiry_date_before: "",
-          expiry_date_after: "",
+          expiry_date_start: "",
+          expiry_date_end: "",
+          id: "",
+          asc: "",
         },
       ],
     },
@@ -46,7 +67,7 @@ export const OkaimonoMemo: VFC = memo(() => {
     mode: "all",
   });
 
-  const { fields, append, insert, remove } = useFieldArray({
+  const { fields, insert, remove } = useFieldArray({
     control,
     name: "listForm",
     keyName: "key", // デフォルトではidだが、keyに変更。
@@ -65,7 +86,16 @@ export const OkaimonoMemo: VFC = memo(() => {
   );
 
   const insertInputForm = (index: number) => {
-    insert(index + 1, { purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
+    insert(index + 1, {
+      purchase_name: "",
+      price: "",
+      shopping_detail_memo: "",
+      amount: "",
+      expiry_date_start: "",
+      expiry_date_end: "",
+      id: "",
+      asc: "",
+    });
   };
 
   useEffect(() => {
@@ -84,6 +114,13 @@ export const OkaimonoMemo: VFC = memo(() => {
   // ---------------------------------------------------------------------------
   const history = useHistory();
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
+
+  useEffect(() => onOpen(), []);
+
+  const onClickInputNow = useCallback(() => {
+    setExpiryDate(true);
+    onClose();
+  }, []);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -112,6 +149,7 @@ export const OkaimonoMemo: VFC = memo(() => {
               errors={errors}
               validationNumber={validationNumber}
               watch={watch}
+              expiryDate={expiryData}
             />
           </Box>
           <VStack
@@ -143,6 +181,22 @@ export const OkaimonoMemo: VFC = memo(() => {
           <Box h="12.5rem" />
         </VStack>
       </Flex>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>いま消費期限を入力しますか？</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>お買い物をする時にも入力できますよ！</ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              今はしない
+            </Button>
+            <Button variant="ghost" onClick={onClickInputNow}>
+              今入力したい
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </form>
   );
 });

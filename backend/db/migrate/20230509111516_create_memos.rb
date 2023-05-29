@@ -11,6 +11,8 @@ class CreateMemos < ActiveRecord::Migration[6.1]
       t.string :shopping_date, null: false
       t.string :memo_type
       t.integer :asc
+      t.date :expiry_date_start
+      t.date :expiry_date_end
       t.timestamps
     end
   end

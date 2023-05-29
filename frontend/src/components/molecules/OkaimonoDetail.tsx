@@ -38,6 +38,7 @@ type Props = {
   deleteIds?: string[];
   setDeleteIds?: Dispatch<SetStateAction<string[]>>;
   watch: UseFormWatch<FieldValues>;
+  expiryDate?: boolean;
 };
 
 export const OkaimonoDetail: VFC<Props> = memo((props) => {
@@ -53,6 +54,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     getValues,
     setDeleteIds,
     watch,
+    expiryDate,
   } = props;
 
   return (
@@ -61,7 +63,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
         お買い物リスト
       </Heading>
       {fields.map((field, index) => {
-        const startDate = watch(`listForm.${index}.expiry_date_before`);
+        const startDate = watch(`listForm.${index}.expiry_date_start`);
         return (
           <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
             <VStack spacing={1} w="5%">
@@ -192,50 +194,54 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   </Box>
                 )}
               </HStack>
-              <Divider my={4} />
-              <HStack w="100%" py={2}>
-                <Box w="50%">
-                  <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-                    消費期限 開始日
-                  </FormLabel>
-                  <Input
-                    isReadOnly={readOnly}
-                    type="date"
-                    placeholder="test"
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    fontSize={{ base: "sm", md: "md" }}
-                    size="md"
-                    {...register(`listForm.${index}.expiry_date_before`)}
-                  />
-                </Box>
-                <Box w="50%">
-                  <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-                    終了日
-                  </FormLabel>
-                  <Input
-                    isReadOnly={readOnly}
-                    type="date"
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    fontSize={{ base: "sm", md: "md" }}
-                    size="md"
-                    {...register(`listForm.${index}.expiry_date_after`, {
-                      validate: (value) =>
-                        !startDate || // eslint-disable-line
-                        !value ||
-                        new Date(value) >= new Date(startDate) ||
-                        "終了日は開始日以降の日付を選択してください。",
-                    })}
-                  />
-                  {errors.listForm && errors.listForm[index]?.expiry_date_after && (
-                    <Box color="red" fontSize="sm">
-                      {errors.listForm[index]?.expiry_date_after?.message}
+              {expiryDate && (
+                <>
+                  <Divider my={4} />
+                  <HStack w="100%" py={2}>
+                    <Box w="50%">
+                      <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
+                        消費期限 開始日
+                      </FormLabel>
+                      <Input
+                        isReadOnly={readOnly}
+                        type={expiryDate ? "date" : "hidden"}
+                        placeholder="test"
+                        bg={readOnly ? "blackAlpha.200" : "white"}
+                        fontSize={{ base: "sm", md: "md" }}
+                        size="md"
+                        {...register(`listForm.${index}.expiry_date_start`)}
+                      />
                     </Box>
-                  )}
-                </Box>
-                <Input type="hidden" {...register(`listForm.${index}.id`)} />
-                <Input type="hidden" {...register(`listForm.${index}.asc`)} />
-              </HStack>
-              <Divider my={4} />
+                    <Box w="50%">
+                      <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
+                        終了日
+                      </FormLabel>
+                      <Input
+                        isReadOnly={readOnly}
+                        type="date"
+                        bg={readOnly ? "blackAlpha.200" : "white"}
+                        fontSize={{ base: "sm", md: "md" }}
+                        size="md"
+                        {...register(`listForm.${index}.expiry_date_end`, {
+                          validate: (value) =>
+                            !startDate || // eslint-disable-line
+                            !value ||
+                            new Date(value) >= new Date(startDate) ||
+                            "終了日は開始日以降の日付を選択してください。",
+                        })}
+                      />
+                      {errors.listForm && errors.listForm[index]?.expiry_date_end && (
+                        <Box color="red" fontSize="sm">
+                          {errors.listForm[index]?.expiry_date_end?.message}
+                        </Box>
+                      )}
+                    </Box>
+                    <Input type="hidden" {...register(`listForm.${index}.id`)} />
+                    <Input type="hidden" {...register(`listForm.${index}.asc`)} />
+                  </HStack>
+                  <Divider my={4} />
+                </>
+              )}
             </VStack>
           </HStack>
         );

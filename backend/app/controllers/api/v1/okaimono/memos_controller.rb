@@ -67,7 +67,9 @@ end
         :shopping_date,
         :memo_type,
         :memo_id,
-        :asc
+        :asc,
+        :expiry_date_start,
+        :expiry_date_end
         )
     end
   end

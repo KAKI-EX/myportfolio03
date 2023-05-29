@@ -33,7 +33,6 @@ export const useMemoUpdate = (props: Props) => {
       shopping_memo, // eslint-disable-line
       estimated_budget, // eslint-disable-line
       shopping_datum_id, // eslint-disable-line
-      asc,
     } = formData; // eslint-disable-line
     const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
 
@@ -67,6 +66,8 @@ export const useMemoUpdate = (props: Props) => {
                 shopping_date,
                 memo_id: data.id,
                 asc: data.asc,
+                expiry_date_start: data.expiry_date_start,
+                expiry_date_end: data.expiry_date_end,
               };
             }),
           };
@@ -87,6 +88,8 @@ export const useMemoUpdate = (props: Props) => {
                   amount: newMemo.amount,
                   shopping_date,
                   asc: newMemo.asc,
+                  expiry_date_start: newMemo.expiry_date_start,
+                  expiry_date_end: newMemo.expiry_date_end,
                 };
                 return updateCreate;
               });
@@ -96,7 +99,7 @@ export const useMemoUpdate = (props: Props) => {
           // 上記で登録したidが空文字の配列を削除。(既存メモのupdateではないのでエラーが発生するため)
           const existingMemos = memosParams.memos.filter((newMemo) => newMemo.memo_id);
           // ---------------------------------------------------------------
-          // 特定メモの削除。show画面で赤✗ボタンを押した際にdeleteIdsにはidが入り、保存で一括削除。
+          // 特定メモの削除。show画面で赤✗ボタンを押した際にdeleteIdsにはidが入り、保存ボタン押下で一括削除。
           if (deleteIds.length > 0) {
             const deleteArrays = deleteIds.map((t) => {
               const deleteArray = {

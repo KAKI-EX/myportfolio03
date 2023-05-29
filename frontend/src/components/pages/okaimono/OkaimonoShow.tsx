@@ -1,11 +1,25 @@
 import { SmallCloseIcon } from "@chakra-ui/icons";
-import { Box, Divider, Flex, Stack, VStack, Spinner, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Stack,
+  VStack,
+  Spinner,
+  Heading,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import {
-  MergeParams,
-  OkaimonoMemosDataResponse,
-} from "interfaces";
+import { MergeParams, OkaimonoMemosDataResponse } from "interfaces";
 import { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
@@ -23,6 +37,8 @@ export const OkaimonoShow: VFC = memo(() => {
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [expiryData, setExpiryDate] = useState<boolean>(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -61,10 +77,10 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // メモのindexを取得
-  const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append });
+  const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append, setExpiryDate });
   useEffect(() => {
     showMemo();
-  }, []);
+  }, [expiryData]);
 
   useEffect(() => {
     fields.forEach((field, index) => {
@@ -91,7 +107,16 @@ export const OkaimonoShow: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // フォーム追加機能
   const insertInputForm = (index: number) => {
-    insert(index + 1, { purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
+    insert(index + 1, {
+      purchase_name: "",
+      price: "",
+      shopping_detail_memo: "",
+      amount: "",
+      id: "",
+      asc: "",
+      expiry_date_start: "",
+      expiry_date_end: "",
+    });
   };
 
   useEffect(() => {
@@ -111,6 +136,9 @@ export const OkaimonoShow: VFC = memo(() => {
   const onSubmit = useCallback(
     async (formData: MergeParams) => {
       setReadOnly(!readOnly);
+      if (readOnly && !expiryData) {
+        onOpen();
+      }
       if (!readOnly) {
         const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
@@ -132,6 +160,11 @@ export const OkaimonoShow: VFC = memo(() => {
     },
     [readOnly, sendUpdateToAPI]
   );
+
+  const onClickInputNow = useCallback(() => {
+    setExpiryDate(true);
+    onClose();
+  }, []);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -168,6 +201,8 @@ export const OkaimonoShow: VFC = memo(() => {
               getValues={getValues}
               deleteIds={deleteIds}
               setDeleteIds={setDeleteIds}
+              watch={watch}
+              expiryDate={expiryData}
             />
           </Box>
           <VStack
@@ -200,6 +235,22 @@ export const OkaimonoShow: VFC = memo(() => {
           </VStack>
           <Box h="12.5rem" />
         </VStack>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>いま消費期限を入力しますか？</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>お買い物をする時にも入力できますよ！</ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onClose}>
+                今はしない
+              </Button>
+              <Button variant="ghost" onClick={onClickInputNow}>
+                今入力したい
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Flex>
     </form>
   );
