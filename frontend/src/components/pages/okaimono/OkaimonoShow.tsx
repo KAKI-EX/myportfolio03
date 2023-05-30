@@ -115,7 +115,7 @@ export const OkaimonoShow: VFC = memo(() => {
       amount: "",
       id: "",
       asc: "",
-      expiry_date_start: "",
+      expiry_date_start: formattedDefaultShoppingDate,
       expiry_date_end: "",
     });
   };

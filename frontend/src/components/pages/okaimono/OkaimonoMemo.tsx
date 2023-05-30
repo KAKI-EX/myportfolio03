@@ -56,7 +56,7 @@ export const OkaimonoMemo: VFC = memo(() => {
           price: "",
           shopping_detail_memo: "",
           amount: "",
-          expiry_date_start: "",
+          expiry_date_start: formattedDefaultShoppingDate,
           expiry_date_end: "",
           id: "",
           asc: "",
