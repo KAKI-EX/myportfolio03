@@ -20,7 +20,7 @@ import {
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams, OkaimonoMemosDataResponse } from "interfaces";
-import { memo, useCallback, useEffect, useState, VFC } from "react";
+import { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -39,6 +39,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const [expiryData, setExpiryDate] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const initialRef = useRef(null);
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -235,14 +236,14 @@ export const OkaimonoShow: VFC = memo(() => {
           </VStack>
           <Box h="12.5rem" />
         </VStack>
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent maxW="95vw">
             <ModalHeader>いま消費期限を入力しますか？</ModalHeader>
             <ModalCloseButton />
             <ModalBody>お買い物をする時にも入力できますよ！</ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>
+              <Button ref={initialRef} colorScheme="blue" mr={3} onClick={onClose}>
                 今はしない
               </Button>
               <Button variant="ghost" onClick={onClickInputNow}>

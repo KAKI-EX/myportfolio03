@@ -247,7 +247,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
               <ModalOverlay />
-              <ModalContent bg="gray.100">
+              <ModalContent bg="gray.100" maxW="95vw">
                 <ModalHeader>お店の情報</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
@@ -282,7 +282,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
           </form>
           <AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={onDeleteDialogClose}>
             <AlertDialogOverlay>
-              <AlertDialogContent>
+              <AlertDialogContent maxW="95vw">
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   お店の情報を削除しますか？
                 </AlertDialogHeader>

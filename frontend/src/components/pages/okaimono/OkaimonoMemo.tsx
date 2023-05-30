@@ -183,7 +183,7 @@ export const OkaimonoMemo: VFC = memo(() => {
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxW="95vw">
           <ModalHeader>いま消費期限を入力しますか？</ModalHeader>
           <ModalCloseButton />
           <ModalBody>お買い物をする時にも入力できますよ！</ModalBody>
