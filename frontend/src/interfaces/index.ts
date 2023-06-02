@@ -58,6 +58,15 @@ export interface MergeParams {
   asc?: string;
   expiry_date_start?: string;
   expiry_date_end?: string;
+  modify_purchase_name?: string;
+  modify_amount?: string;
+  modify_memo?: string;
+  modify_expiry_date_start?: string;
+  modify_expiry_date_end?: string;
+  modify_shopping_date?: string;
+  modify_estimated_budget?: string;
+  modify_shopping_memo?: string;
+  modifiy_shop_name?: string;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------
@@ -71,7 +80,7 @@ export interface OkaimonoMemoData {
   shoppingMemo: string;
   totalBudget: string;
   updatedAt: string;
-  userId: number;
+  userId: string;
 }
 
 export interface OkaimonoMemoResponse {
@@ -90,7 +99,10 @@ export interface OkaimonoMemoDataShow {
   shoppingMemo: string;
   totalBudget: string;
   updatedAt: string;
-  userId: number;
+  userId: string;
+  modify_shopping_date?: string;
+  modify_estimated_budget?: string;
+  modify_shopping_memo?: string;
 }
 
 export interface OkaimonoMemoDataShowResponse {
@@ -104,7 +116,7 @@ export interface OkaimonoShopData {
   shopMemo: string;
   shopName: string;
   updatedAt: string;
-  userId: number;
+  userId: string;
 }
 
 export interface OkaimonoShopDataResponse {
@@ -124,9 +136,10 @@ export interface OkaimonoMemosData {
   shoppingDatumId: string;
   shoppingDetailMemo: string;
   updatedAt: string;
-  userId: number;
+  userId: string;
   expiryDateStart: string;
   expiryDateEnd: string;
+  asc: string;
 }
 
 export interface OkaimonoMemosDataResponse {

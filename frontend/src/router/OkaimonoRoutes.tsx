@@ -27,7 +27,7 @@ export const OkaimonoRoutes = [
     children: <OkaimonoShopShow />,
   },
   {
-    path: "/okaimono_memo_use",
+    path: "/okaimono_memo_use/:id",
     exact: false,
     children: <OkaimonoMemoUse />,
   },

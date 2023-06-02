@@ -91,11 +91,18 @@ export const OkaimonoIndex: VFC = memo(() => {
     },
     [okaimonoMemo]
   );
-
+  // ---------------------------------------------------------------------------------
+  // paramsを使用してidを渡すリンク
   const onClickShowMemo = (id: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     history.push(`/okaimono/okaimono_show/${id}`);
   };
+
+  const onClickMemoUse = (id: string) => (event: React.MouseEvent) => {
+    event.preventDefault();
+    history.push(`/okaimono/okaimono_memo_use/${id}`);
+  };
+  // ---------------------------------------------------------------------------------
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -168,13 +175,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                       >
                         一言メモ
                       </Th>
-                      <Th
-                        bg="teal.500"
-                        px="0"
-                        w={{ base: "7%", md: "8%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                      />
+                      <Th bg="teal.500" px="0" w={{ base: "7%", md: "8%" }} borderBottom="1px" borderColor="gray.400" />
                     </Tr>
                   </Thead>
                   {okaimonoMemo?.data.map((i: OkaimonoMemoData) => {
@@ -235,7 +236,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                             <Menu>
                               <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
                               <MenuList borderRadius="md" shadow="md">
-                                <MenuItem>お買い物で使ってみる！</MenuItem>
+                                <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem>
                                 <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
                                 <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
                                 <MenuItem

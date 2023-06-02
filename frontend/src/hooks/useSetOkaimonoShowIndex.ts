@@ -46,7 +46,15 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
           };
           const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
           for (let i = fields.length; i < memosRes.data.length; i++) {
-            append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "" });
+            append({
+              purchase_name: "",
+              price: "",
+              shopping_detail_memo: "",
+              amount: "",
+              id: "",
+              expiry_date_start: "",
+              expiry_date_end: "",
+            });
           }
           memosRes.data.forEach((m, index) => {
             setValue(`listForm.${index}.purchase_name`, m.purchaseName);

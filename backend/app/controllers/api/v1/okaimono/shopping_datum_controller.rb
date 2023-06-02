@@ -11,7 +11,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def create
     shopping = ShoppingDatum.new(shopping_params)
-    if shopping.save!
+    if shopping.save
       render json: shopping
     else
       render json: shopping.errors
@@ -19,11 +19,15 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def show
-    render json: @shopping
+    if @shopping.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      render json: @shopping
+    end
   end
 
   def update
-    if @shopping.update!(shopping_params)
+    if @shopping.update(shopping_params)
       render json: @shopping
     else
       render json: @shopping.errors
@@ -31,7 +35,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def destroy
-    if @shopping.destroy!
+    if @shopping.destroy
       render json: @shopping
     else
       render json: @shopping.errors

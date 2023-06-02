@@ -1,12 +1,12 @@
 import client from "lib/api/client";
 
 export type shopPropsType = {
-  userId: number;
+  userId: string;
   shopId: number;
 };
 
 export type memoProps = {
-  userId: number;
+  userId: string;
   shoppingDataId: string;
 };
 
@@ -39,5 +39,15 @@ export const memosShow = async (props: memoProps) => {
   return {
     data: memosShowRes.data,
     status: memosShowRes.status,
+  };
+};
+
+export const shoppingDatumShow = async (props: memoProps) => {
+  const { userId, shoppingDataId } = props;
+  console.log("shopShowが走っています。");
+  const shoppingDatumShowRes = await client.get(`okaimono/shoppingdatum/show?user_id=${userId}&shopping_datum_id=${shoppingDataId}`);
+  return {
+    data: shoppingDatumShowRes.data,
+    status: shoppingDatumShowRes.status,
   };
 };

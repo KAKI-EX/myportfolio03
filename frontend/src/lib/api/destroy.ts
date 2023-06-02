@@ -7,7 +7,7 @@ export const memosDelete = (params: { memo_id: string }[]) => {
   return client.post("okaimono/memo/delete", { memos: params });
 };
 
-export const shoppingDataDelete = (userId: number, shoppingId: string) => {
+export const shoppingDataDelete = (userId: string, shoppingId: string) => {
   console.log("shoppingDataDeleteが走っています。");
   return client.delete(`okaimono/shoppingdatum/destroy/${userId}/${shoppingId}`);
 };
