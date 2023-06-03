@@ -123,12 +123,6 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                       maxLength: { value: 30, message: "最大文字数は30文字までです。" },
                     })}
                   />
-                  {errors.listForm && errors.listForm[index]?.purchase_name && (
-                    <Box color="red" fontSize="sm">
-                      {errors.listForm[index]?.purchase_name?.types?.required}
-                      {errors.listForm[index]?.purchase_name?.types?.maxLength}
-                    </Box>
-                  )}
                 </Box>
                 <Box w="30%">
                   <Input
@@ -145,14 +139,20 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                       pattern: { value: validationNumber, message: "半角整数で入力してください。" },
                     })}
                   />
-                  {errors.listForm && errors.listForm[index]?.amount && (
-                    <Box color="red" fontSize="sm">
-                      {errors.listForm[index]?.amount?.types?.max}
-                      {errors.listForm[index]?.amount?.types?.pattern}
-                    </Box>
-                  )}
                 </Box>
               </HStack>
+              {errors.listForm && errors.listForm[index]?.purchase_name && (
+                <Box color="red" fontSize="sm">
+                  {errors.listForm[index]?.purchase_name?.types?.required}
+                  {errors.listForm[index]?.purchase_name?.types?.maxLength}
+                </Box>
+              )}
+              {errors.listForm && errors.listForm[index]?.amount && (
+                <Box color="red" fontSize="sm">
+                  {errors.listForm[index]?.amount?.types?.max}
+                  {errors.listForm[index]?.amount?.types?.pattern}
+                </Box>
+              )}
               <HStack w="100%" pb={2}>
                 <Box w="70%">
                   <Input
@@ -165,11 +165,6 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                       maxLength: { value: 150, message: "最大文字数は150文字です。" },
                     })}
                   />
-                  {errors.listForm && errors.listForm[index]?.shopping_detail_memo && (
-                    <Box color="red" fontSize="sm">
-                      {errors.listForm[index]?.shopping_detail_memo?.types?.maxLength}
-                    </Box>
-                  )}
                 </Box>
                 <Box w="30%">
                   <InputGroup>
@@ -188,12 +183,17 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                     </InputRightElement>
                   </InputGroup>
                 </Box>
-                {errors.listForm && errors.listForm[index]?.price && (
-                  <Box color="red" fontSize="sm">
-                    {errors.listForm[index]?.price?.types?.pattern}
-                  </Box>
-                )}
               </HStack>
+              {errors.listForm && errors.listForm[index]?.shopping_detail_memo && (
+                <Box color="red" fontSize="sm">
+                  {errors.listForm[index]?.shopping_detail_memo?.types?.maxLength}
+                </Box>
+              )}
+              {errors.listForm && errors.listForm[index]?.price && (
+                <Box color="red" fontSize="sm">
+                  {errors.listForm[index]?.price?.types?.pattern}
+                </Box>
+              )}
               {expiryDate && (
                 <>
                   <Divider my={4} />
