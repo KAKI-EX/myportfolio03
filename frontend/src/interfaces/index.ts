@@ -66,7 +66,7 @@ export interface MergeParams {
   modify_shopping_date?: string;
   modify_estimated_budget?: string;
   modify_shopping_memo?: string;
-  modifiy_shop_name?: string;
+  modify_shop_name?: string;
   modify_shopping_datum_id?: string;
   listForm?: ListFormParams[];
 }

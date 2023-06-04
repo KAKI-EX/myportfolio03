@@ -47,6 +47,8 @@ import { memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
 import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
+import { shopCreate } from "lib/api/post";
+import { shoppingDatumUpdate } from "lib/api/update";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -55,7 +57,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
 
-  const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: onCloseShoppingDatum } = useDisclosure();
+  const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: onCloseList } = useDisclosure();
 
   const defaultShoppingDate = new Date();
@@ -131,9 +133,45 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     0
   );
 
-  const shoppingDatumSubmit = (shoppingDatumFormData: any) => {
+  const shoppingDatumSubmit = async (shoppingDatumFormData: MergeParams) => {
     setReadOnly(!readOnly);
     console.log("これやねん", shoppingDatumFormData);
+    if (!readOnly) {
+      const userId = separateCookies("_user_id");
+      const {
+        modify_shop_name, // eslint-disable-line
+        modify_shopping_date, // eslint-disable-line
+        modify_shopping_memo, // eslint-disable-line
+        modify_estimated_budget, // eslint-disable-line
+        modify_shopping_datum_id, // eslint-disable-line
+      } = shoppingDatumFormData; // eslint-disable-line
+      const shopParams: MergeParams = { user_id: userId, shop_name: modify_shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
+      try {
+        const shopUpdateRes = await shopCreate(shopParams);
+        if (shopUpdateRes.status === 200) {
+          const shopId = shopUpdateRes.data.id;
+          const shoppingDataParams: MergeParams = {
+            user_id: userId, // eslint-disable-line
+            shop_id: shopId, // eslint-disable-line
+            shopping_date: modify_shopping_date, // eslint-disable-line
+            shopping_memo: modify_shopping_memo, // eslint-disable-line
+            estimated_budget: modify_estimated_budget, // eslint-disable-line
+            shopping_datum_id: modify_shopping_datum_id, // eslint-disable-line
+          };
+          await shoppingDatumUpdate(shoppingDataParams);
+        }
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
+    }
+  };
+
+  const onCloseShoppingDatum = () => {
+    setShoppingMemoList();
+    setReadOnly(true);
+    closeShoppingDatum();
   };
 
   const onOneSubmit = () => {
@@ -156,62 +194,63 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const { separateCookies } = useCookie();
 
   useEffect(() => {
-    const setShoppingMemoList = async () => {
-      setLoading(true);
-      const userId = separateCookies("_user_id");
-      if (userId) {
-        const memosProps = {
-          userId,
-          shoppingDataId: id,
-        };
-        try {
-          const shoppingDatumRes = await shoppingDatumShow(memosProps);
-          if (shoppingDatumRes?.status === 200) {
-            setShoppingDatumValues(shoppingDatumRes.data);
-            setValue("shopping_date", shoppingDatumRes.data.shoppingDate);
-            setValue("shopping_datum_id", id);
-            setValue("estimated_budget", shoppingDatumRes.data.estimatedBudget);
-
-            const shopProps = {
-              userId,
-              shopId: shoppingDatumRes.data.shopId,
-            };
-            const shopRes = await shopShow(shopProps);
-            if (shopRes.status === 200) {
-              setShopDataValues(shopRes.data);
-              setValue("shop_name", shopRes.data.shopName);
-              const listProps = {
-                userId,
-                shoppingDataId: id,
-              };
-              const shoppingListRes: OkaimonoMemosDataResponse = await memosShow(listProps);
-              if (shopRes.status === 200) {
-                setListValues(shoppingListRes.data);
-                for (let i = fields.length; i < shoppingListRes.data.length; i++) {
-                  append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
-                }
-                shoppingListRes.data.forEach((list, index) => {
-                  setValue(`listForm.${index}.price`, list.price);
-                  setValue(`listForm.${index}.amount`, list.amount);
-                  setValue(`listForm.${index}.purchase_name`, list.purchaseName);
-                  setValue(`listForm.${index}.amount`, list.amount);
-                  setValue(`listForm.${index}.id`, list.id);
-                  setValue(`listForm.${index}.asc`, list.asc);
-                });
-              }
-            }
-          }
-          setLoading(false);
-        } catch (err) {
-          setLoading(false);
-          const axiosError = err as AxiosError;
-          console.error(axiosError.response);
-          showMessage({ title: "エラーが発生しました。", status: "error" });
-        }
-      }
-    };
     setShoppingMemoList();
   }, []);
+
+  const setShoppingMemoList = async () => {
+    setLoading(true);
+    const userId = separateCookies("_user_id");
+    if (userId) {
+      const memosProps = {
+        userId,
+        shoppingDataId: id,
+      };
+      try {
+        const shoppingDatumRes = await shoppingDatumShow(memosProps);
+        if (shoppingDatumRes?.status === 200) {
+          setShoppingDatumValues(shoppingDatumRes.data);
+          setValue("shopping_date", shoppingDatumRes.data.shoppingDate);
+          setValue("shopping_datum_id", id);
+          setValue("estimated_budget", shoppingDatumRes.data.estimatedBudget);
+
+          const shopProps = {
+            userId,
+            shopId: shoppingDatumRes.data.shopId,
+          };
+          const shopRes = await shopShow(shopProps);
+          if (shopRes.status === 200) {
+            setShopDataValues(shopRes.data);
+            setValue("shop_name", shopRes.data.shopName);
+            const listProps = {
+              userId,
+              shoppingDataId: id,
+            };
+            const shoppingListRes: OkaimonoMemosDataResponse = await memosShow(listProps);
+            if (shopRes.status === 200) {
+              setListValues(shoppingListRes.data);
+              for (let i = fields.length; i < shoppingListRes.data.length; i++) {
+                append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
+              }
+              shoppingListRes.data.forEach((list, index) => {
+                setValue(`listForm.${index}.price`, list.price);
+                setValue(`listForm.${index}.amount`, list.amount);
+                setValue(`listForm.${index}.purchase_name`, list.purchaseName);
+                setValue(`listForm.${index}.amount`, list.amount);
+                setValue(`listForm.${index}.id`, list.id);
+                setValue(`listForm.${index}.asc`, list.asc);
+              });
+            }
+          }
+        }
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
+    }
+  };
 
   const onClickListModify = (index: number) => (event: React.MouseEvent) => {
     if (listValues) {
@@ -231,7 +270,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
       shoppingDatumSetValue("modify_shopping_memo", shoppingDatumValues.shoppingMemo);
       shoppingDatumSetValue("modify_shopping_datum_id", shoppingDatumValues.id);
       if (shopDataValue) {
-        shoppingDatumSetValue("modifiy_shop_name", shopDataValue.shopName);
+        shoppingDatumSetValue("modify_shop_name", shopDataValue.shopName);
         onShoppingDatumOpen();
       }
     }
@@ -408,7 +447,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
       </form>
 
       <form onSubmit={shoppiingDatumModifyHandleSubmit(shoppingDatumSubmit)}>
-        <Modal isOpen={isShoppingDatumOpen} onClose={onCloseShoppingDatum}>
+        <Modal isOpen={isShoppingDatumOpen} onClose={closeShoppingDatum}>
           <ModalOverlay />
           <ModalContent bg="gray.100" maxW="95vw">
             <ModalHeader>選択したお買い物メモ情報</ModalHeader>
@@ -432,12 +471,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     size="md"
                     w="90%"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modifiy_shop_name", {
+                    {...shoppingDatumRegister("modify_shop_name", {
                       maxLength: { value: 35, message: "最大文字数は35文字までです。" },
                     })}
                   />
-                  {shoppingDatumErrors.modifiy_shop_name && shoppingDatumErrors.modifiy_shop_name.types?.maxLength && (
-                    <Box color="red">{shoppingDatumErrors.modifiy_shop_name.types.maxLength}</Box>
+                  {shoppingDatumErrors.modify_shop_name && shoppingDatumErrors.modify_shop_name.types?.maxLength && (
+                    <Box color="red">{shoppingDatumErrors.modify_shop_name.types.maxLength}</Box>
                   )}
                   <InputGroup w="90%">
                     <Input
@@ -445,7 +484,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       size="md"
                       placeholder={!readOnly ? "お買い物の予算" : ""}
-                      // type="number"
+                      type="number"
                       fontSize={{ base: "sm", md: "md" }}
                       {...shoppingDatumRegister("modify_estimated_budget", {
                         pattern: {
@@ -473,9 +512,10 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       maxLength: { value: 150, message: "最大文字数は150文字です。" },
                     })}
                   />
-                  {shoppingDatumErrors.modify_shopping_memo && shoppingDatumErrors.modify_shopping_memo.types?.maxLength && (
-                    <Box color="red">{shoppingDatumErrors.modify_shopping_memo.types.maxLength}</Box>
-                  )}
+                  {shoppingDatumErrors.modify_shopping_memo &&
+                    shoppingDatumErrors.modify_shopping_memo.types?.maxLength && (
+                      <Box color="red">{shoppingDatumErrors.modify_shopping_memo.types.maxLength}</Box>
+                    )}
                   <Input type="hidden" {...shoppingDatumRegister(`modify_shopping_datum_id`)} />
                 </Stack>
               </Box>
