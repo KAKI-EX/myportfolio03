@@ -22,7 +22,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           type="date"
           w="90%"
           fontSize={{ base: "sm", md: "md" }}
-          {...register("shopping_date")}
+          {...register("shoppingDate")}
         />
         <Input
           isReadOnly={readOnly}
@@ -31,12 +31,12 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           size="md"
           w="90%"
           fontSize={{ base: "sm", md: "md" }}
-          {...register("shop_name", {
+          {...register("shopName", {
             maxLength: { value: 35, message: "最大文字数は35文字までです。" },
           })}
         />
-        {errors.shop_name && errors.shop_name.types?.maxLength && (
-          <Box color="red">{errors.shop_name.types.maxLength}</Box>
+        {errors.shopName && errors.shopName.types?.maxLength && (
+          <Box color="red">{errors.shopName.types.maxLength}</Box>
         )}
         <InputGroup w="90%">
           <Input
@@ -46,7 +46,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
             placeholder={!readOnly ? "お買い物の予算" : ""}
             type="number"
             fontSize={{ base: "sm", md: "md" }}
-            {...register("estimated_budget", {
+            {...register("estimatedBudget", {
               pattern: {
                 value: validationNumber,
                 message: "半角整数で入力してください。",
@@ -57,8 +57,8 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
             円
           </InputRightElement>
         </InputGroup>
-        {errors.estimated_budget && errors.estimated_budget.types?.pattern && (
-          <Box color="red">{errors.estimated_budget.types.pattern}</Box>
+        {errors.estimatedBudget && errors.estimatedBudget.types?.pattern && (
+          <Box color="red">{errors.estimatedBudget.types.pattern}</Box>
         )}
         <Input
           isReadOnly={readOnly}
@@ -67,14 +67,14 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           size="md"
           w="90%"
           fontSize={{ base: "sm", md: "md" }}
-          {...register("shopping_memo", {
+          {...register("shoppingMemo", {
             maxLength: { value: 150, message: "最大文字数は150文字です。" },
           })}
         />
-        {errors.shopping_memo && errors.shopping_memo.types?.maxLength && (
-          <Box color="red">{errors.shopping_memo.types.maxLength}</Box>
+        {errors.shoppingMemo && errors.shoppingMemo.types?.maxLength && (
+          <Box color="red">{errors.shoppingMemo.types.maxLength}</Box>
         )}
-        <Input type="hidden" {...register(`shopping_datum_id`)} />
+        <Input type="hidden" {...register(`shoppingDatumId`)} />
       </Stack>
     </Box>
   );

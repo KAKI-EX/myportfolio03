@@ -29,17 +29,17 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
     try {
       const shoppingRes: OkaimonoMemoDataShowResponse | undefined = await getOkaimonoShow();
       if (shoppingRes?.status === 200) {
-        setValue("shopping_date", shoppingRes.data.shoppingDate);
-        setValue("estimated_budget", shoppingRes.data.estimatedBudget);
-        setValue("shopping_memo", shoppingRes.data.shoppingMemo);
-        setValue("shopping_datum_id", shoppingRes.data.id);
+        setValue("shoppingDate", shoppingRes.data.shoppingDate);
+        setValue("estimatedBudget", shoppingRes.data.estimatedBudget);
+        setValue("shoppingMemo", shoppingRes.data.shoppingMemo);
+        setValue("shoppingDatumId", shoppingRes.data.id);
         const shopProps: shopPropsType = {
           userId: shoppingRes.data.userId,
           shopId: shoppingRes.data.shopId,
         };
         const shopRes: OkaimonoShopDataResponse = await shopShow(shopProps);
         if (shopRes.status === 200) {
-          setValue("shop_name", shopRes.data.shopName);
+          setValue("shopName", shopRes.data.shopName);
           const memosProps: memoProps = {
             userId: shoppingRes.data.userId,
             shoppingDataId: shoppingRes.data.id,
@@ -47,23 +47,23 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
           const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
           for (let i = fields.length; i < memosRes.data.length; i++) {
             append({
-              purchase_name: "",
+              purchaseName: "",
               price: "",
-              shopping_detail_memo: "",
+              shoppingDetailMemo: "",
               amount: "",
               id: "",
-              expiry_date_start: "",
-              expiry_date_end: "",
+              expiryDateStart: "",
+              expiryDateEnd: "",
             });
           }
           memosRes.data.forEach((m, index) => {
-            setValue(`listForm.${index}.purchase_name`, m.purchaseName);
+            setValue(`listForm.${index}.purchaseName`, m.purchaseName);
             setValue(`listForm.${index}.price`, m.price);
-            setValue(`listForm.${index}.shopping_detail_memo`, m.shoppingDetailMemo);
+            setValue(`listForm.${index}.shoppingDetailMemo`, m.shoppingDetailMemo);
             setValue(`listForm.${index}.amount`, m.amount);
             setValue(`listForm.${index}.id`, m.id);
-            setValue(`listForm.${index}.expiry_date_start`, m.expiryDateStart);
-            setValue(`listForm.${index}.expiry_date_end`, m.expiryDateEnd);
+            setValue(`listForm.${index}.expiryDateStart`, m.expiryDateStart);
+            setValue(`listForm.${index}.expiryDateEnd`, m.expiryDateEnd);
             if (m.expiryDateStart) {
               setExpiryDate(true);
             }

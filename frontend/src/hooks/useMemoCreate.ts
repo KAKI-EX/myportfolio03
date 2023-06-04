@@ -7,7 +7,7 @@ import { useMessage } from "./useToast";
 
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  total_budget: number; // eslint-disable-line
+  totalBudget: number;
 };
 
 export const useMemoCreate = (props: Props) => {
@@ -17,51 +17,44 @@ export const useMemoCreate = (props: Props) => {
   const history = useHistory();
   const { showMessage } = useMessage();
 
-  const { setLoading, total_budget } = props; // eslint-disable-line
+  const { setLoading, totalBudget } = props;
 
   const sendDataToAPI = async (formData: MergeParams) => {
     console.log("カスタムフックsendDataToAPIが走っています");
 
-    const user_id = separateCookies("_user_id"); // eslint-disable-line
-    const {
-      shop_name, // eslint-disable-line
-      shopping_date, // eslint-disable-line
-      shopping_memo, // eslint-disable-line
-      estimated_budget, // eslint-disable-line
-      expiry_date_start, // eslint-disable-line
-      expiry_date_end, // eslint-disable-line
-    } = formData; // eslint-disable-line
-    const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
+    const userId = separateCookies("_user_id");
+    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, expiryDateStart, expiryDateEnd } = formData;
+    const shopParams: MergeParams = { userId, shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {
       setLoading(true);
       const shopCreateRes = await shopCreate(shopParams);
       if (shopCreateRes.status === 200) {
-        const shop_id = shopCreateRes.data.id; // eslint-disable-line
+        const shopId = shopCreateRes.data.id;
         const shoppingDataParams: MergeParams = {
-          user_id,
-          shop_id,
-          shopping_date,
-          shopping_memo,
-          estimated_budget,
-          total_budget,
+          userId,
+          shopId,
+          shoppingDate,
+          shoppingMemo,
+          estimatedBudget,
+          totalBudget,
         };
         const shoppingDatumCreateRes = await shoppingDatumCreate(shoppingDataParams);
         if (shoppingDatumCreateRes.status === 200) {
-          const shopping_datum_id = shoppingDatumCreateRes.data.id; // eslint-disable-line
+          const shoppingDatumId = shoppingDatumCreateRes.data.id;
           const memosParams = {
             memos: (formData.listForm || []).map((data: ListFormParams) => {
               return {
-                user_id,
-                shop_id,
-                shopping_datum_id,
-                purchase_name: data.purchase_name,
+                userId,
+                shopId,
+                shoppingDatumId,
+                purchaseName: data.purchaseName,
                 price: data.price,
-                shopping_detail_memo: data.shopping_detail_memo,
+                shoppingDetailMemo: data.shoppingDetailMemo,
                 amount: data.amount,
-                shopping_date,
-                expiry_date_start: data.expiry_date_start,
-                expiry_date_end: data.expiry_date_end,
+                shoppingDate,
+                expiryDateStart: data.expiryDateStart,
+                expiryDateEnd: data.expiryDateEnd,
               };
             }),
           };

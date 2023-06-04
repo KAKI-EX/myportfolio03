@@ -34,6 +34,7 @@ export const useUpdateShopData = (props: Props) => {
         setShopsIndex(setResIndexPage);
       } catch (err) {
         const axiosError = err as AxiosError;
+        console.error(axiosError.response);
         showMessage({ title: axiosError.response?.data.errors, status: "error" });
       }
     }

@@ -79,8 +79,8 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
-      shopping_date: formattedDefaultShoppingDate,
-      listForm: [{ price: "", id: "", amount: "", purchase_name: "", asc: "" }],
+      shoppingDate: formattedDefaultShoppingDate,
+      listForm: [{ price: "", id: "", amount: "", purchaseName: "", asc: "" }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -110,7 +110,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     mode: "all",
   });
 
-  const startDate = listWatch(`modify_expiry_date_start`);
+  const startDate = listWatch(`modifyExpiryDateStart`);
   // ----------------------------------------------------------------------------------------------------------
 
   // ReactHookFormの機能呼び出し、デフォルト値の設定。
@@ -122,7 +122,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
 
-  const shoppingBudgetField = watch("estimated_budget");
+  const shoppingBudgetField = watch("estimatedBudget");
   const watchedPriceFields = fields.map((field, index) => ({
     price: watch(`listForm.${index}.price`),
     amount: watch(`listForm.${index}.amount`),
@@ -138,25 +138,20 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     console.log("これやねん", shoppingDatumFormData);
     if (!readOnly) {
       const userId = separateCookies("_user_id");
-      const {
-        modify_shop_name, // eslint-disable-line
-        modify_shopping_date, // eslint-disable-line
-        modify_shopping_memo, // eslint-disable-line
-        modify_estimated_budget, // eslint-disable-line
-        modify_shopping_datum_id, // eslint-disable-line
-      } = shoppingDatumFormData; // eslint-disable-line
-      const shopParams: MergeParams = { user_id: userId, shop_name: modify_shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
+      const { modifyShopName, modifyshoppingDate, modifyShoppingMemo, modifyEstimatedBudget, modyfyShoppingDatumId } =
+        shoppingDatumFormData;
+      const shopParams: MergeParams = { userId, shopName: modifyShopName || "お店名称未設定でのお買い物" };
       try {
         const shopUpdateRes = await shopCreate(shopParams);
         if (shopUpdateRes.status === 200) {
           const shopId = shopUpdateRes.data.id;
           const shoppingDataParams: MergeParams = {
-            user_id: userId, // eslint-disable-line
-            shop_id: shopId, // eslint-disable-line
-            shopping_date: modify_shopping_date, // eslint-disable-line
-            shopping_memo: modify_shopping_memo, // eslint-disable-line
-            estimated_budget: modify_estimated_budget, // eslint-disable-line
-            shopping_datum_id: modify_shopping_datum_id, // eslint-disable-line
+            userId,
+            shopId,
+            shoppingDate: modifyshoppingDate,
+            shoppingMemo: modifyShoppingMemo,
+            estimatedBudget: modifyEstimatedBudget,
+            shoppingDatumId: modyfyShoppingDatumId,
           };
           await shoppingDatumUpdate(shoppingDataParams);
         }
@@ -209,9 +204,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         const shoppingDatumRes = await shoppingDatumShow(memosProps);
         if (shoppingDatumRes?.status === 200) {
           setShoppingDatumValues(shoppingDatumRes.data);
-          setValue("shopping_date", shoppingDatumRes.data.shoppingDate);
-          setValue("shopping_datum_id", id);
-          setValue("estimated_budget", shoppingDatumRes.data.estimatedBudget);
+          setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
+          setValue("shoppingDatumId", id);
+          setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
 
           const shopProps = {
             userId,
@@ -220,7 +215,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           const shopRes = await shopShow(shopProps);
           if (shopRes.status === 200) {
             setShopDataValues(shopRes.data);
-            setValue("shop_name", shopRes.data.shopName);
+            setValue("shopName", shopRes.data.shopName);
             const listProps = {
               userId,
               shoppingDataId: id,
@@ -229,12 +224,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             if (shopRes.status === 200) {
               setListValues(shoppingListRes.data);
               for (let i = fields.length; i < shoppingListRes.data.length; i++) {
-                append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
+                append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
               }
               shoppingListRes.data.forEach((list, index) => {
                 setValue(`listForm.${index}.price`, list.price);
                 setValue(`listForm.${index}.amount`, list.amount);
-                setValue(`listForm.${index}.purchase_name`, list.purchaseName);
+                setValue(`listForm.${index}.purchaseName`, list.purchaseName);
                 setValue(`listForm.${index}.amount`, list.amount);
                 setValue(`listForm.${index}.id`, list.id);
                 setValue(`listForm.${index}.asc`, list.asc);
@@ -254,23 +249,23 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   const onClickListModify = (index: number) => (event: React.MouseEvent) => {
     if (listValues) {
-      listSetValue("modify_purchase_name", listValues[index].purchaseName);
-      listSetValue("modify_amount", listValues[index].amount);
-      listSetValue("modify_memo", listValues[index].shoppingDetailMemo);
-      listSetValue("modify_expiry_date_start", listValues[index].expiryDateStart);
-      listSetValue("modify_expiry_date_end", listValues[index].expiryDateEnd);
+      listSetValue("modifyPurchaseName", listValues[index].purchaseName);
+      listSetValue("modifyAmount", listValues[index].amount);
+      listSetValue("modifyMemo", listValues[index].shoppingDetailMemo);
+      listSetValue("modifyExpiryDateStart", listValues[index].expiryDateStart);
+      listSetValue("modifyExpiryDateEnd", listValues[index].expiryDateEnd);
       onListOpen();
     }
   };
 
   const onClickShoppingDatumModify = () => (event: React.MouseEvent) => {
     if (shoppingDatumValues) {
-      shoppingDatumSetValue("modify_shopping_date", shoppingDatumValues.shoppingDate);
-      shoppingDatumSetValue("modify_estimated_budget", shoppingDatumValues.estimatedBudget);
-      shoppingDatumSetValue("modify_shopping_memo", shoppingDatumValues.shoppingMemo);
-      shoppingDatumSetValue("modify_shopping_datum_id", shoppingDatumValues.id);
+      shoppingDatumSetValue("modifyshoppingDate", shoppingDatumValues.shoppingDate);
+      shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
+      shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);
+      shoppingDatumSetValue("modyfyShoppingDatumId", shoppingDatumValues.id);
       if (shopDataValue) {
-        shoppingDatumSetValue("modify_shop_name", shopDataValue.shopName);
+        shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
         onShoppingDatumOpen();
       }
     }
@@ -302,7 +297,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     type="date"
                     w="100%"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...register("shopping_date")}
+                    {...register("shoppingDate")}
                   />
                   <Input
                     isReadOnly={readOnly}
@@ -311,12 +306,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     size="md"
                     w="100%"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...register("shop_name", {
+                    {...register("shopName", {
                       maxLength: { value: 35, message: "最大文字数は35文字までです。" },
                     })}
                   />
-                  {errors.shop_name && errors.shop_name.types?.maxLength && (
-                    <Box color="red">{errors.shop_name.types.maxLength}</Box>
+                  {errors.shopName && errors.shopName.types?.maxLength && (
+                    <Box color="red">{errors.shopName.types.maxLength}</Box>
                   )}
                   <InputGroup w="100%">
                     <Input
@@ -326,13 +321,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       placeholder={!readOnly ? "お買い物の予算" : ""}
                       type="number"
                       fontSize={{ base: "sm", md: "md" }}
-                      {...register("estimated_budget")}
+                      {...register("estimatedBudget")}
                     />
                     <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
                       円
                     </InputRightElement>
                   </InputGroup>
-                  <Input type="hidden" {...register(`shopping_datum_id`)} />
+                  <Input type="hidden" {...register(`shoppingDatumId`)} />
                 </Stack>
                 <Box w="5%">
                   <Menu>
@@ -355,7 +350,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       px={1}
                       ml={0}
                       readOnly
-                      {...register(`listForm.${index}.purchase_name`)}
+                      {...register(`listForm.${index}.purchaseName`)}
                     />
                     <InputGroup w="17%">
                       <Input
@@ -427,11 +422,10 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             >
               <Box mt={4}>
                 <Box as="p" color="white">
-                  現在の合計(税別): {totalBudget}円 {/* eslint-disable-line */}
+                  現在の合計(税別): {totalBudget}円
                 </Box>
-                {/* eslint-disable-next-line */}
+
                 <Box as="p" color={Number(shoppingBudgetField || "") < totalBudget ? "red.500" : "white"}>
-                  {/* eslint-disable-next-line */}
                   お買い物予算残り: {Number(shoppingBudgetField || "") - totalBudget}円
                 </Box>
               </Box>
@@ -462,7 +456,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     type="date"
                     w="90%"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modify_shopping_date")}
+                    {...shoppingDatumRegister("modifyshoppingDate")}
                   />
                   <Input
                     isReadOnly={readOnly}
@@ -471,12 +465,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     size="md"
                     w="90%"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modify_shop_name", {
+                    {...shoppingDatumRegister("modifyShopName", {
                       maxLength: { value: 35, message: "最大文字数は35文字までです。" },
                     })}
                   />
-                  {shoppingDatumErrors.modify_shop_name && shoppingDatumErrors.modify_shop_name.types?.maxLength && (
-                    <Box color="red">{shoppingDatumErrors.modify_shop_name.types.maxLength}</Box>
+                  {shoppingDatumErrors.modifyShopName && shoppingDatumErrors.modifyShopName.types?.maxLength && (
+                    <Box color="red">{shoppingDatumErrors.modifyShopName.types.maxLength}</Box>
                   )}
                   <InputGroup w="90%">
                     <Input
@@ -486,7 +480,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       placeholder={!readOnly ? "お買い物の予算" : ""}
                       type="number"
                       fontSize={{ base: "sm", md: "md" }}
-                      {...shoppingDatumRegister("modify_estimated_budget", {
+                      {...shoppingDatumRegister("modifyEstimatedBudget", {
                         pattern: {
                           value: validationNumber,
                           message: "半角整数で入力してください。",
@@ -497,9 +491,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       円
                     </InputRightElement>
                   </InputGroup>
-                  {shoppingDatumErrors.modify_estimated_budget &&
-                    shoppingDatumErrors.modify_estimated_budget.types?.pattern && (
-                      <Box color="red">{shoppingDatumErrors.modify_estimated_budget.types.pattern}</Box>
+                  {shoppingDatumErrors.modifyEstimatedBudget &&
+                    shoppingDatumErrors.modifyEstimatedBudget.types?.pattern && (
+                      <Box color="red">{shoppingDatumErrors.modifyEstimatedBudget.types.pattern}</Box>
                     )}
                   <Input
                     isReadOnly={readOnly}
@@ -508,15 +502,15 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     size="md"
                     w="90%"
                     fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modify_shopping_memo", {
+                    {...shoppingDatumRegister("modifyShoppingMemo", {
                       maxLength: { value: 150, message: "最大文字数は150文字です。" },
                     })}
                   />
-                  {shoppingDatumErrors.modify_shopping_memo &&
-                    shoppingDatumErrors.modify_shopping_memo.types?.maxLength && (
-                      <Box color="red">{shoppingDatumErrors.modify_shopping_memo.types.maxLength}</Box>
+                  {shoppingDatumErrors.modifyShoppingMemo &&
+                    shoppingDatumErrors.modifyShoppingMemo.types?.maxLength && (
+                      <Box color="red">{shoppingDatumErrors.modifyShoppingMemo.types.maxLength}</Box>
                     )}
-                  <Input type="hidden" {...shoppingDatumRegister(`modify_shopping_datum_id`)} />
+                  <Input type="hidden" {...shoppingDatumRegister(`modyfyShoppingDatumId`)} />
                 </Stack>
               </Box>
             </ModalBody>
@@ -551,7 +545,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                         placeholder="商品名"
                         w="70%"
                         fontSize={{ base: "sm", md: "md" }}
-                        {...listRegister(`modify_purchase_name`, {
+                        {...listRegister(`modifyPurchaseName`, {
                           required: { value: true, message: "商品名が入力されていません" },
                           maxLength: { value: 30, message: "最大文字数は30文字までです。" },
                         })}
@@ -563,7 +557,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                           placeholder="個数"
                           type="number"
                           fontSize={{ base: "sm", md: "md" }}
-                          {...listRegister(`modify_amount`, {
+                          {...listRegister(`modifyAmount`, {
                             max: { value: 99, message: "上限は99までです。" },
                             pattern: { value: validationNumber, message: "半角整数で入力してください。" },
                           })}
@@ -573,16 +567,16 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                         </InputRightElement>
                       </InputGroup>
                     </HStack>
-                    {listErrors.modify_purchase_name && (
+                    {listErrors.modifyPurchaseName && (
                       <Box color="red" fontSize="sm">
-                        {listErrors.modify_purchase_name?.types?.required}
-                        {listErrors.modify_purchase_name?.types?.maxLength}
+                        {listErrors.modifyPurchaseName?.types?.required}
+                        {listErrors.modifyPurchaseName?.types?.maxLength}
                       </Box>
                     )}
-                    {listErrors.modify_amount && (
+                    {listErrors.modifyAmount && (
                       <Box color="red" fontSize="sm">
-                        {listErrors.modify_amount?.types?.max}
-                        {listErrors.modify_amount?.types?.pattern}
+                        {listErrors.modifyAmount?.types?.max}
+                        {listErrors.modifyAmount?.types?.pattern}
                       </Box>
                     )}
                     <Input
@@ -590,13 +584,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       placeholder="メモ"
                       fontSize={{ base: "sm", md: "md" }}
-                      {...listRegister(`modify_memo`, {
+                      {...listRegister(`modifyMemo`, {
                         maxLength: { value: 150, message: "最大文字数は150文字です。" },
                       })}
                     />
-                    {listErrors.modify_memo && (
+                    {listErrors.modifyMemo && (
                       <Box color="red" fontSize="sm">
-                        {listErrors.modify_memo?.types?.maxLength}
+                        {listErrors.modifyMemo?.types?.maxLength}
                       </Box>
                     )}
                   </VStack>
@@ -611,7 +605,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       type="date"
                       placeholder="消費期限 開始"
-                      {...listRegister(`modify_expiry_date_start`)}
+                      {...listRegister(`modifyExpiryDateStart`)}
                     />
                   </Box>
                   <Box w="50%">
@@ -623,9 +617,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       type="date"
                       placeholder="終了日"
-                      {...listRegister(`modify_expiry_date_end`, {
+                      {...listRegister(`modifyExpiryDateEnd`, {
                         validate: (value) =>
-                          !startDate || // eslint-disable-line
+                          !startDate ||
                           !value ||
                           new Date(value) >= new Date(startDate) ||
                           "終了日は開始日以降の日付を選択してください。",
@@ -633,9 +627,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     />
                   </Box>
                 </HStack>
-                {listErrors.modify_expiry_date_end && (
+                {listErrors.modifyExpiryDateEnd && (
                   <Box color="red" fontSize="sm">
-                    {listErrors.modify_expiry_date_end?.message}
+                    {listErrors.modifyExpiryDateEnd?.message}
                   </Box>
                 )}
               </VStack>

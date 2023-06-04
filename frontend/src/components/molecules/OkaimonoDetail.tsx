@@ -63,7 +63,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
         お買い物リスト
       </Heading>
       {fields.map((field, index) => {
-        const startDate = watch(`listForm.${index}.expiry_date_start`);
+        const startDate = watch(`listForm.${index}.expiryDateStart`);
         return (
           <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
             <VStack spacing={1} w="5%">
@@ -118,7 +118,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                     fontSize={{ base: "sm", md: "md" }}
                     size="md"
                     w="100%"
-                    {...register(`listForm.${index}.purchase_name`, {
+                    {...register(`listForm.${index}.purchaseName`, {
                       required: { value: true, message: "商品名が入力されていません" },
                       maxLength: { value: 30, message: "最大文字数は30文字までです。" },
                     })}
@@ -141,10 +141,10 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   />
                 </Box>
               </HStack>
-              {errors.listForm && errors.listForm[index]?.purchase_name && (
+              {errors.listForm && errors.listForm[index]?.purchaseName && (
                 <Box color="red" fontSize="sm">
-                  {errors.listForm[index]?.purchase_name?.types?.required}
-                  {errors.listForm[index]?.purchase_name?.types?.maxLength}
+                  {errors.listForm[index]?.purchaseName?.types?.required}
+                  {errors.listForm[index]?.purchaseName?.types?.maxLength}
                 </Box>
               )}
               {errors.listForm && errors.listForm[index]?.amount && (
@@ -161,7 +161,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                     placeholder={!readOnly ? "メモ" : ""}
                     fontSize={{ base: "sm", md: "md" }}
                     size="md"
-                    {...register(`listForm.${index}.shopping_detail_memo`, {
+                    {...register(`listForm.${index}.shoppingDetailMemo`, {
                       maxLength: { value: 150, message: "最大文字数は150文字です。" },
                     })}
                   />
@@ -184,9 +184,9 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   </InputGroup>
                 </Box>
               </HStack>
-              {errors.listForm && errors.listForm[index]?.shopping_detail_memo && (
+              {errors.listForm && errors.listForm[index]?.shoppingDetailMemo && (
                 <Box color="red" fontSize="sm">
-                  {errors.listForm[index]?.shopping_detail_memo?.types?.maxLength}
+                  {errors.listForm[index]?.shoppingDetailMemo?.types?.maxLength}
                 </Box>
               )}
               {errors.listForm && errors.listForm[index]?.price && (
@@ -209,7 +209,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                         bg={readOnly ? "blackAlpha.200" : "white"}
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
-                        {...register(`listForm.${index}.expiry_date_start`)}
+                        {...register(`listForm.${index}.expiryDateStart`)}
                       />
                     </Box>
                     <Box w="50%">
@@ -222,17 +222,17 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                         bg={readOnly ? "blackAlpha.200" : "white"}
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
-                        {...register(`listForm.${index}.expiry_date_end`, {
+                        {...register(`listForm.${index}.expiryDateEnd`, {
                           validate: (value) =>
-                            !startDate || // eslint-disable-line
+                            !startDate ||
                             !value ||
                             new Date(value) >= new Date(startDate) ||
                             "終了日は開始日以降の日付を選択してください。",
                         })}
                       />
-                      {errors.listForm && errors.listForm[index]?.expiry_date_end && (
+                      {errors.listForm && errors.listForm[index]?.expiryDateEnd && (
                         <Box color="red" fontSize="sm">
-                          {errors.listForm[index]?.expiry_date_end?.message}
+                          {errors.listForm[index]?.expiryDateEnd?.message}
                         </Box>
                       )}
                     </Box>

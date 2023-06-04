@@ -61,8 +61,8 @@ export const OkaimonoShow: VFC = memo(() => {
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
-      shopping_date: formattedDefaultShoppingDate,
-      listForm: [{ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" }],
+      shoppingDate: formattedDefaultShoppingDate,
+      listForm: [{ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -91,7 +91,7 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // 予算計算
-  const shoppingBudgetField = watch("estimated_budget");
+  const shoppingBudgetField = watch("estimatedBudget");
   const watchedPriceFields = fields.map((field, index) => ({
     price: watch(`listForm.${index}.price`),
     amount: watch(`listForm.${index}.amount`),
@@ -99,8 +99,8 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // 予算計算
-  // eslint-disable-next-line
-  const total_budget = watchedPriceFields.reduce(
+  //
+  const totalBudget = watchedPriceFields.reduce(
     (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
     0
   );
@@ -109,14 +109,14 @@ export const OkaimonoShow: VFC = memo(() => {
   // フォーム追加機能
   const insertInputForm = (index: number) => {
     insert(index + 1, {
-      purchase_name: "",
+      purchaseName: "",
       price: "",
-      shopping_detail_memo: "",
+      shoppingDetailMemo: "",
       amount: "",
       id: "",
       asc: "",
-      expiry_date_start: formattedDefaultShoppingDate,
-      expiry_date_end: "",
+      expiryDateStart: formattedDefaultShoppingDate,
+      expiryDateEnd: "",
     });
   };
 
@@ -131,8 +131,8 @@ export const OkaimonoShow: VFC = memo(() => {
   // Createアクション送信分はsendUpdateToAPIの中で削除している。その後にupdateアクションを行っているため、戻り値の中にCreateアクションの
   // データがない。そのため、sendUpdataToAPIの戻り値の配列0番目のuserIdとshoppingDatumIdを元にShowアクションを実行してsetValueしている。
   // 戻り値をsetValueせずに反映しない方法(リロードすると消える)もあるが、その状態でupdateアクションを再度送ると、仕様上、新規作成アクションで
-  // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をmemo_idの有無で検知しているため)
-  const props = { setLoading, total_budget };
+  // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をmemoIdの有無で検知しているため)
+  const props = { setLoading, totalBudget };
   const sendUpdateToAPI = useMemoUpdate(props);
   const onSubmit = useCallback(
     async (formData: MergeParams) => {
@@ -148,12 +148,12 @@ export const OkaimonoShow: VFC = memo(() => {
         };
         const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
         for (let i = fields.length; i < memosRes.data.length; i++) {
-          append({ purchase_name: "", price: "", shopping_detail_memo: "", amount: "", id: "", asc: "" });
+          append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
         }
         memosRes.data.forEach((m, index) => {
-          setValue(`listForm.${index}.purchase_name`, m.purchaseName);
+          setValue(`listForm.${index}.purchaseName`, m.purchaseName);
           setValue(`listForm.${index}.price`, m.price);
-          setValue(`listForm.${index}.shopping_detail_memo`, m.shoppingDetailMemo);
+          setValue(`listForm.${index}.shoppingDetailMemo`, m.shoppingDetailMemo);
           setValue(`listForm.${index}.amount`, m.amount);
           setValue(`listForm.${index}.id`, m.id);
         });
@@ -219,12 +219,11 @@ export const OkaimonoShow: VFC = memo(() => {
           >
             <Box mt={4}>
               <Box as="p" color="white">
-                現在の合計(税別): {total_budget}円 {/* eslint-disable-line */}
+                現在の合計(税別): {totalBudget}円
               </Box>
-              {/* eslint-disable-next-line */}
-              <Box as="p" color={Number(shoppingBudgetField || "") < total_budget ? "red.500" : "white"}>
-                {/* eslint-disable-next-line */}
-                お買い物予算残り: {Number(shoppingBudgetField || "") - total_budget}円
+
+              <Box as="p" color={Number(shoppingBudgetField || "") < totalBudget ? "red.500" : "white"}>
+                お買い物予算残り: {Number(shoppingBudgetField || "") - totalBudget}円
               </Box>
             </Box>
             <Stack w="80%" py="3%">

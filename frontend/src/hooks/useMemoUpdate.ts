@@ -9,7 +9,7 @@ import { useMessage } from "./useToast";
 
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  total_budget: number; // eslint-disable-line
+  totalBudget: number;
 };
 
 export const useMemoUpdate = (props: Props) => {
@@ -18,7 +18,7 @@ export const useMemoUpdate = (props: Props) => {
   const history = useHistory();
   const { showMessage } = useMessage();
 
-  const { setLoading, total_budget } = props; // eslint-disable-line
+  const { setLoading, totalBudget } = props;
 
   const sendUpdateToAPI = async (
     formData: MergeParams,
@@ -26,70 +26,64 @@ export const useMemoUpdate = (props: Props) => {
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     console.log("カスタムフックsendDataToAPIが走っています");
-    const user_id = separateCookies("_user_id"); // eslint-disable-line
-    const {
-      shop_name, // eslint-disable-line
-      shopping_date, // eslint-disable-line
-      shopping_memo, // eslint-disable-line
-      estimated_budget, // eslint-disable-line
-      shopping_datum_id, // eslint-disable-line
-    } = formData; // eslint-disable-line
-    const shopParams: MergeParams = { user_id, shop_name: shop_name || "お店名称未設定でのお買い物" }; // eslint-disable-line
+    const userId = separateCookies("_user_id");
+    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId } = formData;
+    const shopParams: MergeParams = { userId, shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {
       setLoading(true);
       const shopUpdateRes = await shopCreate(shopParams); // updateアクションだがcreateで問題なし。変数名だけupdateに変更。
       if (shopUpdateRes.status === 200) {
-        const shop_id = shopUpdateRes.data.id; // eslint-disable-line
+        const shopId = shopUpdateRes.data.id;
         const shoppingDataParams: MergeParams = {
-          user_id,
-          shop_id,
-          shopping_date,
-          shopping_memo,
-          estimated_budget,
-          total_budget,
-          shopping_datum_id,
+          userId,
+          shopId,
+          shoppingDate,
+          shoppingMemo,
+          estimatedBudget,
+          totalBudget,
+          shoppingDatumId,
         };
         const shoppingDatumUpdateRes = await shoppingDatumUpdate(shoppingDataParams);
         if (shoppingDatumUpdateRes.status === 200) {
-          const shopping_datum_id = shoppingDatumUpdateRes.data.id; // eslint-disable-line
+          const resShoppingDatumId = shoppingDatumUpdateRes.data.id;
           const memosParams = {
             memos: (formData.listForm || []).map((data: ListFormParams) => {
               return {
-                user_id,
-                shop_id,
-                shopping_datum_id,
-                purchase_name: data.purchase_name,
+                userId,
+                shopId,
+                shoppingDatumId: resShoppingDatumId,
+                purchaseName: data.purchaseName,
                 price: data.price,
-                shopping_detail_memo: data.shopping_detail_memo,
+                shoppingDetailMemo: data.shoppingDetailMemo,
                 amount: data.amount,
-                shopping_date,
-                memo_id: data.id,
+                shoppingDate,
+                memoId: data.id,
                 asc: data.asc,
-                expiry_date_start: data.expiry_date_start,
-                expiry_date_end: data.expiry_date_end,
+                expiryDateStart: data.expiryDateStart,
+                expiryDateEnd: data.expiryDateEnd,
               };
             }),
           };
           // ---------------------------------------------------------------
           // show画面でフォームを追加した場合を検知して新規で登録する。(updateアクションで対応できないため)
 
-          if (memosParams.memos.some((memo) => memo.memo_id === "")) {
+          if (memosParams.memos.some((memo) => memo.memoId === "")) {
             const catchNewMemo = memosParams.memos
-              .filter((newMemo) => !newMemo.memo_id)
+              .filter((newMemo) => !newMemo.memoId)
               .map((newMemo) => {
                 const updateCreate: ListFormParams = {
-                  user_id,
-                  shop_id,
-                  shopping_datum_id,
-                  purchase_name: newMemo.purchase_name,
+                  userId,
+                  shopId,
+                  shoppingDatumId: resShoppingDatumId,
+                  purchaseName: newMemo.purchaseName,
                   price: newMemo.price,
-                  shopping_detail_memo: newMemo.shopping_detail_memo,
+                  shoppingDetailMemo: newMemo.shoppingDetailMemo,
                   amount: newMemo.amount,
-                  shopping_date,
+                  shoppingDate,
                   asc: newMemo.asc,
-                  expiry_date_start: newMemo.expiry_date_start,
-                  expiry_date_end: newMemo.expiry_date_end,
+                  expiryDateStart: newMemo.expiryDateStart,
+                  expiryDateEnd: newMemo.expiryDateEnd,
                 };
                 return updateCreate;
               });
@@ -97,14 +91,14 @@ export const useMemoUpdate = (props: Props) => {
           }
           // ---------------------------------------------------------------
           // 上記で登録したidが空文字の配列を削除。(既存メモのupdateではないのでエラーが発生するため)
-          const existingMemos = memosParams.memos.filter((newMemo) => newMemo.memo_id);
+          const existingMemos = memosParams.memos.filter((newMemo) => newMemo.memoId);
           // ---------------------------------------------------------------
           // 特定メモの削除。show画面で赤✗ボタンを押した際にdeleteIdsにはidが入り、保存ボタン押下で一括削除。
           if (deleteIds.length > 0) {
             const deleteArrays = deleteIds.map((t) => {
               const deleteArray = {
-                user_id,
-                memo_id: t,
+                userId,
+                memoId: t,
               };
               return deleteArray;
             });

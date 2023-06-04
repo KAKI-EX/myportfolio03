@@ -9,11 +9,15 @@ ja:
               blank: "が入力されていません。"
             email:
               blank: "が入力されていません。"
-              taken: "%{value}は既に使用されています。"
+              taken: "「%{value}」は既に使用されています。"
         memo:
           attributes:
             shopping_datum:
               require:
+        shop:
+          attributes:
+            shop_name:
+              taken: "%{value}は既に登録されています。"
     attributes:
       user:
         confirmation_sent_at: パスワード確認送信時刻

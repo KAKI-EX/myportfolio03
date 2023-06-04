@@ -49,15 +49,15 @@ export const OkaimonoMemo: VFC = memo(() => {
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
-      shopping_date: formattedDefaultShoppingDate,
+      shoppingDate: formattedDefaultShoppingDate,
       listForm: [
         {
-          purchase_name: "",
+          purchaseName: "",
           price: "",
-          shopping_detail_memo: "",
+          shoppingDetailMemo: "",
           amount: "",
-          expiry_date_start: formattedDefaultShoppingDate,
-          expiry_date_end: "",
+          expiryDateStart: formattedDefaultShoppingDate,
+          expiryDateEnd: "",
           id: "",
           asc: "",
         },
@@ -73,26 +73,25 @@ export const OkaimonoMemo: VFC = memo(() => {
     keyName: "key", // デフォルトではidだが、keyに変更。
   });
 
-  const shoppingBudgetField = watch("estimated_budget");
+  const shoppingBudgetField = watch("estimatedBudget");
   const watchedPriceFields = fields.map((field, index) => ({
     price: watch(`listForm.${index}.price`),
     amount: watch(`listForm.${index}.amount`),
   }));
 
-  // eslint-disable-next-line
-  const total_budget = watchedPriceFields.reduce(
+  const totalBudget = watchedPriceFields.reduce(
     (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
     0
   );
 
   const insertInputForm = (index: number) => {
     insert(index + 1, {
-      purchase_name: "",
+      purchaseName: "",
       price: "",
-      shopping_detail_memo: "",
+      shoppingDetailMemo: "",
       amount: "",
-      expiry_date_start: "",
-      expiry_date_end: "",
+      expiryDateStart: "",
+      expiryDateEnd: "",
       id: "",
       asc: "",
     });
@@ -105,7 +104,7 @@ export const OkaimonoMemo: VFC = memo(() => {
   }, [fields.length]);
   // ---------------------------------------------------------------------------
   // ここでフォームデータの送信処理を行っている。詳細はuseMemoCreateを参照。
-  const props = { setLoading, total_budget };
+  const props = { setLoading, totalBudget };
   const sendDataToAPI = useMemoCreate(props);
 
   const onSubmit = (formData: MergeParams) => {
@@ -165,12 +164,10 @@ export const OkaimonoMemo: VFC = memo(() => {
           >
             <Box mt={4}>
               <Box as="p" color="white">
-                現在の合計(税別): {total_budget}円 {/* eslint-disable-line */}
+                現在の合計(税別): {totalBudget}円
               </Box>
-              {/* eslint-disable-next-line */}
-              <Box as="p" color={Number(shoppingBudgetField || "") < total_budget ? "red.500" : "white"}>
-                {/* eslint-disable-next-line */}
-                お買い物予算残り: {Number(shoppingBudgetField || "") - total_budget}円
+              <Box as="p" color={Number(shoppingBudgetField || "") < totalBudget ? "red.500" : "white"}>
+                お買い物予算残り: {Number(shoppingBudgetField || "") - totalBudget}円
               </Box>
             </Box>
             <Stack w="80%" py="3%">

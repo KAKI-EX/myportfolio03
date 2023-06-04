@@ -39,6 +39,7 @@ module.exports = {
     "operator-linebreak": "off",
     "indent": "off",
     "react/jsx-indent-props": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "implicit-arrow-linebreak": "off"
   },
 };

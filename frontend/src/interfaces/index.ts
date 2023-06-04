@@ -22,52 +22,52 @@ export interface User {
   nickname?: string;
   image?: string;
   allowPasswordChange: boolean;
-  created_at: Date; // eslint-disable-line
-  updated_at: Date; // eslint-disable-line
+  created_at: Date;
+  updated_at: Date;
 }
 // メモページ
 export interface ListFormParams {
-  user_id?: string;
-  shop_id?: string;
+  userId?: string;
+  shopId?: string;
   id?: string;
   asc?: string;
-  shopping_datum_id?: string;
-  purchase_name?: string;
+  shoppingDatumId?: string;
+  purchaseName?: string;
   price?: string;
-  shopping_detail_memo?: string;
+  shoppingDetailMemo?: string;
   amount?: string;
-  shopping_date?: string;
-  expiry_date_start?: string;
-  expiry_date_end?: string;
+  shoppingDate?: string;
+  expiryDateStart?: string;
+  expiryDateEnd?: string;
 }
 
 export interface MergeParams {
-  shop_name?: string;
-  estimated_budget?: string;
-  shopping_memo?: string;
-  total_budget?: number;
-  user_id?: string;
-  shop_id?: string;
-  shopping_datum_id?: string;
-  purchase_name?: string;
+  shopName?: string;
+  estimatedBudget?: string;
+  shoppingMemo?: string;
+  totalBudget?: number;
+  userId?: string;
+  shopId?: string;
+  shoppingDatumId?: string;
+  purchaseName?: string;
   price?: string;
-  shopping_detail_memo?: string;
+  shoppingDetailMemo?: string;
   amount?: string;
-  shopping_date?: string;
+  shoppingDate?: string;
   shipping_datum_id?: string;
   asc?: string;
-  expiry_date_start?: string;
-  expiry_date_end?: string;
-  modify_purchase_name?: string;
-  modify_amount?: string;
-  modify_memo?: string;
-  modify_expiry_date_start?: string;
-  modify_expiry_date_end?: string;
-  modify_shopping_date?: string;
-  modify_estimated_budget?: string;
-  modify_shopping_memo?: string;
-  modify_shop_name?: string;
-  modify_shopping_datum_id?: string;
+  expiryDateStart?: string;
+  expiryDateEnd?: string;
+  modifyPurchaseName?: string;
+  modifyAmount?: string;
+  modifyMemo?: string;
+  modifyExpiryDateStart?: string;
+  modifyExpiryDateEnd?: string;
+  modifyshoppingDate?: string;
+  modifyEstimatedBudget?: string;
+  modifyShoppingMemo?: string;
+  modifyShopName?: string;
+  modyfyShoppingDatumId?: string;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------
@@ -101,9 +101,9 @@ export interface OkaimonoMemoDataShow {
   totalBudget: string;
   updatedAt: string;
   userId: string;
-  modify_shopping_date?: string;
-  modify_estimated_budget?: string;
-  modify_shopping_memo?: string;
+  modifyshoppingDate?: string;
+  modifyEstimatedBudget?: string;
+  modifyShoppingMemo?: string;
 }
 
 export interface OkaimonoMemoDataShowResponse {
