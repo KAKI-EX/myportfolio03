@@ -10,14 +10,16 @@ type Props = {
   readOnly: boolean;
   setValue: UseFormSetValue<OkaimonoShopModifingData>;
   setShopsIndex: React.Dispatch<React.SetStateAction<OkaimonoShopsDataResponse | undefined>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const useUpdateShopData = (props: Props) => {
   const { showMessage } = useMessage();
-  const { readOnly, setValue, setShopsIndex } = props;
+  const { readOnly, setValue, setShopsIndex, setLoading } = props;
 
   const updateShopData = async (formData: OkaimonoShopModifingData) => {
     if (!readOnly) {
+      setLoading(true);
       try {
         const makeCustomData: OkaimonoShopModifingData = {
           shopName: formData.shopName,
@@ -32,9 +34,12 @@ export const useUpdateShopData = (props: Props) => {
         setValue("userId", updatedShops.data.userId);
         const setResIndexPage = await shopsShow(updatedShops.data.userId);
         setShopsIndex(setResIndexPage);
+        setLoading(false);
+        showMessage({ title: "お店情報の更新が完了しました", status: "success" });
       } catch (err) {
         const axiosError = err as AxiosError;
         console.error(axiosError.response);
+        setLoading(false);
         showMessage({ title: axiosError.response?.data.errors, status: "error" });
       }
     }

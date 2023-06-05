@@ -12,7 +12,8 @@ export const useGetShopIndex = (setShopsIndex: SetShopsIndex) => {
   const { showMessage } = useMessage();
   const userId = separateCookies("_user_id");
 
-  const getShopsIndex = async () => {
+  const getShopsIndex = async (setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setLoading(true);
     try {
       if (userId) {
         const res = await shopsShow(userId);
@@ -20,11 +21,13 @@ export const useGetShopIndex = (setShopsIndex: SetShopsIndex) => {
         if (res?.data.length === 0) {
           showMessage({ title: "まだメモが登録されていません", status: "info" });
         }
+        setLoading(false);
       }
     } catch (err) {
       const axiosError = err as AxiosError;
       console.error(axiosError.response);
       showMessage({ title: "エラーが発生しました。", status: "error" });
+      setLoading(false);
     }
   };
   return getShopsIndex;

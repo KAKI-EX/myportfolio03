@@ -33,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  Spinner,
 } from "@chakra-ui/react";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
@@ -47,6 +48,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
   const [shopsindex, setShopsIndex] = useState<OkaimonoShopsDataResponse>();
   const [shopFormData, setShopFormData] = useState<OkaimonoShopsIndexData>();
   const [readOnly, setReadOnly] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const cancelRef = React.useRef(null);
   // modalを2つ使うため、競合防止のために記述。
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
@@ -56,7 +58,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
   // -------------------------------------------------------------
   // shop一覧の読み込み
   useEffect(() => {
-    getShopsIndex();
+    getShopsIndex(setLoading);
   }, []);
   // -------------------------------------------------------------
   const {
@@ -82,7 +84,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
 
   // -------------------------------------------------------------
   // shop情報のupdate処理を記述
-  const updateShopData = useUpdateShopData({ readOnly, setValue, setShopsIndex });
+  const updateShopData = useUpdateShopData({ readOnly, setValue, setShopsIndex, setLoading });
   const onSubmit = useCallback(
     (formData: OkaimonoShopModifingData) => {
       updateShopData(formData);
@@ -100,7 +102,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
 
   // -------------------------------------------------------------
   // shop情報のdelete処理の記述
-  const deleteShopData = useDeleteShopData({ onDeleteDialogClose, setShopsIndex });
+  const deleteShopData = useDeleteShopData({ onDeleteDialogClose, setShopsIndex, setLoading });
 
   const onClickDelete = useCallback(
     (formData: OkaimonoShopModifingData) => {
@@ -110,7 +112,11 @@ export const OkaimonoShopShow: VFC = memo(() => {
   );
   // -------------------------------------------------------------
 
-  return (
+  return loading ? (
+    <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
+      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+    </Box>
+  ) : (
     <Flex align="center" justify="center" px={3} rounded={10}>
       <VStack w="100rem">
         <Heading as="h2" size="lg" textAlign="center" pt={3}>
