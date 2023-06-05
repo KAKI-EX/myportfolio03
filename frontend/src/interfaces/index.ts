@@ -39,6 +39,8 @@ export interface ListFormParams {
   shoppingDate?: string;
   expiryDateStart?: string;
   expiryDateEnd?: string;
+  memoId?: string;
+  checkbox?: string;
 }
 
 export interface MergeParams {
@@ -63,11 +65,17 @@ export interface MergeParams {
   modifyMemo?: string;
   modifyExpiryDateStart?: string;
   modifyExpiryDateEnd?: string;
-  modifyshoppingDate?: string;
+  modifyShoppingDate?: string;
   modifyEstimatedBudget?: string;
   modifyShoppingMemo?: string;
   modifyShopName?: string;
   modyfyShoppingDatumId?: string;
+  modifyId?: string;
+  modifyAsc?: string;
+  modifyShopId?: string
+  modifyListShoppingDate?: string;
+  modifyListShoppingDatumId?: string;
+  checkbox?: string;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------
@@ -76,7 +84,7 @@ export interface OkaimonoMemoData {
   estimatedBudget: string;
   id: string;
   memosCount: number;
-  shopId: number;
+  shopId: string;
   shoppingDate: string;
   shoppingMemo: string;
   totalBudget: string;
@@ -101,7 +109,7 @@ export interface OkaimonoMemoDataShow {
   totalBudget: string;
   updatedAt: string;
   userId: string;
-  modifyshoppingDate?: string;
+  modifyShoppingDate?: string;
   modifyEstimatedBudget?: string;
   modifyShoppingMemo?: string;
 }
@@ -132,7 +140,7 @@ export interface OkaimonoMemosData {
   memoType: string;
   price: string;
   purchaseName: string;
-  shopId: number;
+  shopId: string;
   shoppingDate: string;
   shoppingDatumId: string;
   shoppingDetailMemo: string;
@@ -169,4 +177,20 @@ export interface OkaimonoShopModifingData {
   userId: string;
   shopId?: string;
   id?: string;
+}
+
+export interface OkaimonoMemoUseModifingData {
+  modifyPurchaseName?: string;
+  modifyAmount?: string;
+  modifyMemo?: string;
+  modifyExpiryDateStart?: string;
+  modifyExpiryDateEnd?: string;
+  modifyShoppingDate?: string;
+  modifyEstimatedBudget?: string;
+  modifyShoppingMemo?: string;
+  modifyShopName?: string;
+  modyfyShoppingDatumId?: string;
+  modifyId?: string;
+  modifyAsc?: string;
+  modifyShopId?: string
 }
