@@ -37,19 +37,20 @@ import {
   OkaimonoMemosDataResponse,
   OkaimonoShopModifingData,
 } from "interfaces";
-import React, { memo, useEffect, useState, VFC } from "react";
+import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
 import { ChevronDownIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useParams } from "react-router-dom";
-import { memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
+import { memoProps, memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
 import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
 import { shopCreate } from "lib/api/post";
 import { memosUpdate, shoppingDatumUpdate } from "lib/api/update";
+import { useMemoUpdate } from "hooks/useMemoUpdate";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -215,10 +216,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   };
   // ----------------------------------------------------------------------------------------------------------
 
-  const onAllSubmit = (listFormData: any) => {
-    console.log("aaaeeaaaeeeasdfa", listFormData);
-  };
-
   const insertInputForm = (index: number) => {
     insert(index + 1, {
       purchaseName: "",
@@ -306,6 +303,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   const onClickListModify = (index: number) => (event: React.MouseEvent) => {
     if (listValues) {
+      getShoppingMemoList();
       listSetValue("modifyPurchaseName", listValues[index].purchaseName);
       listSetValue("modifyAmount", listValues[index].amount);
       listSetValue("modifyMemo", listValues[index].shoppingDetailMemo);
@@ -339,6 +337,39 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   const checkboxCount = watchCheckbox.filter((c) => c.checked === true).length;
   const calculateCheckbox = fields.length - checkboxCount;
+  // ----------------------------------------------------------------------------------------------------------
+
+  const props = { setLoading, totalBudget };
+  const sendUpdateToAPI = useMemoUpdate(props);
+  const onAllSubmit = useCallback(
+    async (formData: MergeParams) => {
+      try {
+        const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
+        const memosProps: memoProps = {
+          userId: result?.data[0].userId,
+          shoppingDataId: result?.data[0].shoppingDatumId,
+        };
+        const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
+        for (let i = fields.length; i < memosRes.data.length; i++) {
+          append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+        }
+        memosRes.data.forEach((m, index) => {
+          setValue(`listForm.${index}.purchaseName`, m.purchaseName);
+          setValue(`listForm.${index}.price`, m.price);
+          setValue(`listForm.${index}.shoppingDetailMemo`, m.shoppingDetailMemo);
+          setValue(`listForm.${index}.amount`, m.amount);
+          setValue(`listForm.${index}.id`, m.id);
+        });
+      } catch (err) {
+        setLoading(false);
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
+    },
+    [sendUpdateToAPI]
+  );
+  // ----------------------------------------------------------------------------------------------------------
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -407,8 +438,8 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             </Box>
             {fields.map((field, index) => {
               return (
-                <Box w="100%" key={field.key}>
-                  <HStack bg="white" py={4} px={2} rounded={10} boxShadow="md">
+                <Box w="100%" key={field.key} bg="white" py={4} px={2} rounded={10} boxShadow="md">
+                  <HStack>
                     <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.checkbox`)} />
                     <Input
                       border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
@@ -418,7 +449,10 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       px={1}
                       isReadOnly={!!getValues(`listForm.${index}.id`)}
                       ml={0}
-                      {...register(`listForm.${index}.purchaseName`)}
+                      {...register(`listForm.${index}.purchaseName`, {
+                        required: { value: true, message: "商品名が入力されていません" },
+                        maxLength: { value: 30, message: "最大文字数は30文字までです。" },
+                      })}
                     />
                     <InputGroup w="20%">
                       <Input
@@ -429,7 +463,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
                         type="number"
-                        min="1"
                         {...register(`listForm.${index}.amount`, {
                           max: { value: 99, message: "上限は99までです。" },
                           pattern: { value: validationNumber, message: "半角整数で入力してください。" },
@@ -439,12 +472,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                         個
                       </InputRightElement>
                     </InputGroup>
-                    {errors.listForm && errors.listForm[index]?.amount && (
-                      <Box color="red" fontSize="sm">
-                        {errors.listForm[index]?.amount?.types?.max}
-                        {errors.listForm[index]?.amount?.types?.pattern}
-                      </Box>
-                    )}
                     <InputGroup w="30%">
                       <Input
                         type="number"
@@ -489,6 +516,18 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       </MenuList>
                     </Menu>
                   </HStack>
+                  {errors.listForm && errors.listForm[index]?.purchaseName && (
+                    <Box color="red" fontSize="sm">
+                      {errors.listForm[index]?.purchaseName?.types?.required}
+                      {errors.listForm[index]?.purchaseName?.types?.maxLength}
+                    </Box>
+                  )}
+                  {errors.listForm && errors.listForm[index]?.amount && (
+                    <Box color="red" fontSize="sm">
+                      {errors.listForm[index]?.amount?.types?.max}
+                      {errors.listForm[index]?.amount?.types?.pattern}
+                    </Box>
+                  )}
                 </Box>
               );
             })}
@@ -517,9 +556,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                 </Box>
               </Box>
               <Stack w="80%" py="3%">
-                <PrimaryButtonForReactHookForm disabled={!isValid} onClick={onAllSubmit}>
-                  保存する
-                </PrimaryButtonForReactHookForm>
+                <PrimaryButtonForReactHookForm>お買い物終了！</PrimaryButtonForReactHookForm>
                 <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
               </Stack>
             </VStack>

@@ -35,7 +35,7 @@ export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
   const { setLoading, loading } = useContext(AuthContext);
-  const [expiryData, setExpiryDate] = useState<boolean>(false);
+  const [expiryDate, setExpiryDate] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
@@ -148,7 +148,7 @@ export const OkaimonoMemo: VFC = memo(() => {
               errors={errors}
               validationNumber={validationNumber}
               watch={watch}
-              expiryDate={expiryData}
+              expiryDate={expiryDate}
             />
           </Box>
           <VStack

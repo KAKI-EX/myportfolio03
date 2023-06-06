@@ -37,7 +37,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
-  const [expiryData, setExpiryDate] = useState<boolean>(false);
+  const [expiryDate, setExpiryDate] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialRef = useRef(null);
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
@@ -81,7 +81,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append, setExpiryDate });
   useEffect(() => {
     showMemo();
-  }, [expiryData]);
+  }, [expiryDate]);
 
   useEffect(() => {
     fields.forEach((field, index) => {
@@ -137,7 +137,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const onSubmit = useCallback(
     async (formData: MergeParams) => {
       setReadOnly(!readOnly);
-      if (readOnly && !expiryData) {
+      if (readOnly && !expiryDate) {
         onOpen();
       }
       if (!readOnly) {
@@ -203,7 +203,7 @@ export const OkaimonoShow: VFC = memo(() => {
               deleteIds={deleteIds}
               setDeleteIds={setDeleteIds}
               watch={watch}
-              expiryDate={expiryData}
+              expiryDate={expiryDate}
             />
           </Box>
           <VStack

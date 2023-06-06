@@ -178,19 +178,3 @@ export interface OkaimonoShopModifingData {
   shopId?: string;
   id?: string;
 }
-
-export interface OkaimonoMemoUseModifingData {
-  modifyPurchaseName?: string;
-  modifyAmount?: string;
-  modifyMemo?: string;
-  modifyExpiryDateStart?: string;
-  modifyExpiryDateEnd?: string;
-  modifyShoppingDate?: string;
-  modifyEstimatedBudget?: string;
-  modifyShoppingMemo?: string;
-  modifyShopName?: string;
-  modyfyShoppingDatumId?: string;
-  modifyId?: string;
-  modifyAsc?: string;
-  modifyShopId?: string
-}
