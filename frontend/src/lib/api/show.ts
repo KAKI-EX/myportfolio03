@@ -2,7 +2,7 @@ import client from "lib/api/client";
 
 export type shopPropsType = {
   userId: string;
-  shopId: number;
+  shopId: string;
 };
 
 export type memoProps = {

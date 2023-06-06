@@ -40,7 +40,7 @@ export interface ListFormParams {
   expiryDateStart?: string;
   expiryDateEnd?: string;
   memoId?: string;
-  checkbox?: string;
+  checkbox?: boolean;
 }
 
 export interface MergeParams {
@@ -75,7 +75,7 @@ export interface MergeParams {
   modifyShopId?: string
   modifyListShoppingDate?: string;
   modifyListShoppingDatumId?: string;
-  checkbox?: string;
+  checkbox?: boolean;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------
@@ -103,7 +103,7 @@ export interface OkaimonoMemoDataShow {
   estimatedBudget: string;
   id: string;
   memosCount: number;
-  shopId: number;
+  shopId: string;
   shoppingDate: string;
   shoppingMemo: string;
   totalBudget: string;

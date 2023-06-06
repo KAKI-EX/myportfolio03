@@ -57,6 +57,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const [listValues, setListValues] = useState<OkaimonoMemosData[]>();
   const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
+  const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -76,12 +77,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     register,
     control,
     watch,
+    getValues,
     handleSubmit: allListHandleSubmit,
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
       shoppingDate: formattedDefaultShoppingDate,
-      listForm: [{ price: "", id: "", amount: "", purchaseName: "", asc: "", checkbox: "", }],
+      listForm: [{ price: "", id: "", amount: "", purchaseName: "", asc: "", checkbox: false }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -217,8 +219,17 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     console.log("aaaeeaaaeeeasdfa", listFormData);
   };
 
-  const addNewList = () => {
-    alert("tst");
+  const insertInputForm = (index: number) => {
+    insert(index + 1, {
+      purchaseName: "",
+      price: "",
+      shoppingDetailMemo: "",
+      amount: "",
+      id: "",
+      asc: "",
+      expiryDateStart: formattedDefaultShoppingDate,
+      expiryDateEnd: "",
+    });
   };
 
   const onClickBack = () => {
@@ -231,6 +242,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   useEffect(() => {
     getShoppingMemoList();
   }, []);
+
+  useEffect(() => {
+    fields.forEach((field, index) => {
+      setValue(`listForm.${index}.asc`, index.toString());
+    });
+  }, [fields]);
 
   const getShoppingMemoList = async () => {
     setLoading(true);
@@ -316,6 +333,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     }
   };
 
+  const watchCheckbox = fields.map((field, index) => ({
+    checked: watch(`listForm.${index}.checkbox`),
+  }));
+
+  const checkboxCount = watchCheckbox.filter((c) => c.checked === true).length;
+  const calculateCheckbox = fields.length - checkboxCount;
+
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
@@ -329,9 +353,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               今日のお買物メモ
             </Heading>
             <Divider my={4} />
-            <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
-              お買い物情報
-            </Heading>
             <Box bg="white" rounded="xl" w="100%" boxShadow="md">
               <HStack>
                 <Stack align="center" justify="center" py={6} spacing="3" w="95%" ml={5}>
@@ -388,26 +409,23 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               return (
                 <Box w="100%" key={field.key}>
                   <HStack bg="white" py={4} px={2} rounded={10} boxShadow="md">
-                    <Checkbox
-                      size="lg"
-                      colorScheme="green"
-                      ml={1}
-                      {...register(`listForm.${index}.checkbox`)}
-                    />
+                    <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.checkbox`)} />
                     <Input
-                      border="none"
-                      w="53%"
+                      border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
+                      placeholder="商品名"
+                      w="50%"
+                      fontSize={{ base: "sm", md: "md" }}
                       px={1}
+                      isReadOnly={!!getValues(`listForm.${index}.id`)}
                       ml={0}
-                      readOnly
                       {...register(`listForm.${index}.purchaseName`)}
                     />
-                    <InputGroup w="17%">
+                    <InputGroup w="20%">
                       <Input
                         textAlign="center"
                         px={1}
-                        border="none"
-                        readOnly
+                        border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
+                        isReadOnly={!!getValues(`listForm.${index}.id`)}
                         fontSize={{ base: "sm", md: "md" }}
                         size="md"
                         type="number"
@@ -429,7 +447,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     )}
                     <InputGroup w="30%">
                       <Input
-                        placeholder="いくら？"
                         type="number"
                         fontSize={{ base: "sm", md: "md" }}
                         {...register(`listForm.${index}.price`, {
@@ -449,16 +466,32 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     <Input type="hidden" {...register(`listForm.${index}.asc`)} />
                     <Menu>
                       <MenuButton as={ChevronDownIcon} />
-                      <MenuList borderRadius="md" shadow="md">
-                        <MenuItem onClick={onClickListModify(index)}>編集する</MenuItem>
-                        <MenuItem>削除する</MenuItem>
+                      <MenuList borderRadius="md" shadow="md" zIndex="dropdown">
+                        {getValues(`listForm.${index}.id`) ? (
+                          <MenuItem onClick={onClickListModify(index)}>編集する</MenuItem>
+                        ) : null}
+                        <MenuItem
+                          onClick={() => {
+                            if (getValues) {
+                              const memoId = getValues(`listForm.${index}.id`);
+                              if (memoId) {
+                                if (setDeleteIds) {
+                                  setDeleteIds((prevIds) => [...(prevIds || []), memoId]);
+                                }
+                              }
+                            }
+                            remove(index);
+                          }}
+                        >
+                          削除する
+                        </MenuItem>
+                        <MenuItem onClick={() => insertInputForm(index)}>フォームを下に追加</MenuItem>
                       </MenuList>
                     </Menu>
                   </HStack>
                 </Box>
               );
             })}
-            <Icon as={PlusSquareIcon} boxSize={5} style={{ transform: "translateY(20px)" }} onClick={addNewList} />
             <VStack
               position="fixed"
               bg="rgba(49,151,149,1)"
@@ -478,6 +511,10 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                 <Box as="p" color={Number(shoppingBudgetField || "") < totalBudget ? "red.500" : "white"}>
                   お買い物予算残り: {Number(shoppingBudgetField || "") - totalBudget}円
                 </Box>
+
+                <Box as="p" color="white">
+                  買い物予定残り： {calculateCheckbox}つ
+                </Box>
               </Box>
               <Stack w="80%" py="3%">
                 <PrimaryButtonForReactHookForm disabled={!isValid} onClick={onAllSubmit}>
@@ -486,6 +523,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                 <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
               </Stack>
             </VStack>
+            <Box h="15rem" />
           </VStack>
         </Flex>
       </form>
@@ -682,11 +720,11 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     {listErrors.modifyExpiryDateEnd?.message}
                   </Box>
                 )}
-                <Input type="hidden" {...register(`modifyId`)} />
-                <Input type="hidden" {...register(`modifyAsc`)} />
-                <Input type="hidden" {...register(`modifyShopId`)} />
-                <Input type="hidden" {...register(`modifyListShoppingDatumId`)} />
-                <Input type="hidden" {...register(`modifyListShoppingDate`)} />
+                <Input type="hidden" {...listRegister(`modifyId`)} />
+                <Input type="hidden" {...listRegister(`modifyAsc`)} />
+                <Input type="hidden" {...listRegister(`modifyShopId`)} />
+                <Input type="hidden" {...listRegister(`modifyListShoppingDatumId`)} />
+                <Input type="hidden" {...listRegister(`modifyListShoppingDate`)} />
               </VStack>
             </ModalBody>
             <ModalFooter>
