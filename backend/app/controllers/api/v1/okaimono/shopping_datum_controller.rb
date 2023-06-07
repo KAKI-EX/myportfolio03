@@ -45,7 +45,16 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   private
 
   def shopping_params
-    params.require(:shopping_datum).permit(:user_id, :shop_id, :shopping_date, :shopping_memo, :estimated_budget, :total_budget, :shopping_datum_id)
+    params.require(:shopping_datum).permit(
+      :user_id,
+      :shop_id,
+      :shopping_date,
+      :shopping_memo,
+      :estimated_budget,
+      :total_budget,
+      :shopping_datum_id,
+      :is_finish
+      )
   end
 
   def find_shopping

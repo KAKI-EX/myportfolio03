@@ -69,7 +69,8 @@ end
         :memo_id,
         :asc,
         :expiry_date_start,
-        :expiry_date_end
+        :expiry_date_end,
+        :is_bought
         )
     end
   end

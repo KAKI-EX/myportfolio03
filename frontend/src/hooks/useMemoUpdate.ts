@@ -27,7 +27,7 @@ export const useMemoUpdate = (props: Props) => {
   ) => {
     console.log("カスタムフックsendDataToAPIが走っています");
     const userId = separateCookies("_user_id");
-    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId } = formData;
+    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish } = formData;
     const shopParams: MergeParams = { userId, shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {
@@ -43,6 +43,7 @@ export const useMemoUpdate = (props: Props) => {
           estimatedBudget,
           totalBudget,
           shoppingDatumId,
+          isFinish,
         };
         const shoppingDatumUpdateRes = await shoppingDatumUpdate(shoppingDataParams);
         if (shoppingDatumUpdateRes.status === 200) {
@@ -62,6 +63,7 @@ export const useMemoUpdate = (props: Props) => {
                 asc: data.asc,
                 expiryDateStart: data.expiryDateStart,
                 expiryDateEnd: data.expiryDateEnd,
+                isBought: data.isBought,
               };
             }),
           };
@@ -108,7 +110,7 @@ export const useMemoUpdate = (props: Props) => {
           // ---------------------------------------------------------------
           const memosUpdateRes = await memosUpdate(existingMemos);
           if (formData.listForm) {
-            showMessage({ title: `お買い物メモの修正が完了しました。`, status: "success" });
+            showMessage({ title: `お買い物メモの処理が完了しました。`, status: "success" });
           }
           setLoading(false);
           return memosUpdateRes;

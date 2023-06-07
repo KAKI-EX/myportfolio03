@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.integer "asc"
     t.date "expiry_date_start"
     t.date "expiry_date_end"
+    t.boolean "is_bought"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["shop_id"], name: "index_memos_on_shop_id"
@@ -38,6 +39,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.string "shopping_memo"
     t.string "estimated_budget"
     t.string "total_budget"
+    t.boolean "is_finish"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["shop_id"], name: "index_shopping_data_on_shop_id"

@@ -43,7 +43,7 @@ import { ja } from "date-fns/locale";
 import { ChevronDownIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { memoProps, memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
 import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
@@ -64,6 +64,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
 
   const defaultShoppingDate = new Date();
+  const history = useHistory();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -84,7 +85,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   } = useForm<MergeParams>({
     defaultValues: {
       shoppingDate: formattedDefaultShoppingDate,
-      listForm: [{ price: "", id: "", amount: "", purchaseName: "", asc: "", checkbox: false }],
+      listForm: [{ price: "", id: "", amount: "", purchaseName: "", asc: "", isBought: false, isFinish: false }],
     },
     criteriaMode: "all",
     mode: "all",
@@ -261,7 +262,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
           setValue("shoppingDatumId", id);
           setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
-
+          setValue("isFinish", true);
           const shopProps = {
             userId,
             shopId: shoppingDatumRes.data.shopId,
@@ -332,13 +333,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   };
 
   const watchCheckbox = fields.map((field, index) => ({
-    checked: watch(`listForm.${index}.checkbox`),
+    checked: watch(`listForm.${index}.isBought`),
   }));
 
   const checkboxCount = watchCheckbox.filter((c) => c.checked === true).length;
   const calculateCheckbox = fields.length - checkboxCount;
   // ----------------------------------------------------------------------------------------------------------
-
+  // 全体のリスト更新
   const props = { setLoading, totalBudget };
   const sendUpdateToAPI = useMemoUpdate(props);
   const onAllSubmit = useCallback(
@@ -360,6 +361,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           setValue(`listForm.${index}.amount`, m.amount);
           setValue(`listForm.${index}.id`, m.id);
         });
+        history.push("/okaimono");
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
@@ -425,6 +427,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     </InputRightElement>
                   </InputGroup>
                   <Input type="hidden" {...register(`shoppingDatumId`)} />
+                  <Input {...register(`isFinish`)} />
                 </Stack>
                 <Box w="5%">
                   <Menu>
@@ -440,7 +443,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               return (
                 <Box w="100%" key={field.key} bg="white" py={4} px={2} rounded={10} boxShadow="md">
                   <HStack>
-                    <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.checkbox`)} />
+                    <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isBought`)} />
                     <Input
                       border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
                       placeholder="商品名"

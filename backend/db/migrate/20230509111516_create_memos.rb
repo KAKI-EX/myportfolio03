@@ -13,6 +13,7 @@ class CreateMemos < ActiveRecord::Migration[6.1]
       t.integer :asc
       t.date :expiry_date_start
       t.date :expiry_date_end
+      t.boolean :is_bought, default: ""
       t.timestamps
     end
   end

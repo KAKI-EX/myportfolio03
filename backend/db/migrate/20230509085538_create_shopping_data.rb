@@ -7,6 +7,7 @@ class CreateShoppingData < ActiveRecord::Migration[6.1]
       t.string :shopping_memo
       t.string :estimated_budget
       t.string :total_budget
+      t.boolean :is_finish
       t.timestamps
     end
   end
