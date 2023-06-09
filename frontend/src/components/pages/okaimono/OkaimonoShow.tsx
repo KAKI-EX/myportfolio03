@@ -31,6 +31,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { memoProps, memosShow } from "lib/api/show";
 import { useMemoUpdate } from "hooks/useMemoUpdate";
 import { useSetOkaimonoShowIndex } from "hooks/useSetOkaimonoShowIndex";
+import { OptionallyButton } from "components/atoms/OptionallyButton";
 
 export const OkaimonoShow: VFC = memo(() => {
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
@@ -38,6 +39,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
+  const [pushTemporarilyButton, setPushTemporarilyButton] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialRef = useRef(null);
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
@@ -140,8 +142,10 @@ export const OkaimonoShow: VFC = memo(() => {
       if (readOnly && !expiryDate) {
         onOpen();
       }
+      const addFormData = { ...formData, ...(pushTemporarilyButton ? { isFinish: null } : { isFinish: false }) };
+      console.log("addFormData", addFormData);
       if (!readOnly) {
-        const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
+        const result = await sendUpdateToAPI(addFormData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
           userId: result?.data[0].userId,
           shoppingDataId: result?.data[0].shoppingDatumId,
@@ -157,10 +161,23 @@ export const OkaimonoShow: VFC = memo(() => {
           setValue(`listForm.${index}.amount`, m.amount);
           setValue(`listForm.${index}.id`, m.id);
         });
+        setPushTemporarilyButton(false);
       }
     },
-    [readOnly, sendUpdateToAPI]
+    [readOnly, sendUpdateToAPI, pushTemporarilyButton]
   );
+
+  const onClickTemporarilySaved = () => {
+    setPushTemporarilyButton(true);
+  };
+
+  useEffect(() => {
+    if (pushTemporarilyButton) {
+      console.log("一時保存ボタンを押した直後", pushTemporarilyButton);
+      const formData = getValues();
+      onSubmit(formData);
+    }
+  }, [pushTemporarilyButton]);
 
   const onClickInputNow = useCallback(() => {
     setExpiryDate(true);
@@ -228,8 +245,9 @@ export const OkaimonoShow: VFC = memo(() => {
             </Box>
             <Stack w="80%" py="3%">
               <PrimaryButtonForReactHookForm disabled={!isValid}>
-                {readOnly ? "編集する" : "保存する"}
+                {readOnly ? "編集する" : "確定する"}
               </PrimaryButtonForReactHookForm>
+              <OptionallyButton onClick={onClickTemporarilySaved} disabled={readOnly}>一時保存</OptionallyButton>
               <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
             </Stack>
           </VStack>

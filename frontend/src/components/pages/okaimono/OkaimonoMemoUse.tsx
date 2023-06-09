@@ -230,9 +230,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     });
   };
 
-  const onClickBack = () => {
-    alert("test");
-  };
+  const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
 
   const { showMessage } = useMessage();
   const { separateCookies } = useCookie();

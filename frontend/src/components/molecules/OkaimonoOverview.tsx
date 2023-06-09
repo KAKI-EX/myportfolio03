@@ -75,6 +75,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           <Box color="red">{errors.shoppingMemo.types.maxLength}</Box>
         )}
         <Input type="hidden" {...register(`shoppingDatumId`)} />
+        <Input type="hidden" {...register(`isFinish`)} />
       </Stack>
     </Box>
   );

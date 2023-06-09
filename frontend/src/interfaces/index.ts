@@ -41,7 +41,7 @@ export interface ListFormParams {
   expiryDateEnd?: string;
   memoId?: string;
   isBought?: boolean;
-  isFinish?: boolean;
+  isFinish?: boolean | null;
 }
 
 export interface MergeParams {
@@ -77,7 +77,7 @@ export interface MergeParams {
   modifyListShoppingDate?: string;
   modifyListShoppingDatumId?: string;
   isBought?: boolean;
-  isFinish?: boolean;
+  isFinish?: boolean | null;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------

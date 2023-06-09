@@ -30,6 +30,7 @@ import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
 import { AuthContext } from "App";
 import { useHistory } from "react-router-dom";
+import { OptionallyButton } from "components/atoms/OptionallyButton";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
@@ -46,6 +47,8 @@ export const OkaimonoMemo: VFC = memo(() => {
     handleSubmit,
     control,
     watch,
+    setValue,
+    getValues,
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
@@ -56,7 +59,7 @@ export const OkaimonoMemo: VFC = memo(() => {
           price: "",
           shoppingDetailMemo: "",
           amount: "",
-          expiryDateStart: formattedDefaultShoppingDate,
+          expiryDateStart: "",
           expiryDateEnd: "",
           id: "",
           asc: "",
@@ -108,13 +111,17 @@ export const OkaimonoMemo: VFC = memo(() => {
   const sendDataToAPI = useMemoCreate(props);
 
   const onSubmit = (formData: MergeParams) => {
+    const addFromData = { ...formData, isFinish: false };
+    sendDataToAPI(addFromData);
+  };
+
+  const onClickTemporarilySaved = () => {
+    const formData = getValues();
     sendDataToAPI(formData);
   };
   // ---------------------------------------------------------------------------
   const history = useHistory();
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
-
-  useEffect(() => onOpen(), []);
 
   const onClickInputNow = useCallback(() => {
     setExpiryDate(true);
@@ -171,11 +178,12 @@ export const OkaimonoMemo: VFC = memo(() => {
               </Box>
             </Box>
             <Stack w="80%" py="3%">
-              <PrimaryButtonForReactHookForm disabled={!isValid}>保存</PrimaryButtonForReactHookForm>
+              <PrimaryButtonForReactHookForm disabled={!isValid}>確定</PrimaryButtonForReactHookForm>
+              <OptionallyButton onClick={onClickTemporarilySaved} disabled={!isValid}>一時保存</OptionallyButton>
               <DeleteButton onClick={onClickBack}>保存しない</DeleteButton>
             </Stack>
           </VStack>
-          <Box h="12.5rem" />
+          <Box h="15rem" />
         </VStack>
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
