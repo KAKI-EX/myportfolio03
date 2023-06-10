@@ -27,7 +27,7 @@ export const useMemoUpdate = (props: Props) => {
   ) => {
     console.log("カスタムフックsendDataToAPIが走っています");
     const userId = separateCookies("_user_id");
-    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish } = formData;
+    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen } = formData;
     const shopParams: MergeParams = { userId, shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {
@@ -44,6 +44,7 @@ export const useMemoUpdate = (props: Props) => {
           totalBudget,
           shoppingDatumId,
           isFinish,
+          isOpen,
         };
         const shoppingDatumUpdateRes = await shoppingDatumUpdate(shoppingDataParams);
         if (shoppingDatumUpdateRes.status === 200) {

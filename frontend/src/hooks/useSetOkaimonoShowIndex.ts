@@ -33,6 +33,7 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
         setValue("estimatedBudget", shoppingRes.data.estimatedBudget);
         setValue("shoppingMemo", shoppingRes.data.shoppingMemo);
         setValue("shoppingDatumId", shoppingRes.data.id);
+        setValue("isOpen", shoppingRes.data.isOpen);
         const shopProps: shopPropsType = {
           userId: shoppingRes.data.userId,
           shopId: shoppingRes.data.shopId,

@@ -8,7 +8,9 @@ class CreateShoppingData < ActiveRecord::Migration[6.1]
       t.string :estimated_budget
       t.string :total_budget
       t.boolean :is_finish
+      t.boolean :is_open, default: false
       t.timestamps
     end
   end
 end
+

@@ -425,7 +425,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                     </InputRightElement>
                   </InputGroup>
                   <Input type="hidden" {...register(`shoppingDatumId`)} />
-                  <Input {...register(`isFinish`)} />
+                  <Input type="hidden" {...register(`isFinish`)} />
                 </Stack>
                 <Box w="5%">
                   <Menu>

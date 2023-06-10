@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.string "estimated_budget"
     t.string "total_budget"
     t.boolean "is_finish"
+    t.boolean "is_open", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["shop_id"], name: "index_shopping_data_on_shop_id"

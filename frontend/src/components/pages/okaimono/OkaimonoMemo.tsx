@@ -37,7 +37,7 @@ export const OkaimonoMemo: VFC = memo(() => {
   const { showMessage } = useMessage();
   const { setLoading, loading } = useContext(AuthContext);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -47,7 +47,6 @@ export const OkaimonoMemo: VFC = memo(() => {
     handleSubmit,
     control,
     watch,
-    setValue,
     getValues,
     formState: { errors, isValid },
   } = useForm<MergeParams>({
@@ -179,7 +178,9 @@ export const OkaimonoMemo: VFC = memo(() => {
             </Box>
             <Stack w="80%" py="3%">
               <PrimaryButtonForReactHookForm disabled={!isValid}>確定</PrimaryButtonForReactHookForm>
-              <OptionallyButton onClick={onClickTemporarilySaved} disabled={!isValid}>一時保存</OptionallyButton>
+              <OptionallyButton onClick={onClickTemporarilySaved} disabled={!isValid}>
+                一時保存
+              </OptionallyButton>
               <DeleteButton onClick={onClickBack}>保存しない</DeleteButton>
             </Stack>
           </VStack>

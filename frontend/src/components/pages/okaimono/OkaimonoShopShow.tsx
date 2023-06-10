@@ -45,7 +45,7 @@ import { useUpdateShopData } from "hooks/useUpdateShopData";
 import { useDeleteShopData } from "hooks/useDeleteShopData";
 
 export const OkaimonoShopShow: VFC = memo(() => {
-  const [shopsindex, setShopsIndex] = useState<OkaimonoShopsDataResponse>();
+  const [shopsIndex, setShopsIndex] = useState<OkaimonoShopsDataResponse>();
   const [shopFormData, setShopFormData] = useState<OkaimonoShopsIndexData>();
   const [readOnly, setReadOnly] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
@@ -159,7 +159,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
                 />
               </Tr>
             </Thead>
-            {shopsindex?.data.map((shopData: OkaimonoShopsIndexData) => {
+            {shopsIndex?.data.map((shopData: OkaimonoShopsIndexData) => {
               return (
                 <Tbody _hover={{ fontWeight: "bold" }} key={shopData.id}>
                   <Tr>

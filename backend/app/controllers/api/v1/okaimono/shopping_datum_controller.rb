@@ -53,7 +53,8 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       :estimated_budget,
       :total_budget,
       :shopping_datum_id,
-      :is_finish
+      :is_finish,
+      :is_open,
       )
   end
 

@@ -1,4 +1,17 @@
-import { Box, Divider, Heading, Input, InputGroup, InputRightElement, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  FormLabel,
+  Heading,
+  HStack,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Stack,
+  Switch,
+} from "@chakra-ui/react";
 import { MergeParams } from "interfaces";
 import { memo, VFC } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
@@ -74,6 +87,14 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
         {errors.shoppingMemo && errors.shoppingMemo.types?.maxLength && (
           <Box color="red">{errors.shoppingMemo.types.maxLength}</Box>
         )}
+        <HStack>
+          <FormControl display="flex" alignItems="center">
+            <FormLabel htmlFor="email-alerts" mb="0">
+              おつかい機能をオン
+            </FormLabel>
+            <Switch isReadOnly={readOnly} fontSize={{ base: "sm", md: "lg" }} {...register("isOpen")} />
+          </FormControl>
+        </HStack>
         <Input type="hidden" {...register(`shoppingDatumId`)} />
         <Input type="hidden" {...register(`isFinish`)} />
       </Stack>

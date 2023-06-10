@@ -78,6 +78,7 @@ export interface MergeParams {
   modifyListShoppingDatumId?: string;
   isBought?: boolean;
   isFinish?: boolean | null;
+  isOpen?: boolean;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------
@@ -92,6 +93,7 @@ export interface OkaimonoMemoData {
   totalBudget: string;
   updatedAt: string;
   userId: string;
+  isOpen: boolean;
 }
 
 export interface OkaimonoMemoResponse {
