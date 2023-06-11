@@ -1,6 +1,6 @@
 class CreateShoppingData < ActiveRecord::Migration[6.1]
   def change
-    create_table :shopping_data do |t|
+    create_table :shopping_data, id: :string do |t|
       t.string :user_id, null: false
       t.references :shop, null: false, foreign_key: true
       t.string :shopping_date, null: false
@@ -13,4 +13,3 @@ class CreateShoppingData < ActiveRecord::Migration[6.1]
     end
   end
 end
-
