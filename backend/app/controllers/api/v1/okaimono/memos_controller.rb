@@ -1,4 +1,5 @@
 class Api::V1::Okaimono::MemosController < ApplicationController
+  before_action :authenticate_api_v1_user!
 
   def index
     memos = User.find(params[:id]).memos

@@ -1,8 +1,10 @@
 class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   before_action :find_shopping, only: [:show, :update, :destroy]
+  before_action :authenticate_api_v1_user!
 
   def index
-    shopping = User.find(params[:id]).shopping_data
+    binding.pry
+    shopping = current_api_v1_user.shopping_data
     shapping = shopping.map do |s_data|
       s_data.attributes.merge({ 'memos_count': s_data.memos.count })
     end
@@ -55,6 +57,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       :shopping_datum_id,
       :is_finish,
       :is_open,
+      :is_signed_in
       )
   end
 

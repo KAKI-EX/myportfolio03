@@ -1,5 +1,5 @@
 class ShoppingDatum < ApplicationRecord
-  before_create :set_base64
+  before_create :set_uuid
   validates :user_id, :shop_id, :shopping_date, presence: true
   validates :shopping_memo, length: {maximum: 150, message: "買い物メモは%{count}文字以上の登録はできません。"}
   validates :estimated_budget, :total_budget, numericality: { only_integer: true, message: "お買い物の予算は数字のみ入力してください。" }, allow_blank: true
@@ -9,9 +9,9 @@ class ShoppingDatum < ApplicationRecord
   has_many :memos, dependent: :destroy
 
   private
-  def set_base64
+  def set_uuid
     while self.id.blank? || User.find_by(id: self.id).present? do
-      self.id = SecureRandom.base64(20)
+      self.id = SecureRandom.uuid
     end
   end
 end

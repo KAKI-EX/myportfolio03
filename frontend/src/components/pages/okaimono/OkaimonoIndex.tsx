@@ -81,11 +81,6 @@ export const OkaimonoIndex: VFC = memo(() => {
               return finishedShopping;
             });
 
-          console.log("isFinishNull", isFinishNull);
-          console.log("isFinishFalse", isFinishFalse);
-          console.log("isFinishTrue", isFinishTrue);
-          console.log("indexRes", indexRes);
-
           setInCompleteMemo(isFinishNull);
           setOkaimonoMemo(indexRes);
           setReadyShoppingMemo(isFinishFalse);
@@ -98,7 +93,7 @@ export const OkaimonoIndex: VFC = memo(() => {
       } catch (err) {
         const axiosError = err as AxiosError;
         console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
+        showMessage({ title: axiosError.response?.data.errors, status: "error" });
         setLoading(false);
       }
     };

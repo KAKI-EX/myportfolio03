@@ -1,5 +1,7 @@
 class Api::V1::Okaimono::ShopsController < ApplicationController
   # before_action :set_shop, only: %i[show destroy update]
+  before_action :authenticate_api_v1_user!
+
 
   def index
     shops = User.find(params[:user_id]).shops
@@ -47,7 +49,6 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
 
   def shop_params
     params.require(:shop).permit(:user_id, :shop_name, :shop_memo, :id)
-
   end
 
 end
