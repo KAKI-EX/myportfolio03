@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { ListFormParams, MergeParams } from "interfaces";
 import { memosCreate, shopCreate, shoppingDatumCreate } from "lib/api/post";
 import React from "react";
@@ -22,9 +23,8 @@ export const useMemoCreate = (props: Props) => {
   const sendDataToAPI = async (formData: MergeParams) => {
     console.log("カスタムフックsendDataToAPIが走っています");
 
-    const userId = separateCookies("_user_id");
     const { shopName, shoppingDate, shoppingMemo, estimatedBudget, isFinish, isOpen } = formData;
-    const shopParams: MergeParams = { userId, shopName: shopName || "お店名称未設定でのお買い物" };
+    const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {
       setLoading(true);
@@ -32,7 +32,6 @@ export const useMemoCreate = (props: Props) => {
       if (shopCreateRes.status === 200) {
         const shopId = shopCreateRes.data.id;
         const shoppingDataParams: MergeParams = {
-          userId,
           shopId,
           shoppingDate,
           shoppingMemo,
@@ -47,7 +46,6 @@ export const useMemoCreate = (props: Props) => {
           const memosParams = {
             memos: (formData.listForm || []).map((data: ListFormParams) => {
               return {
-                userId,
                 shopId,
                 shoppingDatumId,
                 purchaseName: data.purchaseName,
@@ -67,10 +65,10 @@ export const useMemoCreate = (props: Props) => {
           }
         }
       }
-    } catch (err: any) {
-      showMessage({ title: err.response.data.errors, status: "error" });
-      console.error(err.response);
-      console.log(err.response.data.error);
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      console.error(axiosError.response);
+      showMessage({ title: axiosError.response?.data.errors, status: "error" });
     }
     setLoading(false);
   };

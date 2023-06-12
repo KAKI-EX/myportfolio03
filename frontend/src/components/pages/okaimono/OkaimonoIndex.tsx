@@ -58,7 +58,6 @@ export const OkaimonoIndex: VFC = memo(() => {
       try {
         setLoading(true);
         const indexRes = await getOkaimonoIndex();
-        console.log("resdayo", indexRes);
         if (indexRes) {
           const isFinishNull = indexRes.data // 一時保存中のメモリストデータ
             .filter((resData: ListFormParams) => resData.isFinish === null)
@@ -106,15 +105,14 @@ export const OkaimonoIndex: VFC = memo(() => {
       const { id } = props;
       try {
         if (okaimonoMemo) {
-          const shoppingDataDeleteRes = await shoppingDataDelete(okaimonoMemo?.data[0].userId, id);
-          console.log(shoppingDataDeleteRes);
+          await shoppingDataDelete(id);
           const res = await getOkaimonoIndex();
           setOkaimonoMemo(res);
         }
       } catch (err) {
         const axiosError = err as AxiosError;
         console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
+        showMessage({ title: axiosError.response?.data.errors, status: "error" });
       }
     },
     [okaimonoMemo]

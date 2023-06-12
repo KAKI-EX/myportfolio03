@@ -131,7 +131,7 @@ export const OkaimonoShow: VFC = memo(() => {
   // ---------------------------------------------------------------------------
   // updateを行なうと、編集画面で追加した新規メモがあるとエラーを起こすため、新規メモを検知したのち、Createアクションへ該当メモを送信。
   // Createアクション送信分はsendUpdateToAPIの中で削除している。その後にupdateアクションを行っているため、戻り値の中にCreateアクションの
-  // データがない。そのため、sendUpdataToAPIの戻り値の配列0番目のuserIdとshoppingDatumIdを元にShowアクションを実行してsetValueしている。
+  // データがない。そのため、sendUpdataToAPIの戻り値の配列0番目のshoppingDatumIdを元にShowアクションを実行してsetValueしている。
   // 戻り値をsetValueせずに反映しない方法(リロードすると消える)もあるが、その状態でupdateアクションを再度送ると、仕様上、新規作成アクションで
   // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をmemoIdの有無で検知しているため)
   const props = { setLoading, totalBudget };
@@ -147,7 +147,6 @@ export const OkaimonoShow: VFC = memo(() => {
       if (!readOnly) {
         const result = await sendUpdateToAPI(addFormData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
-          userId: result?.data[0].userId,
           shoppingDataId: result?.data[0].shoppingDatumId,
         };
         const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);

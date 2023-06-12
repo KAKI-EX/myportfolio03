@@ -78,7 +78,6 @@ export const OkaimonoShopShow: VFC = memo(() => {
     setValue("shopName", shopData.shopName);
     setValue("shopMemo", shopData.shopMemo);
     setValue("shopId", shopData.id);
-    setValue("userId", shopData.userId);
     onEditModalOpen();
   };
 
@@ -270,7 +269,6 @@ export const OkaimonoShopShow: VFC = memo(() => {
                     )}
                     <Input bg={readOnly ? "blackAlpha.200" : "white"} isReadOnly={readOnly} {...register("shopMemo")} />
                     <Input type="hidden" {...register("shopId")} />
-                    <Input type="hidden" {...register("userId")} />
                   </VStack>
                 </ModalBody>
                 <ModalFooter>

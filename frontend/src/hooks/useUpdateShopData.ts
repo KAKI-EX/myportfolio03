@@ -24,15 +24,13 @@ export const useUpdateShopData = (props: Props) => {
         const makeCustomData: OkaimonoShopModifingData = {
           shopName: formData.shopName,
           shopMemo: formData.shopMemo,
-          userId: formData.userId,
           id: formData.shopId,
         };
         const updatedShops = await shopUpdate(makeCustomData);
         setValue("shopName", updatedShops.data.shopName);
         setValue("shopMemo", updatedShops.data.shopMemo);
         setValue("shopId", updatedShops.data.id);
-        setValue("userId", updatedShops.data.userId);
-        const setResIndexPage = await shopsShow(updatedShops.data.userId);
+        const setResIndexPage = await shopsShow();
         setShopsIndex(setResIndexPage);
         setLoading(false);
         showMessage({ title: "お店情報の更新が完了しました", status: "success" });

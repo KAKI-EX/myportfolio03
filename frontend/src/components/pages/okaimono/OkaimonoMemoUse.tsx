@@ -143,16 +143,14 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     setReadOnly(!readOnly);
     if (!readOnly) {
       setLoading(true);
-      const userId = separateCookies("_user_id");
       const { modifyShopName, modifyShoppingDate, modifyShoppingMemo, modifyEstimatedBudget, modyfyShoppingDatumId } =
         shoppingDatumFormData;
-      const shopParams: MergeParams = { userId, shopName: modifyShopName || "お店名称未設定でのお買い物" };
+      const shopParams: MergeParams = { shopName: modifyShopName || "お店名称未設定でのお買い物" };
       try {
         const shopUpdateRes = await shopCreate(shopParams);
         if (shopUpdateRes.status === 200) {
           const shopId = shopUpdateRes.data.id;
           const shoppingDataParams: MergeParams = {
-            userId,
             shopId,
             shoppingDate: modifyShoppingDate,
             shoppingMemo: modifyShoppingMemo,
@@ -183,11 +181,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     setReadOnly(!readOnly);
     if (!readOnly) {
       setLoading(true);
-      const userId = separateCookies("_user_id");
       try {
         const listParams: ListFormParams = {
           memoId: oneListFormData.modifyId,
-          userId,
           shoppingDatumId: oneListFormData.modifyListShoppingDatumId,
           shopId: oneListFormData.modifyShopId,
           purchaseName: oneListFormData.modifyPurchaseName,
@@ -247,10 +243,8 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   const getShoppingMemoList = async () => {
     setLoading(true);
-    const userId = separateCookies("_user_id");
-    if (userId) {
+    if (id) {
       const memosProps = {
-        userId,
         shoppingDataId: id,
       };
       try {
@@ -262,7 +256,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
           setValue("isFinish", true);
           const shopProps = {
-            userId,
             shopId: shoppingDatumRes.data.shopId,
           };
           const shopRes = await shopShow(shopProps);
@@ -270,7 +263,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             setShopDataValues(shopRes.data);
             setValue("shopName", shopRes.data.shopName);
             const listProps = {
-              userId,
               shoppingDataId: id,
             };
             const shoppingListRes: OkaimonoMemosDataResponse = await memosShow(listProps);
@@ -345,7 +337,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
       try {
         const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
-          userId: result?.data[0].userId,
           shoppingDataId: result?.data[0].shoppingDatumId,
         };
         const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);

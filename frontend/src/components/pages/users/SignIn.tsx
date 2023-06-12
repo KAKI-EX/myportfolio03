@@ -51,7 +51,6 @@ export const SignIn: VFC = memo(() => {
           _access_token: res.headers["access-token"],
           _client: res.headers.client,
           _uid: res.headers.uid,
-          _user_id: res.data.data.id,
         };
         Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
         // console.log(document.cookie);

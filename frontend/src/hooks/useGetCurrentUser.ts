@@ -22,7 +22,6 @@ export const useGetCurrentUser = (props: Props) => {
           _access_token: res.headers["access-token"],
           _client: res.headers.client,
           _uid: res.headers.uid,
-          _user_id: res.data.data.id,
           _isLogin: res.data.isLogin,
         };
         Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));

@@ -16,13 +16,13 @@ export const useDeleteShopData = (props: Props) => {
   const { onDeleteDialogClose, setShopsIndex, setLoading } = props;
 
   const deleteShopData = async (formData: OkaimonoShopModifingData) => {
-    const { userId, id } = formData;
+    const { id } = formData;
     onDeleteDialogClose();
     if (id) {
       setLoading(true);
       try {
-        const updatedShop = await shopDelete(userId, id);
-        const setResIndexPage = await shopsShow(userId);
+        const updatedShop = await shopDelete(id);
+        const setResIndexPage = await shopsShow();
         setShopsIndex(setResIndexPage);
         setLoading(false);
         showMessage({ title: updatedShop.data.message, status: "success" });

@@ -10,19 +10,16 @@ type SetShopsIndex = React.Dispatch<React.SetStateAction<OkaimonoShopsDataRespon
 export const useGetShopIndex = (setShopsIndex: SetShopsIndex) => {
   const { separateCookies } = useCookie();
   const { showMessage } = useMessage();
-  const userId = separateCookies("_user_id");
 
   const getShopsIndex = async (setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
     setLoading(true);
     try {
-      if (userId) {
-        const res = await shopsShow(userId);
-        setShopsIndex(res);
-        if (res?.data.length === 0) {
-          showMessage({ title: "まだメモが登録されていません", status: "info" });
-        }
-        setLoading(false);
+      const res = await shopsShow();
+      setShopsIndex(res);
+      if (res?.data.length === 0) {
+        showMessage({ title: "まだメモが登録されていません", status: "info" });
       }
+      setLoading(false);
     } catch (err) {
       const axiosError = err as AxiosError;
       console.error(axiosError.response);

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
         get    'memo/show',                                         to: 'memos#show'
         post   'memo/update',                                       to: 'memos#update'
         post   'memo/delete',                                       to: 'memos#destroy'
-        get    'shoppingdatum/index/:id',                           to: 'shopping_datum#index'
+        get    'shoppingdatum/index',                           to: 'shopping_datum#index'
         post   'shoppingdatum/create',                              to: 'shopping_datum#create'
         get    'shoppingdatum/show',                                to: 'shopping_datum#show'
         post   'shoppingdatum/update',                              to: 'shopping_datum#update'

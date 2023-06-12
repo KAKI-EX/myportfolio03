@@ -35,14 +35,12 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
         setValue("shoppingDatumId", shoppingRes.data.id);
         setValue("isOpen", shoppingRes.data.isOpen);
         const shopProps: shopPropsType = {
-          userId: shoppingRes.data.userId,
           shopId: shoppingRes.data.shopId,
         };
         const shopRes: OkaimonoShopDataResponse = await shopShow(shopProps);
         if (shopRes.status === 200) {
           setValue("shopName", shopRes.data.shopName);
           const memosProps: memoProps = {
-            userId: shoppingRes.data.userId,
             shoppingDataId: shoppingRes.data.id,
           };
           const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);

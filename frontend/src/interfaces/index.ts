@@ -27,7 +27,6 @@ export interface User {
 }
 // メモページ
 export interface ListFormParams {
-  userId?: string;
   shopId?: string;
   id?: string;
   asc?: string;
@@ -49,7 +48,6 @@ export interface MergeParams {
   estimatedBudget?: string;
   shoppingMemo?: string;
   totalBudget?: number;
-  userId?: string;
   shopId?: string;
   shoppingDatumId?: string;
   purchaseName?: string;
@@ -92,7 +90,6 @@ export interface OkaimonoMemoData {
   shoppingMemo: string;
   totalBudget: string;
   updatedAt: string;
-  userId: string;
   isOpen: boolean;
 }
 
@@ -112,7 +109,6 @@ export interface OkaimonoMemoDataShow {
   shoppingMemo: string;
   totalBudget: string;
   updatedAt: string;
-  userId: string;
   modifyShoppingDate?: string;
   modifyEstimatedBudget?: string;
   modifyShoppingMemo?: string;
@@ -129,7 +125,6 @@ export interface OkaimonoShopData {
   shopMemo: string;
   shopName: string;
   updatedAt: string;
-  userId: string;
 }
 
 export interface OkaimonoShopDataResponse {
@@ -149,7 +144,6 @@ export interface OkaimonoMemosData {
   shoppingDatumId: string;
   shoppingDetailMemo: string;
   updatedAt: string;
-  userId: string;
   expiryDateStart: string;
   expiryDateEnd: string;
   asc: string;
@@ -167,7 +161,6 @@ export interface OkaimonoShopsIndexData {
   shopName: string;
   shoppingDataCount: string;
   updatedAt: string;
-  userId: string;
 }
 
 export interface OkaimonoShopsDataResponse {
@@ -178,7 +171,6 @@ export interface OkaimonoShopsDataResponse {
 export interface OkaimonoShopModifingData {
   shopName: string;
   shopMemo: string;
-  userId: string;
   shopId?: string;
   id?: string;
 }

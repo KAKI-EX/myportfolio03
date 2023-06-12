@@ -11,11 +11,11 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def create
-    shopping = ShoppingDatum.new(shopping_params)
+    shopping = current_api_v1_user.shopping_data.new(shopping_params)
     if shopping.save
       render json: shopping
     else
-      render json: shopping.errors
+      render json: { errors: shopping.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -47,7 +47,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def shopping_params
     params.require(:shopping_datum).permit(
-      :user_id,
       :shop_id,
       :shopping_date,
       :shopping_memo,
@@ -61,6 +60,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def find_shopping
-    @shopping = User.find(params[:user_id]).shopping_data.find(params[:shopping_datum_id])
+    @shopping = current_api_v1_user.shopping_data.find(params[:shopping_datum_id])
   end
 end

@@ -26,9 +26,8 @@ export const useMemoUpdate = (props: Props) => {
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     console.log("カスタムフックsendDataToAPIが走っています");
-    const userId = separateCookies("_user_id");
     const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen } = formData;
-    const shopParams: MergeParams = { userId, shopName: shopName || "お店名称未設定でのお買い物" };
+    const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {
       setLoading(true);
@@ -36,7 +35,6 @@ export const useMemoUpdate = (props: Props) => {
       if (shopUpdateRes.status === 200) {
         const shopId = shopUpdateRes.data.id;
         const shoppingDataParams: MergeParams = {
-          userId,
           shopId,
           shoppingDate,
           shoppingMemo,
@@ -52,7 +50,6 @@ export const useMemoUpdate = (props: Props) => {
           const memosParams = {
             memos: (formData.listForm || []).map((data: ListFormParams) => {
               return {
-                userId,
                 shopId,
                 shoppingDatumId: resShoppingDatumId,
                 purchaseName: data.purchaseName,
@@ -76,7 +73,6 @@ export const useMemoUpdate = (props: Props) => {
               .filter((newMemo) => !newMemo.memoId)
               .map((newMemo) => {
                 const updateCreate: ListFormParams = {
-                  userId,
                   shopId,
                   shoppingDatumId: resShoppingDatumId,
                   purchaseName: newMemo.purchaseName,
@@ -100,7 +96,6 @@ export const useMemoUpdate = (props: Props) => {
           if (deleteIds.length > 0) {
             const deleteArrays = deleteIds.map((t) => {
               const deleteArray = {
-                userId,
                 memoId: t,
               };
               return deleteArray;

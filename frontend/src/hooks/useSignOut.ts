@@ -24,7 +24,6 @@ export const useSignOut = (props: Props) => {
         Cookies.remove("_access_token");
         Cookies.remove("_client");
         Cookies.remove("_uid");
-        Cookies.remove("_user_id");
         Cookies.remove("_isLogin");
       }
       history.push("/");
