@@ -1,6 +1,6 @@
 class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   before_action :find_shopping, only: [:show, :update, :destroy]
-  before_action :authenticate_api_v1_user!
+  before_action :authenticate_api_v1_user!, except: [:show_open_memo]
 
   def index
     shopping = current_api_v1_user.shopping_data
@@ -15,7 +15,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     if shopping.save
       render json: shopping
     else
-      render json: { errors: shopping.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: '何らかのエラーにより作成できませんでした' }, status: :unprocessable_entity
     end
   end
 
@@ -27,11 +27,23 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     end
   end
 
+  def show_open_memo
+    shopping = User.find_by(id: params[:user_id]).shopping_data.find_by(id: params[:shopping_datum_id])
+
+    if shopping.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    elsif shopping.is_open
+      render json: shopping
+    else
+      render json: { error: '不正な操作が実行されました' }, status: :unprocessable_entity
+    end
+  end
+
   def update
     if @shopping.update(shopping_params)
       render json: @shopping
     else
-      render json: @shopping.errors
+      render json: { error: '更新に失敗しました' }, status: :not_modified
     end
   end
 
@@ -60,6 +72,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def find_shopping
-    @shopping = current_api_v1_user.shopping_data.find(params[:shopping_datum_id])
+    @shopping = current_api_v1_user.shopping_data.find_by(id: params[:shopping_datum_id])
   end
 end

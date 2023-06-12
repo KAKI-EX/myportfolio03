@@ -7,16 +7,17 @@ Rails.application.routes.draw do
         get    'memo/show',                                         to: 'memos#show'
         post   'memo/update',                                       to: 'memos#update'
         post   'memo/delete',                                       to: 'memos#destroy'
-        get    'shoppingdatum/index',                           to: 'shopping_datum#index'
+        get    'shoppingdatum/index',                               to: 'shopping_datum#index'
         post   'shoppingdatum/create',                              to: 'shopping_datum#create'
         get    'shoppingdatum/show',                                to: 'shopping_datum#show'
+        get    'shoppingdatum/show_open_memo',   to: 'shopping_datum#show_open_memo'
         post   'shoppingdatum/update',                              to: 'shopping_datum#update'
-        delete 'shoppingdatum/destroy/:user_id/:shopping_datum_id', to: 'shopping_datum#destroy'
+        delete 'shoppingdatum/destroy/:shopping_datum_id',          to: 'shopping_datum#destroy'
         get    'shops/index/:user_id',                              to: 'shops#index'
         post   'shops/create',                                      to: 'shops#create'
         get    'shops/show',                                        to: 'shops#show'
         post   'shops/update',                                      to: 'shops#update'
-        delete 'shops/destroy/:user_id/:id',                   to: 'shops#destroy'
+        delete 'shops/destroy/:id',                                 to: 'shops#destroy'
       end
     end
   end
