@@ -3,7 +3,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   before_action :authenticate_api_v1_user!
 
   def index
-    binding.pry
     shopping = current_api_v1_user.shopping_data
     shapping = shopping.map do |s_data|
       s_data.attributes.merge({ 'memos_count': s_data.memos.count })
