@@ -1,6 +1,6 @@
 class Api::V1::Okaimono::ShopsController < ApplicationController
   # before_action :set_shop, only: %i[show destroy update]
-  before_action :authenticate_api_v1_user!
+  before_action :authenticate_api_v1_user!, except: [:show_open_memo]
 
 
   def index
@@ -23,8 +23,21 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
   end
 
   def show
-    shop = current_api_v1_user.shops.find(params[:shop_id])
-    render json: shop
+    shop = current_api_v1_user.shops.find_by(id: params[:shop_id])
+    if shop.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      render json: shop
+    end
+  end
+
+  def show_open_memo
+    shop = User.find_by(id: params[:user_id]).shops.find_by(id: params[:shop_id])
+    if shop.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      render json: shop
+    end
   end
 
   def update

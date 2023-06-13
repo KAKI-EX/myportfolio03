@@ -43,7 +43,7 @@ import { ChevronDownIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memosShow, shoppingDatumShow, shoppingDatumShowOpenTrue, shopShow } from "lib/api/show";
+import { memoProps, memosShow, memosShowOpenTrue, shoppingDatumShow, shoppingDatumShowOpenTrue, shopShow, shopShowOpenTrue } from "lib/api/show";
 import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
@@ -240,7 +240,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   }, [fields]);
 
   const getShoppingMemoList = async () => {
-    // setLoading(true);
+    setLoading(true);
     if (userId) {
       const memosProps = {
         userId,
@@ -256,16 +256,18 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
           setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
           setValue("isFinish", true);
           const shopProps = {
+            userId,
             shopId: shoppingDatumRes.data.shopId,
           };
-          const shopRes = await shopShow(shopProps);
+          const shopRes = await shopShowOpenTrue(shopProps);
           if (shopRes.status === 200) {
             setShopDataValues(shopRes.data);
             setValue("shopName", shopRes.data.shopName);
             const listProps = {
+              userId,
               shoppingDataId: id,
             };
-            const shoppingListRes: OkaimonoMemosDataResponse = await memosShow(listProps);
+            const shoppingListRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(listProps);
             if (shopRes.status === 200) {
               setListValues(shoppingListRes.data);
               for (let i = fields.length; i < shoppingListRes.data.length; i++) {
