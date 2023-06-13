@@ -1,6 +1,6 @@
 class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   before_action :find_shopping, only: [:show, :update, :destroy]
-  before_action :authenticate_api_v1_user!, except: [:show_open_memo]
+  before_action :authenticate_api_v1_user!, except: [:show_open_memo, :update_open_memo]
 
   def index
     shopping = current_api_v1_user.shopping_data
@@ -47,6 +47,17 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     end
   end
 
+  def update_open_memo
+    shopping = User.find_by(id: shopping_params[:user_id]).shopping_data.find_by(id: shopping_params[:shopping_datum_id])
+    if shopping.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    elsif shopping.update(shopping_params.except(:user_id, :shopping_datum_id))
+      render json: shopping
+    else
+      render json: { error: '更新に失敗しました' }, status: :not_modified
+    end
+  end
+
   def destroy
     if @shopping.destroy
       render json: @shopping
@@ -59,6 +70,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def shopping_params
     params.require(:shopping_datum).permit(
+      :user_id,
       :shop_id,
       :shopping_date,
       :shopping_memo,

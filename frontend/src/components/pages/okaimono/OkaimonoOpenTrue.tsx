@@ -43,13 +43,23 @@ import { ChevronDownIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memosShow, memosShowOpenTrue, shoppingDatumShow, shoppingDatumShowOpenTrue, shopShow, shopShowOpenTrue } from "lib/api/show";
+import {
+  memoProps,
+  memosShow,
+  memosShowOpenTrue,
+  shoppingDatumShow,
+  shoppingDatumShowOpenTrue,
+  shopShow,
+  shopShowOpenTrue,
+} from "lib/api/show";
 import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
 import { shopCreate } from "lib/api/post";
-import { memosUpdate, shoppingDatumUpdate } from "lib/api/update";
+import { memosUpdate, memoUpdateOpenTrue, shoppingDatumUpdate } from "lib/api/update";
 import { useMemoUpdate } from "hooks/useMemoUpdate";
+import { useOpenMemoUpdate } from "hooks/useOpenMemoUpdate";
+import { PrimaryButton } from "components/atoms/PrimaryButton";
 
 export const OkaimonoOpenTrue: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -61,6 +71,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: closeConfirm } = useDisclosure();
 
   const defaultShoppingDate = new Date();
   const history = useHistory();
@@ -181,7 +192,8 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     if (!readOnly) {
       setLoading(true);
       try {
-        const listParams: ListFormParams = {
+        const listParams: MergeParams = {
+          userId,
           memoId: oneListFormData.modifyId,
           shoppingDatumId: oneListFormData.modifyListShoppingDatumId,
           shopId: oneListFormData.modifyShopId,
@@ -193,7 +205,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
           expiryDateStart: oneListFormData.modifyExpiryDateStart,
           expiryDateEnd: oneListFormData.modifyExpiryDateEnd,
         };
-        const memosUpdateRes = await memosUpdate([listParams]);
+        await memoUpdateOpenTrue(listParams);
         setLoading(false);
         showMessage({ title: `お買い物リストの修正が完了しました。`, status: "success" });
       } catch (err) {
@@ -226,9 +238,10 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   };
 
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
-
   const { showMessage } = useMessage();
 
+  // ----------------------------------------------------------------------------------------------------------
+  // リスト読み込み部分
   useEffect(() => {
     getShoppingMemoList();
   }, []);
@@ -294,6 +307,8 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     }
   };
 
+  // ----------------------------------------------------------------------------------------------------------
+
   const onClickListModify = (index: number) => (event: React.MouseEvent) => {
     if (listValues) {
       getShoppingMemoList();
@@ -332,16 +347,26 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const calculateCheckbox = fields.length - checkboxCount;
   // ----------------------------------------------------------------------------------------------------------
   // 全体のリスト更新
+
+  const onClickFinish = () => {
+    const formData = getValues();
+    console.log("formData", formData);
+    onAllSubmit(formData);
+    closeConfirm();
+  };
+
   const props = { setLoading, totalBudget };
-  const sendUpdateToAPI = useMemoUpdate(props);
+  const sendUpdateToAPI = useOpenMemoUpdate(props);
   const onAllSubmit = useCallback(
-    async (formData: MergeParams) => {
+    async (originFormData: MergeParams) => {
       try {
+        const formData = { ...originFormData, userId };
         const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
+          userId,
           shoppingDataId: result?.data[0].shoppingDatumId,
         };
-        const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
+        const memosRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(memosProps);
         for (let i = fields.length; i < memosRes.data.length; i++) {
           append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
         }
@@ -352,7 +377,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
           setValue(`listForm.${index}.amount`, m.amount);
           setValue(`listForm.${index}.id`, m.id);
         });
-        history.push("/okaimono");
+        history.push("/");
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
@@ -550,7 +575,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
                 </Box>
               </Box>
               <Stack w="80%" py="3%">
-                <PrimaryButtonForReactHookForm>お買い物終了！</PrimaryButtonForReactHookForm>
+                <PrimaryButton onClick={onConfirmOpen}>お買い物終了！</PrimaryButton>
                 <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
               </Stack>
             </VStack>
@@ -771,6 +796,22 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
           </ModalContent>
         </Modal>
       </form>
+      <Modal isOpen={isConfirmOpen} onClose={closeConfirm}>
+        <ModalOverlay />
+        <ModalContent maxW="95vw">
+          <ModalHeader>お買い物を終了しますか？</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>終了を選択すると作成者以外はページ再表示はできません</ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={closeConfirm}>
+              まだお買い物を続ける
+            </Button>
+            <Button variant="ghost" onClick={onClickFinish}>
+              お買い物を終了する
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 });

@@ -27,6 +27,7 @@ export interface User {
 }
 // メモページ
 export interface ListFormParams {
+  userId?: string,
   shopId?: string;
   id?: string;
   asc?: string;
@@ -44,6 +45,7 @@ export interface ListFormParams {
 }
 
 export interface MergeParams {
+  userId?: string;
   shopName?: string;
   estimatedBudget?: string;
   shoppingMemo?: string;
@@ -52,6 +54,7 @@ export interface MergeParams {
   shoppingDatumId?: string;
   purchaseName?: string;
   price?: string;
+  memoId?: string;
   shoppingDetailMemo?: string;
   amount?: string;
   shoppingDate?: string;

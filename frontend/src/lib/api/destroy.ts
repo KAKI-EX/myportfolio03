@@ -6,6 +6,11 @@ export const memosDelete = (params: { memoId: string }[]) => {
   return client.post("okaimono/memo/delete", { memos: params });
 };
 
+export const memoDeleteOpenTrue = (params: { userId:string, memoId: string }[]) => {
+  console.log("memoDeleteOpenTrueが走っています。");
+  return client.post("okaimono/memo/delete_open_memo", { memos: params });
+};
+
 export const shoppingDataDelete = (shoppingId: string) => {
   console.log("shoppingDataDeleteが走っています。");
   return client.delete(`okaimono/shoppingdatum/destroy/${shoppingId}`);
