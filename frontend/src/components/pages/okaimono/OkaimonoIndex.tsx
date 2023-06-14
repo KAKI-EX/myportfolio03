@@ -11,10 +11,20 @@ import {
   Flex,
   Heading,
   Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Tab,
   Table,
@@ -29,15 +39,19 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
 import { useMessage } from "hooks/useToast";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { OkaimonoMemoData, OkaimonoMemoResponse, ListFormParams } from "interfaces";
 import { shoppingDataDelete } from "lib/api/destroy";
 import { useDateConversion } from "hooks/useDateConversion";
+import { memosShow, shoppingDatumShow } from "lib/api/show";
+import { useForm } from "react-hook-form";
+import { PrimaryButton } from "components/atoms/PrimaryButton";
 
 export const OkaimonoIndex: VFC = memo(() => {
   const history = useHistory();
@@ -48,10 +62,13 @@ export const OkaimonoIndex: VFC = memo(() => {
   const getOkaimonoIndex = useGetOkaimonoIndex();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [openMessage, setOpenMessage] = useState<string>();
+  const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onCloseAlert } = useDisclosure();
+  const { isOpen: isOpenUrl, onOpen: onOpenUrl, onClose: onCloseUrl } = useDisclosure();
   const cancelRef = React.useRef(null);
   const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
   const { dateConversion } = useDateConversion();
+  const { register, getValues, setValue } = useForm();
 
   useEffect(() => {
     const getIndex = async () => {
@@ -101,7 +118,7 @@ export const OkaimonoIndex: VFC = memo(() => {
 
   const onClickDelete = useCallback(
     async (props: OkaimonoMemoData) => {
-      onClose();
+      onCloseAlert();
       const { id } = props;
       try {
         if (okaimonoMemo) {
@@ -130,9 +147,33 @@ export const OkaimonoIndex: VFC = memo(() => {
   };
   // ---------------------------------------------------------------------------------
 
-  console.log("inCompleteMemo", inCompleteMemo);
-  console.log("readyShoppingMemo", readyShoppingMemo);
-  console.log("finishedMemo", finishedMemo);
+  const onClickShowOpenUrl = useCallback((shoppingDataId: string) => async (event: React.MouseEvent) => {
+    event.preventDefault();
+    try {
+      const shoppingDatumShowRes = await shoppingDatumShow({ shoppingDataId });
+      if (shoppingDatumShowRes.status === 200) {
+        if (shoppingDatumShowRes.data.isOpen) {
+          const url = `/okaimono_memo_use_open/${shoppingDatumShowRes.data.userId}/${shoppingDatumShowRes.data.id}`;
+          setOpenMessage("おつかいをお願いしたい人に送ってみましょう");
+          setValue("openMemoUrl", url);
+          onOpenUrl();
+        } else {
+          setOpenMessage("公開設定がされていません。確認ページから再設定しましょう");
+          setValue("openMemoUrl", "非公開");
+          onOpenUrl();
+        }
+      }
+    } catch (err) {
+      setLoading(false);
+      const axiosError = err as AxiosError;
+      console.error(axiosError.response);
+      showMessage({ title: "エラーが発生しました。", status: "error" });
+    }
+  }, [readyShoppingMemo]);
+
+  const onClickUrlCopy = () => {
+    navigator.clipboard.writeText(getValues("openMemoUrl"));
+  };
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -277,7 +318,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                                 <MenuItem
                                   onClick={() => {
                                     setDeletePost(i);
-                                    onOpen();
+                                    onAlertOpen();
                                   }}
                                 >
                                   削除する
@@ -417,11 +458,11 @@ export const OkaimonoIndex: VFC = memo(() => {
                               <MenuList borderRadius="md" shadow="md">
                                 <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem>
                                 <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                                <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
+                                <MenuItem onClick={onClickShowOpenUrl(i.id)}>公開用URLを確認する</MenuItem>
                                 <MenuItem
                                   onClick={() => {
                                     setDeletePost(i);
-                                    onOpen();
+                                    onAlertOpen();
                                   }}
                                 >
                                   削除する
@@ -564,7 +605,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                                 <MenuItem
                                   onClick={() => {
                                     setDeletePost(i);
-                                    onOpen();
+                                    onAlertOpen();
                                   }}
                                 >
                                   削除する
@@ -598,7 +639,7 @@ export const OkaimonoIndex: VFC = memo(() => {
             </Flex>
           ) : null}
         </Box>
-        <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+        <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onAlertOpen}>
           <AlertDialogOverlay>
             <AlertDialogContent>
               <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -606,7 +647,7 @@ export const OkaimonoIndex: VFC = memo(() => {
               </AlertDialogHeader>
               <AlertDialogBody>メモに保存されているリストも削除されます。</AlertDialogBody>
               <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={onClose}>
+                <Button ref={cancelRef} onClick={onAlertOpen}>
                   やっぱりやめる
                 </Button>
                 <Button colorScheme="red" onClick={() => (deletePost ? onClickDelete(deletePost) : undefined)} ml={3}>
@@ -616,6 +657,29 @@ export const OkaimonoIndex: VFC = memo(() => {
             </AlertDialogContent>
           </AlertDialogOverlay>
         </AlertDialog>
+        <Modal isOpen={isOpenUrl} onClose={onCloseUrl}>
+          <ModalOverlay />
+          <ModalContent maxW="95vw">
+            <ModalHeader>公開用URL</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack>
+                <Text fontSize={{ base: "sm", md: "md" }}>{openMessage}</Text>
+                <InputGroup>
+                  <Input pr="4.5rem" {...register("openMemoUrl")} />
+                  <InputRightElement width="3.5rem">
+                    <Button colorScheme="blue" h="1.75rem" size="sm" color="white" onClick={onClickUrlCopy}>
+                      コピー
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <PrimaryButton onClick={onCloseUrl}>閉じる</PrimaryButton>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </Flex>
   );

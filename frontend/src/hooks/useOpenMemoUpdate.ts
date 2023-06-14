@@ -19,12 +19,12 @@ export const useOpenMemoUpdate = (props: Props) => {
 
   const { setLoading, totalBudget } = props;
 
-  const sendUpdateToAPI = async (
+  const sendOpenDataToAPI = async (
     formData: MergeParams,
     deleteIds: string[],
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
-    console.log("カスタムフックsendDataToAPIが走っています");
+    console.log("カスタムフックsendOpenDataToAPIが走っています");
     const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen, userId } =
       formData;
     const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物", userId };
@@ -125,5 +125,5 @@ export const useOpenMemoUpdate = (props: Props) => {
       setLoading(false);
     }
   };
-  return sendUpdateToAPI;
+  return sendOpenDataToAPI;
 };

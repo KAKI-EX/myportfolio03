@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         post   'memo/create_open_memos',                            to: 'memos#create_open_memos'
         get    'memo/show',                                         to: 'memos#show'
         get    'memo/show_open_memo',                               to: 'memos#show_open_memo'
+        get    'memo/show_memo',                                    to: 'memos#show_memo'
         post   'memo/update',                                       to: 'memos#update'
         post   'memo/update_open_memo',                             to: 'memos#update_open_memo'
         post   'memo/update_open_memos',                            to: 'memos#update_open_memos'

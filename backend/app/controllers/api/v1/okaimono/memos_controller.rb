@@ -53,6 +53,15 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     end
   end
 
+  def show_memo
+    memo = current_api_v1_user.memos.find_by(id: params[:memo_id])
+    if memo.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      render json: memo
+    end
+  end
+
   def update
     Memo.transaction do
       update_memos = memos_params.each do |params|

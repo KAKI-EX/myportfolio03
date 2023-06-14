@@ -66,6 +66,17 @@ export const memosShowOpenTrue = async (props: memoProps) => {
   };
 };
 
+export const memoShow = async (memoId: string) => {
+  console.log("memosShowOpenTrueが走っています。");
+  const memoshow = await client.get(
+    `okaimono/memo/show_memo?memo_id=${memoId}`
+  );
+  return {
+    data: memoshow.data,
+    status: memoshow.status,
+  };
+};
+
 // overview部分(お買い物メモ部分)表示
 export const shoppingDatumShow = async (props: memoProps) => {
   const { shoppingDataId } = props;

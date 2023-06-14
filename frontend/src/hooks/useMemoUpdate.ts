@@ -25,7 +25,7 @@ export const useMemoUpdate = (props: Props) => {
     deleteIds: string[],
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
-    console.log("カスタムフックsendDataToAPIが走っています");
+    console.log("カスタムフックsendUpdateToAPIが走っています");
     const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen } = formData;
     const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物" };
 

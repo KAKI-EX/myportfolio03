@@ -29,6 +29,7 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import {
+  GetSingleMemo,
   ListFormParams,
   MergeParams,
   OkaimonoMemoDataShow,
@@ -44,7 +45,7 @@ import { ChevronDownIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
+import { memoProps, memoShow, memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
 import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
@@ -194,7 +195,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           expiryDateStart: oneListFormData.modifyExpiryDateStart,
           expiryDateEnd: oneListFormData.modifyExpiryDateEnd,
         };
-        const memosUpdateRes = await memosUpdate([listParams]);
+        await memosUpdate([listParams]);
         setLoading(false);
         showMessage({ title: `お買い物リストの修正が完了しました。`, status: "success" });
       } catch (err) {
@@ -207,7 +208,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   };
 
   const onCloseList = () => {
-    getShoppingMemoList();
     setReadOnly(true);
     closeList();
   };
@@ -229,17 +229,18 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
 
   const { showMessage } = useMessage();
-  const { separateCookies } = useCookie();
-
-  useEffect(() => {
-    getShoppingMemoList();
-  }, []);
 
   useEffect(() => {
     fields.forEach((field, index) => {
       setValue(`listForm.${index}.asc`, index.toString());
     });
   }, [fields]);
+
+  // ----------------------------------------------------------------------------------------------------------
+  // ページ情報の初回読み込み
+  useEffect(() => {
+    getShoppingMemoList();
+  }, []);
 
   const getShoppingMemoList = async () => {
     setLoading(true);
@@ -292,20 +293,37 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     }
   };
 
-  const onClickListModify = (index: number) => (event: React.MouseEvent) => {
+  // ----------------------------------------------------------------------------------------------------------
+  // shoppingList単一の更新部分。(リスト部分で下矢印を押して編集)
+  const onClickListModify = (index: number) => async (event: React.MouseEvent) => {
+    setLoading(true);
     if (listValues) {
-      getShoppingMemoList();
-      listSetValue("modifyPurchaseName", listValues[index].purchaseName);
-      listSetValue("modifyAmount", listValues[index].amount);
-      listSetValue("modifyMemo", listValues[index].shoppingDetailMemo);
-      listSetValue("modifyExpiryDateStart", listValues[index].expiryDateStart);
-      listSetValue("modifyExpiryDateEnd", listValues[index].expiryDateEnd);
-      listSetValue("modifyId", listValues[index].id);
-      listSetValue("modifyAsc", listValues[index].asc);
-      listSetValue("modifyShopId", listValues[index].shopId);
-      listSetValue("modifyListShoppingDate", listValues[index].shoppingDate);
-      listSetValue("modifyListShoppingDatumId", listValues[index].shoppingDatumId);
-      onListOpen();
+      try {
+        const targetIdToFind = getValues(`listForm.${index}.id`);
+        const target = listValues.find((element) => element.id === targetIdToFind);
+        if (target) {
+          const getTargetMemo: GetSingleMemo = await memoShow(target.id);
+          if (target) {
+            listSetValue("modifyPurchaseName", getTargetMemo.data.purchaseName);
+            listSetValue("modifyAmount", getTargetMemo.data.amount);
+            listSetValue("modifyMemo", getTargetMemo.data.shoppingDetailMemo);
+            listSetValue("modifyExpiryDateStart", getTargetMemo.data.expiryDateStart);
+            listSetValue("modifyExpiryDateEnd", getTargetMemo.data.expiryDateEnd);
+            listSetValue("modifyId", getTargetMemo.data.id);
+            listSetValue("modifyAsc", getTargetMemo.data.asc);
+            listSetValue("modifyShopId", getTargetMemo.data.shopId);
+            listSetValue("modifyListShoppingDate", getTargetMemo.data.shoppingDate);
+            listSetValue("modifyListShoppingDatumId", getTargetMemo.data.shoppingDatumId);
+            onListOpen();
+            setLoading(false);
+          }
+        }
+      } catch (err) {
+        setLoading(false);
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
     }
   };
 

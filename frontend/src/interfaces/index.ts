@@ -177,3 +177,21 @@ export interface OkaimonoShopModifingData {
   shopId?: string;
   id?: string;
 }
+
+export interface GetSingleMemoData {
+  purchaseName: string;
+  amount: string;
+  shoppingDetailMemo: string;
+  expiryDateStart: string;
+  expiryDateEnd: string;
+  id: string;
+  asc: string;
+  shopId: string;
+  shoppingDate: string;
+  shoppingDatumId: string;
+}
+
+export interface GetSingleMemo {
+  data: GetSingleMemoData;
+  status: number;
+}
