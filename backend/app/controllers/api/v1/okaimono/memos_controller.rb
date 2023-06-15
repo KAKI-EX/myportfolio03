@@ -1,5 +1,5 @@
 class Api::V1::Okaimono::MemosController < ApplicationController
-  before_action :authenticate_api_v1_user!, except: [:show_open_memo, :update_open_memo, :update_open_memos]
+  before_action :authenticate_api_v1_user!, except: [:show_open_memos, :show_open_memo, :update_open_memo, :create_open_memos, :update_open_memos]
 
   def index
     memos = current_api_v1_user.memos
@@ -21,12 +21,15 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   end
 
   def create_open_memos
-    user = User.find_by()
     memos = memos_params.map { |param| User.find_by(id: param[:user_id]).memos.new(param) }
-
-    created_memos = User.find_by(id: memos.user_id).memos.transaction do
-      memos.each do |memo|
-        memo.save!
+    if memos.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      user_id = memos.first.user_id
+      created_memos = User.find_by(id: user_id).memos.transaction do
+        memos.each do |memo|
+          memo.save!
+        end
       end
     end
 
@@ -44,7 +47,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     end
   end
 
-  def show_open_memo
+  def show_open_memos
     memos = User.find_by(id: params[:user_id]).shopping_data.find_by(id: params[:shopping_id]).memos.order(:asc)
     if memos.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
@@ -55,6 +58,15 @@ class Api::V1::Okaimono::MemosController < ApplicationController
 
   def show_memo
     memo = current_api_v1_user.memos.find_by(id: params[:memo_id])
+    if memo.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      render json: memo
+    end
+  end
+
+  def show_open_memo
+    memo = User.find_by(id: params[:user_id]).memos.find_by(id: params[:memo_id])
     if memo.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
