@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import client from "lib/api/client";
 
 export type shopPropsType = {
@@ -17,6 +18,9 @@ export type memoOpenProps = {
 
 // お店情報確認
 export const shopShow = async (props: shopPropsType) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { shopId } = props;
   console.log("shopShowが走っています。");
   const shopShowRes = await client.get(`okaimono/shops/show?shop_id=${shopId}`);
@@ -28,6 +32,9 @@ export const shopShow = async (props: shopPropsType) => {
 
 // お店情報確認
 export const shopShowOpenTrue = async (props: shopPropsType) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { userId, shopId } = props;
   console.log("shopShowOpenTrueが走っています。");
   const shopShowOpenTrueRes = await client.get(`okaimono/shops/show_open_memo?user_id=${userId}&shop_id=${shopId}`);
@@ -39,6 +46,9 @@ export const shopShowOpenTrue = async (props: shopPropsType) => {
 
 // お店一覧表示
 export const shopsShow = async () => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   console.log("shopShowが走っています。");
   const shopsShowRes = await client.get(`okaimono/shops/index/`);
   return {
@@ -49,6 +59,9 @@ export const shopsShow = async () => {
 
 // メモ確認（複数メモ読み込み）
 export const memosShow = async (props: memoProps) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { shoppingDataId } = props;
   console.log("memosShowが走っています。");
   const memosShowRes = await client.get(`okaimono/memo/show?shopping_id=${shoppingDataId}`);
@@ -60,6 +73,9 @@ export const memosShow = async (props: memoProps) => {
 
 // メモ確認(公開用ページの複数メモ読み込み)
 export const memosShowOpenTrue = async (props: memoProps) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { userId, shoppingDataId } = props;
   console.log("memosShowOpenTrueが走っています。");
   const memosShowOpenTrueRes = await client.get(
@@ -73,6 +89,9 @@ export const memosShowOpenTrue = async (props: memoProps) => {
 
 // メモ確認(単一のメモ読み込み)
 export const memoShow = async (memoId: string) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   console.log("memosShowOpenTrueが走っています。");
   const memoshow = await client.get(`okaimono/memo/show_memo?memo_id=${memoId}`);
   return {
@@ -83,6 +102,9 @@ export const memoShow = async (memoId: string) => {
 
 // メモ確認(公開用ページの単一のメモ読み込み)
 export const memoShowOpenTrue = async (props: memoOpenProps) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { userId, memoId } = props;
   console.log("memoShowOpenTrueが走っています。");
   const memohow = await client.get(`okaimono/memo/show_open_memo?user_id=${userId}&memo_id=${memoId}`);
@@ -92,8 +114,23 @@ export const memoShowOpenTrue = async (props: memoOpenProps) => {
   };
 };
 
+// OkaimonoIndexページの一覧表示
+export const shoppingDataIndex = async () => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
+  const shoppingDataIndexRes = await client.get(`okaimono/shoppingdatum/index`);
+  return {
+    data: shoppingDataIndexRes.data,
+    status: shoppingDataIndexRes.status,
+  };
+};
+
 // overview部分(お買い物メモ部分)表示
 export const shoppingDatumShow = async (props: memoProps) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { shoppingDataId } = props;
   console.log("shoppingDatumShowが走っています。");
   const shoppingDatumShowRes = await client.get(`okaimono/shoppingdatum/show?shopping_datum_id=${shoppingDataId}`);
@@ -105,6 +142,9 @@ export const shoppingDatumShow = async (props: memoProps) => {
 
 // overview部分(お買い物メモ部分)表示
 export const shoppingDatumShowOpenTrue = async (props: memoProps) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
   const { shoppingDataId, userId } = props;
   console.log("shopShowOpenTrueが走っています。");
   const shoppingDatumShowOpenTrueRes = await client.get(

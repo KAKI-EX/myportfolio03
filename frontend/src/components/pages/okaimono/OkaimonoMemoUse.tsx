@@ -260,14 +260,17 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             shopId: shoppingDatumRes.data.shopId,
           };
           const shopRes = await shopShow(shopProps);
-          if (shopRes.status === 200) {
+          if (shopRes && shopRes.status === 200) {
             setShopDataValues(shopRes.data);
             setValue("shopName", shopRes.data.shopName);
             const listProps = {
               shoppingDataId: id,
             };
-            const shoppingListRes: OkaimonoMemosDataResponse = await memosShow(listProps);
-            if (shopRes.status === 200) {
+            const listResponse = await memosShow(listProps);
+
+            if (listResponse && listResponse.status === 200) {
+              const shoppingListRes: OkaimonoMemosDataResponse = listResponse;
+
               setListValues(shoppingListRes.data);
               for (let i = fields.length; i < shoppingListRes.data.length; i++) {
                 append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
@@ -302,18 +305,19 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         const targetIdToFind = getValues(`listForm.${index}.id`);
         const target = listValues.find((element) => element.id === targetIdToFind);
         if (target) {
-          const getTargetMemo: GetSingleMemo = await memoShow(target.id);
-          if (target) {
-            listSetValue("modifyPurchaseName", getTargetMemo.data.purchaseName);
-            listSetValue("modifyAmount", getTargetMemo.data.amount);
-            listSetValue("modifyMemo", getTargetMemo.data.shoppingDetailMemo);
-            listSetValue("modifyExpiryDateStart", getTargetMemo.data.expiryDateStart);
-            listSetValue("modifyExpiryDateEnd", getTargetMemo.data.expiryDateEnd);
-            listSetValue("modifyId", getTargetMemo.data.id);
-            listSetValue("modifyAsc", getTargetMemo.data.asc);
-            listSetValue("modifyShopId", getTargetMemo.data.shopId);
-            listSetValue("modifyListShoppingDate", getTargetMemo.data.shoppingDate);
-            listSetValue("modifyListShoppingDatumId", getTargetMemo.data.shoppingDatumId);
+          const getTargetMemo = await memoShow(target.id);
+          if (getTargetMemo && target) {
+            const listResponse: GetSingleMemo = getTargetMemo;
+            listSetValue("modifyPurchaseName", listResponse.data.purchaseName);
+            listSetValue("modifyAmount", listResponse.data.amount);
+            listSetValue("modifyMemo", listResponse.data.shoppingDetailMemo);
+            listSetValue("modifyExpiryDateStart", listResponse.data.expiryDateStart);
+            listSetValue("modifyExpiryDateEnd", listResponse.data.expiryDateEnd);
+            listSetValue("modifyId", listResponse.data.id);
+            listSetValue("modifyAsc", listResponse.data.asc);
+            listSetValue("modifyShopId", listResponse.data.shopId);
+            listSetValue("modifyListShoppingDate", listResponse.data.shoppingDate);
+            listSetValue("modifyListShoppingDatumId", listResponse.data.shoppingDatumId);
             onListOpen();
             setLoading(false);
           }
@@ -357,17 +361,21 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         const memosProps: memoProps = {
           shoppingDataId: result?.data[0].shoppingDatumId,
         };
-        const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
-        for (let i = fields.length; i < memosRes.data.length; i++) {
-          append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+        // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
+        const getAllList = await memosShow(memosProps);
+        if (getAllList) {
+          const listResponse = getAllList;
+          for (let i = fields.length; i < listResponse.data.length; i++) {
+            append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+          }
+          listResponse.data.forEach((data: ListFormParams, index: number) => {
+            setValue(`listForm.${index}.purchaseName`, data.purchaseName);
+            setValue(`listForm.${index}.price`, data.price);
+            setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
+            setValue(`listForm.${index}.amount`, data.amount);
+            setValue(`listForm.${index}.id`, data.id);
+          });
         }
-        memosRes.data.forEach((m, index) => {
-          setValue(`listForm.${index}.purchaseName`, m.purchaseName);
-          setValue(`listForm.${index}.price`, m.price);
-          setValue(`listForm.${index}.shoppingDetailMemo`, m.shoppingDetailMemo);
-          setValue(`listForm.${index}.amount`, m.amount);
-          setValue(`listForm.${index}.id`, m.id);
-        });
         history.push("/okaimono");
       } catch (err) {
         setLoading(false);

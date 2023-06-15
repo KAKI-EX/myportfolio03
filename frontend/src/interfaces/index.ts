@@ -84,6 +84,7 @@ export interface MergeParams {
 }
 // --------------------indexページのtype---------------------
 export interface OkaimonoMemoData {
+  userId?: string;
   createdAt: string;
   estimatedBudget: string;
   id: string;
@@ -123,7 +124,7 @@ export interface OkaimonoMemoDataShowResponse {
 }
 
 export interface OkaimonoShopData {
-  id: number;
+  id: string;
   createdAt: string;
   shopMemo: string;
   shopName: string;

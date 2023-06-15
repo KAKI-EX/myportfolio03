@@ -41,15 +41,14 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
 import { useMessage } from "hooks/useToast";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import axios, { AxiosError } from "axios";
-import { OkaimonoMemoData, OkaimonoMemoResponse, ListFormParams } from "interfaces";
+import { OkaimonoMemoData, OkaimonoMemoResponse, ListFormParams, OkaimonoMemoDataShowResponse } from "interfaces";
 import { shoppingDataDelete } from "lib/api/destroy";
 import { useDateConversion } from "hooks/useDateConversion";
-import { memosShow, shoppingDatumShow } from "lib/api/show";
+import { memosShow, shoppingDataIndex, shoppingDatumShow } from "lib/api/show";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 
@@ -59,7 +58,6 @@ export const OkaimonoIndex: VFC = memo(() => {
   const [inCompleteMemo, setInCompleteMemo] = useState<OkaimonoMemoData[] | null>();
   const [readyShoppingMemo, setReadyShoppingMemo] = useState<OkaimonoMemoData[] | null>();
   const [finishedMemo, setFinishedMemo] = useState<OkaimonoMemoData[] | null>();
-  const getOkaimonoIndex = useGetOkaimonoIndex();
   const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [openMessage, setOpenMessage] = useState<string>();
@@ -74,7 +72,7 @@ export const OkaimonoIndex: VFC = memo(() => {
     const getIndex = async () => {
       try {
         setLoading(true);
-        const indexRes = await getOkaimonoIndex();
+        const indexRes = await shoppingDataIndex();
         if (indexRes) {
           const isFinishNull = indexRes.data // 一時保存中のメモリストデータ
             .filter((resData: ListFormParams) => resData.isFinish === null)
@@ -123,7 +121,7 @@ export const OkaimonoIndex: VFC = memo(() => {
       try {
         if (okaimonoMemo) {
           await shoppingDataDelete(id);
-          const res = await getOkaimonoIndex();
+          const res = await shoppingDataIndex();
           setOkaimonoMemo(res);
         }
       } catch (err) {
@@ -147,29 +145,33 @@ export const OkaimonoIndex: VFC = memo(() => {
   };
   // ---------------------------------------------------------------------------------
 
-  const onClickShowOpenUrl = useCallback((shoppingDataId: string) => async (event: React.MouseEvent) => {
-    event.preventDefault();
-    try {
-      const shoppingDatumShowRes = await shoppingDatumShow({ shoppingDataId });
-      if (shoppingDatumShowRes.status === 200) {
-        if (shoppingDatumShowRes.data.isOpen) {
-          const url = `/okaimono_memo_use_open/${shoppingDatumShowRes.data.userId}/${shoppingDatumShowRes.data.id}`;
-          setOpenMessage("おつかいをお願いしたい人に送ってみましょう");
-          setValue("openMemoUrl", url);
-          onOpenUrl();
-        } else {
-          setOpenMessage("公開設定がされていません。確認ページから再設定しましょう");
-          setValue("openMemoUrl", "非公開");
-          onOpenUrl();
+  const onClickShowOpenUrl = useCallback(
+    (shoppingDataId: string) => async (event: React.MouseEvent) => {
+      event.preventDefault();
+      try {
+        const result = await shoppingDatumShow({ shoppingDataId });
+        if (result && result.status === 200) {
+          const shoppingDatumShowRes: OkaimonoMemoDataShowResponse = result;
+          if (shoppingDatumShowRes.data.isOpen) {
+            const url = `/okaimono_memo_use_open/${shoppingDatumShowRes.data.userId}/${shoppingDatumShowRes.data.id}`;
+            setOpenMessage("おつかいをお願いしたい人に送ってみましょう");
+            setValue("openMemoUrl", url);
+            onOpenUrl();
+          } else {
+            setOpenMessage("公開設定がされていません。確認ページから再設定しましょう");
+            setValue("openMemoUrl", "非公開");
+            onOpenUrl();
+          }
         }
+      } catch (err) {
+        setLoading(false);
+        const axiosError = err as AxiosError;
+        console.error(axiosError.response);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
       }
-    } catch (err) {
-      setLoading(false);
-      const axiosError = err as AxiosError;
-      console.error(axiosError.response);
-      showMessage({ title: "エラーが発生しました。", status: "error" });
-    }
-  }, [readyShoppingMemo]);
+    },
+    [readyShoppingMemo]
+  );
 
   const onClickUrlCopy = () => {
     navigator.clipboard.writeText(getValues("openMemoUrl"));

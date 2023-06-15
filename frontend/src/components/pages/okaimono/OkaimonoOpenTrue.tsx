@@ -29,10 +29,12 @@ import {
 import { format } from "date-fns";
 import {
   GetSingleMemo,
+  ListFormParams,
   MergeParams,
   OkaimonoMemoDataShow,
   OkaimonoMemosData,
   OkaimonoMemosDataResponse,
+  OkaimonoShopDataResponse,
   OkaimonoShopModifingData,
 } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
@@ -264,22 +266,24 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
             userId,
             shopId: shoppingDatumRes.data.shopId,
           };
-          const shopRes = await shopShowOpenTrue(shopProps);
-          if (shopRes.status === 200) {
-            setShopDataValues(shopRes.data);
-            setValue("shopName", shopRes.data.shopName);
+          const getShop = await shopShowOpenTrue(shopProps);
+          if (getShop && getShop.status === 200) {
+            const shopResponse = getShop;
+            setShopDataValues(shopResponse.data);
+            setValue("shopName", shopResponse.data.shopName);
             const listProps = {
               userId,
               shoppingDataId: id,
             };
-            console.log("resss", listProps);
-            const shoppingListRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(listProps);
-            if (shopRes.status === 200) {
-              setListValues(shoppingListRes.data);
-              for (let i = fields.length; i < shoppingListRes.data.length; i++) {
+            // const shoppingListRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(listProps);
+            const getList = await memosShowOpenTrue(listProps);
+            if (getList && getList.status === 200) {
+              const listResponse = getList;
+              setListValues(listResponse.data);
+              for (let i = fields.length; i < listResponse.data.length; i++) {
                 append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
               }
-              shoppingListRes.data.forEach((list, index) => {
+              listResponse.data.forEach((list: ListFormParams, index: number) => {
                 setValue(`listForm.${index}.price`, list.price);
                 setValue(`listForm.${index}.amount`, list.amount);
                 setValue(`listForm.${index}.purchaseName`, list.purchaseName);
@@ -313,18 +317,20 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
             userId,
             memoId: target.id,
           };
-          const getTargetMemo: GetSingleMemo = await memoShowOpenTrue(showOpenProps);
-          if (target) {
-            listSetValue("modifyPurchaseName", getTargetMemo.data.purchaseName);
-            listSetValue("modifyAmount", getTargetMemo.data.amount);
-            listSetValue("modifyMemo", getTargetMemo.data.shoppingDetailMemo);
-            listSetValue("modifyExpiryDateStart", getTargetMemo.data.expiryDateStart);
-            listSetValue("modifyExpiryDateEnd", getTargetMemo.data.expiryDateEnd);
-            listSetValue("modifyId", getTargetMemo.data.id);
-            listSetValue("modifyAsc", getTargetMemo.data.asc);
-            listSetValue("modifyShopId", getTargetMemo.data.shopId);
-            listSetValue("modifyListShoppingDate", getTargetMemo.data.shoppingDate);
-            listSetValue("modifyListShoppingDatumId", getTargetMemo.data.shoppingDatumId);
+          // const getTargetMemo: GetSingleMemo = await memoShowOpenTrue(showOpenProps);
+          const getTargetMemo = await memoShowOpenTrue(showOpenProps);
+          if (getTargetMemo && target) {
+            const listResponse: GetSingleMemo = getTargetMemo;
+            listSetValue("modifyPurchaseName", listResponse.data.purchaseName);
+            listSetValue("modifyAmount", listResponse.data.amount);
+            listSetValue("modifyMemo", listResponse.data.shoppingDetailMemo);
+            listSetValue("modifyExpiryDateStart", listResponse.data.expiryDateStart);
+            listSetValue("modifyExpiryDateEnd", listResponse.data.expiryDateEnd);
+            listSetValue("modifyId", listResponse.data.id);
+            listSetValue("modifyAsc", listResponse.data.asc);
+            listSetValue("modifyShopId", listResponse.data.shopId);
+            listSetValue("modifyListShoppingDate", listResponse.data.shoppingDate);
+            listSetValue("modifyListShoppingDatumId", listResponse.data.shoppingDatumId);
             onListOpen();
             setLoading(false);
           }
@@ -378,17 +384,21 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
           userId,
           shoppingDataId: result?.data[0].shoppingDatumId,
         };
-        const memosRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(memosProps);
-        for (let i = fields.length; i < memosRes.data.length; i++) {
-          append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+        // const memosRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(memosProps);
+        const getList = await memosShowOpenTrue(memosProps);
+        if (getList) {
+          const listResponse = getList;
+          for (let i = fields.length; i < listResponse.data.length; i++) {
+            append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+          }
+          listResponse.data.forEach((data: ListFormParams, index: number) => {
+            setValue(`listForm.${index}.purchaseName`, data.purchaseName);
+            setValue(`listForm.${index}.price`, data.price);
+            setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
+            setValue(`listForm.${index}.amount`, data.amount);
+            setValue(`listForm.${index}.id`, data.id);
+          });
         }
-        memosRes.data.forEach((m, index) => {
-          setValue(`listForm.${index}.purchaseName`, m.purchaseName);
-          setValue(`listForm.${index}.price`, m.price);
-          setValue(`listForm.${index}.shoppingDetailMemo`, m.shoppingDetailMemo);
-          setValue(`listForm.${index}.amount`, m.amount);
-          setValue(`listForm.${index}.id`, m.id);
-        });
         history.push("/");
       } catch (err) {
         setLoading(false);

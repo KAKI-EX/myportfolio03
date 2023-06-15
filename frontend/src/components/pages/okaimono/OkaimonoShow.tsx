@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { MergeParams, OkaimonoMemosDataResponse } from "interfaces";
+import { ListFormParams, MergeParams, OkaimonoMemosDataResponse } from "interfaces";
 import { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
@@ -149,17 +149,21 @@ export const OkaimonoShow: VFC = memo(() => {
         const memosProps: memoProps = {
           shoppingDataId: result?.data[0].shoppingDatumId,
         };
-        const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
-        for (let i = fields.length; i < memosRes.data.length; i++) {
-          append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+        // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
+        const getList = await memosShow(memosProps);
+        if (getList) {
+          const listResponse = getList;
+          for (let i = fields.length; i < listResponse.data.length; i++) {
+            append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
+          }
+          listResponse.data.forEach((data: ListFormParams, index: number) => {
+            setValue(`listForm.${index}.purchaseName`, data.purchaseName);
+            setValue(`listForm.${index}.price`, data.price);
+            setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
+            setValue(`listForm.${index}.amount`, data.amount);
+            setValue(`listForm.${index}.id`, data.id);
+          });
         }
-        memosRes.data.forEach((m, index) => {
-          setValue(`listForm.${index}.purchaseName`, m.purchaseName);
-          setValue(`listForm.${index}.price`, m.price);
-          setValue(`listForm.${index}.shoppingDetailMemo`, m.shoppingDetailMemo);
-          setValue(`listForm.${index}.amount`, m.amount);
-          setValue(`listForm.${index}.id`, m.id);
-        });
         setPushTemporarilyButton(false);
       }
     },
@@ -246,7 +250,9 @@ export const OkaimonoShow: VFC = memo(() => {
               <PrimaryButtonForReactHookForm disabled={!isValid}>
                 {readOnly ? "編集する" : "確定する"}
               </PrimaryButtonForReactHookForm>
-              <OptionallyButton onClick={onClickTemporarilySaved} disabled={readOnly}>一時保存</OptionallyButton>
+              <OptionallyButton onClick={onClickTemporarilySaved} disabled={readOnly}>
+                一時保存
+              </OptionallyButton>
               <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
             </Stack>
           </VStack>
