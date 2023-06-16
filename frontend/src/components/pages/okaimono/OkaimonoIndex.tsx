@@ -1,4 +1,4 @@
-import { ChevronDownIcon, DeleteIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -10,7 +10,6 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -44,76 +43,44 @@ import {
 import { useMessage } from "hooks/useToast";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
-import axios, { AxiosError } from "axios";
-import { OkaimonoMemoData, OkaimonoMemoResponse, ListFormParams, OkaimonoMemoDataShowResponse } from "interfaces";
+import { AxiosError } from "axios";
+import { OkaimonoMemoData, OkaimonoMemoResponse } from "interfaces";
 import { shoppingDataDelete } from "lib/api/destroy";
 import { useDateConversion } from "hooks/useDateConversion";
-import { memosShow, shoppingDataIndex, shoppingDatumShow } from "lib/api/show";
+import { shoppingDataIndex } from "lib/api/show";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
+import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
+import { useGetOpenUrl } from "hooks/useGetOpenUrl";
 
 export const OkaimonoIndex: VFC = memo(() => {
-  const history = useHistory();
   const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
   const [inCompleteMemo, setInCompleteMemo] = useState<OkaimonoMemoData[] | null>();
   const [readyShoppingMemo, setReadyShoppingMemo] = useState<OkaimonoMemoData[] | null>();
   const [finishedMemo, setFinishedMemo] = useState<OkaimonoMemoData[] | null>();
-  const { showMessage } = useMessage();
-  const [loading, setLoading] = useState<boolean>(false);
   const [openMessage, setOpenMessage] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
+
+  const { showMessage } = useMessage();
+  const getIndex = useGetOkaimonoIndex();
+  const getOpenUrl = useGetOpenUrl(readyShoppingMemo);
+  const { dateConversion } = useDateConversion();
+
+  const history = useHistory();
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onCloseAlert } = useDisclosure();
   const { isOpen: isOpenUrl, onOpen: onOpenUrl, onClose: onCloseUrl } = useDisclosure();
   const cancelRef = React.useRef(null);
-  const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
-  const { dateConversion } = useDateConversion();
   const { register, getValues, setValue } = useForm();
 
+  //------------------------------------------------------------------------
+  // indexページのリスト読み込み
   useEffect(() => {
-    const getIndex = async () => {
-      try {
-        setLoading(true);
-        const indexRes = await shoppingDataIndex();
-        if (indexRes) {
-          const isFinishNull = indexRes.data // 一時保存中のメモリストデータ
-            .filter((resData: ListFormParams) => resData.isFinish === null)
-            .map((nullList: ListFormParams) => {
-              const inCompleteData = { ...nullList };
-              return inCompleteData;
-            });
-
-          const isFinishFalse = indexRes.data // 買い物予定のメモリストデータ
-            .filter((resData: ListFormParams) => resData.isFinish === false)
-            .map((falseList: ListFormParams) => {
-              const readyShopping = { ...falseList };
-              return readyShopping;
-            });
-
-          const isFinishTrue = indexRes.data // 買い物が終了したメモリストデータ
-            .filter((resData: ListFormParams) => resData.isFinish === true)
-            .map((trueList: ListFormParams) => {
-              const finishedShopping = { ...trueList };
-              return finishedShopping;
-            });
-
-          setInCompleteMemo(isFinishNull);
-          setOkaimonoMemo(indexRes);
-          setReadyShoppingMemo(isFinishFalse);
-          setFinishedMemo(isFinishTrue);
-          setLoading(false);
-        }
-        if (indexRes?.data.length === 0) {
-          showMessage({ title: "まだメモが登録されていません", status: "info" });
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: axiosError.response?.data.errors, status: "error" });
-        setLoading(false);
-      }
-    };
-    getIndex();
+    const props = { setLoading, setInCompleteMemo, setOkaimonoMemo, setReadyShoppingMemo, setFinishedMemo };
+    getIndex(props);
   }, []);
-
+  //------------------------------------------------------------------------
+  // indexページの特定のメモ削除機能
   const onClickDelete = useCallback(
     async (props: OkaimonoMemoData) => {
       onCloseAlert();
@@ -144,38 +111,16 @@ export const OkaimonoIndex: VFC = memo(() => {
     history.push(`/okaimono/okaimono_memo_use/${id}`);
   };
   // ---------------------------------------------------------------------------------
-
-  const onClickShowOpenUrl = useCallback(
-    (shoppingDataId: string) => async (event: React.MouseEvent) => {
-      event.preventDefault();
-      try {
-        const result = await shoppingDatumShow({ shoppingDataId });
-        if (result && result.status === 200) {
-          const shoppingDatumShowRes: OkaimonoMemoDataShowResponse = result;
-          if (shoppingDatumShowRes.data.isOpen) {
-            const url = `/okaimono_memo_use_open/${shoppingDatumShowRes.data.userId}/${shoppingDatumShowRes.data.id}`;
-            setOpenMessage("おつかいをお願いしたい人に送ってみましょう");
-            setValue("openMemoUrl", url);
-            onOpenUrl();
-          } else {
-            setOpenMessage("公開設定がされていません。確認ページから再設定しましょう");
-            setValue("openMemoUrl", "非公開");
-            onOpenUrl();
-          }
-        }
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    },
-    [readyShoppingMemo]
-  );
+  // 公開用ページのopenModalとコピー機能(コピー機能はhttps環境下出ないと動作しないため注意)
+  const onClickShowOpenUrl = (shoppingDataId: string, event: React.MouseEvent) => {
+    const openUrlProps = { setOpenMessage, setValue, onOpenUrl, setLoading, shoppingDataId, event };
+    getOpenUrl(openUrlProps);
+  };
 
   const onClickUrlCopy = () => {
     navigator.clipboard.writeText(getValues("openMemoUrl"));
   };
+  // ---------------------------------------------------------------------------------
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -183,7 +128,7 @@ export const OkaimonoIndex: VFC = memo(() => {
     </Box>
   ) : (
     <Flex align="center" justify="center" px={2}>
-      <Box w="100rem">
+      <Box w={{ base: "100rem", md: "60rem" }}>
         <Heading as="h1" size="lg" textAlign="center" my={5}>
           お買い物リスト一覧
         </Heading>
@@ -310,7 +255,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                             borderTop="1px"
                             borderColor="gray.300"
                             textAlign="center"
-                            display={{ base: "table-cell", md: "none" }}
+                            display={{ base: "table-cell" }}
                           >
                             <Menu>
                               <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
@@ -327,16 +272,6 @@ export const OkaimonoIndex: VFC = memo(() => {
                                 </MenuItem>
                               </MenuList>
                             </Menu>
-                          </Td>
-                          <Td
-                            px="0"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            textAlign="center"
-                            display={{ base: "none", md: "table-cell" }}
-                          >
-                            <Icon as={DeleteIcon} bg="white" boxSize={4} mr="4" />
-                            <Icon as={EditIcon} bg="white" boxSize={4} />
                           </Td>
                         </Tr>
                       </Tbody>
@@ -453,14 +388,16 @@ export const OkaimonoIndex: VFC = memo(() => {
                             borderTop="1px"
                             borderColor="gray.300"
                             textAlign="center"
-                            display={{ base: "table-cell", md: "none" }}
+                            display={{ base: "table-cell" }}
                           >
                             <Menu>
                               <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
                               <MenuList borderRadius="md" shadow="md">
                                 <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem>
                                 <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                                <MenuItem onClick={onClickShowOpenUrl(i.id)}>公開用URLを確認する</MenuItem>
+                                <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>
+                                  公開用URLを確認する
+                                </MenuItem>
                                 <MenuItem
                                   onClick={() => {
                                     setDeletePost(i);
@@ -471,16 +408,6 @@ export const OkaimonoIndex: VFC = memo(() => {
                                 </MenuItem>
                               </MenuList>
                             </Menu>
-                          </Td>
-                          <Td
-                            px="0"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            textAlign="center"
-                            display={{ base: "none", md: "table-cell" }}
-                          >
-                            <Icon as={DeleteIcon} bg="white" boxSize={4} mr="4" />
-                            <Icon as={EditIcon} bg="white" boxSize={4} />
                           </Td>
                         </Tr>
                       </Tbody>
@@ -597,7 +524,7 @@ export const OkaimonoIndex: VFC = memo(() => {
                             borderTop="1px"
                             borderColor="gray.300"
                             textAlign="center"
-                            display={{ base: "table-cell", md: "none" }}
+                            display={{ base: "table-cell" }}
                           >
                             <Menu>
                               <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
@@ -614,16 +541,6 @@ export const OkaimonoIndex: VFC = memo(() => {
                                 </MenuItem>
                               </MenuList>
                             </Menu>
-                          </Td>
-                          <Td
-                            px="0"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            textAlign="center"
-                            display={{ base: "none", md: "table-cell" }}
-                          >
-                            <Icon as={DeleteIcon} bg="white" boxSize={4} mr="4" />
-                            <Icon as={EditIcon} bg="white" boxSize={4} />
                           </Td>
                         </Tr>
                       </Tbody>

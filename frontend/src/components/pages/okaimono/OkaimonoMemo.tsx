@@ -162,7 +162,7 @@ export const OkaimonoMemo: VFC = memo(() => {
             bg="rgba(49,151,149,1)"
             align="center"
             justify="center"
-            w="90%"
+            w={{ base: "90%", md: "60%" }}
             bottom="1.5%"
             rounded="xl"
             zIndex="10"

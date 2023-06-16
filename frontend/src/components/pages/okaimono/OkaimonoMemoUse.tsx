@@ -401,7 +401,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               今日のお買物メモ
             </Heading>
             <Divider my={4} />
-            <Box bg="white" rounded="xl" w="100%" boxShadow="md">
+            <Box bg="white" rounded="xl" w={{ base: "100%", md: "50%" }} boxShadow="md">
               <HStack>
                 <Stack align="center" justify="center" py={6} spacing="3" w="95%" ml={5}>
                   <Input
@@ -456,7 +456,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             </Box>
             {fields.map((field, index) => {
               return (
-                <Box w="100%" key={field.key} bg="white" py={4} px={2} rounded={10} boxShadow="md">
+                <Box w={{ base: "100%", md: "50%" }} key={field.key} bg="white" py={4} px={2} rounded={10} boxShadow="md">
                   <HStack>
                     <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isBought`)} />
                     <Input
@@ -554,7 +554,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               bg="rgba(49,151,149,1)"
               align="center"
               justify="center"
-              w="90%"
+              w={{ base: "90%", md: "60%" }}
               bottom="1.5%"
               rounded="xl"
               zIndex="10"
