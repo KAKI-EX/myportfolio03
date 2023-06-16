@@ -1,16 +1,8 @@
 import { AxiosError } from "axios";
-import {
-  MergeParams,
-  OkaimonoMemoDataShowResponse,
-  OkaimonoShopDataResponse,
-  OkaimonoMemosDataResponse,
-  ListFormParams,
-} from "interfaces";
-import Cookies from "js-cookie";
-import { memoProps, memosShow, shopPropsType, shopShow } from "lib/api/show";
+import { MergeParams, ListFormParams } from "interfaces";
+import { memoProps, memosShow, shoppingDatumShow, shopPropsType, shopShow } from "lib/api/show";
 import React from "react";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";
-import { useGetOkaimonoShow } from "./useGetOkaimonoShow";
 
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,55 +15,56 @@ type Props = {
 
 export const useSetOkaimonoShowIndex = (props: Props) => {
   const { setLoading, id, setValue, fields, append, setExpiryDate } = props;
-  const getOkaimonoShow = useGetOkaimonoShow(id);
 
   const showMemo = async () => {
     setLoading(true);
     try {
-      const shoppingRes: OkaimonoMemoDataShowResponse | undefined = await getOkaimonoShow();
-      if (shoppingRes?.status === 200) {
-        setValue("shoppingDate", shoppingRes.data.shoppingDate);
-        setValue("estimatedBudget", shoppingRes.data.estimatedBudget);
-        setValue("shoppingMemo", shoppingRes.data.shoppingMemo);
-        setValue("shoppingDatumId", shoppingRes.data.id);
-        setValue("isOpen", shoppingRes.data.isOpen);
-        const shopProps: shopPropsType = {
-          shopId: shoppingRes.data.shopId,
-        };
-        const getShopDatum = await shopShow(shopProps);
-        if (getShopDatum && getShopDatum.status === 200) {
-          const shopResponse = getShopDatum;
-          setValue("shopName", shopResponse.data.shopName);
-          const memosProps: memoProps = {
-            shoppingDataId: shoppingRes.data.id,
+      if (id) {
+        const shoppingDatumProps = { shoppingDataId: id };
+        const getShopping = await shoppingDatumShow(shoppingDatumProps);
+        if (getShopping?.status === 200) {
+          setValue("shoppingDate", getShopping.data.shoppingDate);
+          setValue("estimatedBudget", getShopping.data.estimatedBudget);
+          setValue("shoppingMemo", getShopping.data.shoppingMemo);
+          setValue("shoppingDatumId", getShopping.data.id);
+          setValue("isOpen", getShopping.data.isOpen);
+          const shopProps: shopPropsType = {
+            shopId: getShopping.data.shopId,
           };
-          // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
-          const getList = await memosShow(memosProps);
-          if (getList && getList.status === 200) {
-            const listResponse = getList;
-            for (let i = fields.length; i < listResponse.data.length; i++) {
-              append({
-                purchaseName: "",
-                price: "",
-                shoppingDetailMemo: "",
-                amount: "",
-                id: "",
-                expiryDateStart: "",
-                expiryDateEnd: "",
+          const getShopDatum = await shopShow(shopProps);
+          if (getShopDatum && getShopDatum.status === 200) {
+            const shopResponse = getShopDatum;
+            setValue("shopName", shopResponse.data.shopName);
+            const memosProps: memoProps = {
+              shoppingDataId: getShopping.data.id,
+            };
+            const getList = await memosShow(memosProps);
+            if (getList && getList.status === 200) {
+              const listResponse = getList;
+              for (let i = fields.length; i < listResponse.data.length; i++) {
+                append({
+                  purchaseName: "",
+                  price: "",
+                  shoppingDetailMemo: "",
+                  amount: "",
+                  id: "",
+                  expiryDateStart: "",
+                  expiryDateEnd: "",
+                });
+              }
+              listResponse.data.forEach((data: ListFormParams, index: number) => {
+                setValue(`listForm.${index}.purchaseName`, data.purchaseName);
+                setValue(`listForm.${index}.price`, data.price);
+                setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
+                setValue(`listForm.${index}.amount`, data.amount);
+                setValue(`listForm.${index}.id`, data.id);
+                setValue(`listForm.${index}.expiryDateStart`, data.expiryDateStart);
+                setValue(`listForm.${index}.expiryDateEnd`, data.expiryDateEnd);
+                if (data.expiryDateStart) {
+                  setExpiryDate(true);
+                }
               });
             }
-            listResponse.data.forEach((data: ListFormParams, index: number) => {
-              setValue(`listForm.${index}.purchaseName`, data.purchaseName);
-              setValue(`listForm.${index}.price`, data.price);
-              setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
-              setValue(`listForm.${index}.amount`, data.amount);
-              setValue(`listForm.${index}.id`, data.id);
-              setValue(`listForm.${index}.expiryDateStart`, data.expiryDateStart);
-              setValue(`listForm.${index}.expiryDateEnd`, data.expiryDateEnd);
-              if (data.expiryDateStart) {
-                setExpiryDate(true);
-              }
-            });
           }
         }
       }
