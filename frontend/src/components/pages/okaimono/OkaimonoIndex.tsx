@@ -52,6 +52,7 @@ import { useForm } from "react-hook-form";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
 import { useGetOpenUrl } from "hooks/useGetOpenUrl";
+import { TableThread } from "components/molecules/TableThread";
 
 export const OkaimonoIndex: VFC = memo(() => {
   const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
@@ -148,60 +149,7 @@ export const OkaimonoIndex: VFC = memo(() => {
             <TabPanels>
               <TabPanel p={1}>
                 <Table variant="simple" w="100%" bg="white" rounded={10}>
-                  <Thead>
-                    <Tr>
-                      <Th
-                        p={0}
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "35%", md: "20%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                      >
-                        お買い物予定日
-                      </Th>
-                      <Th
-                        p={0}
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "15%", md: "10%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                        // display={{ base: "none", md: "table-cell" }}
-                      >
-                        リスト数
-                      </Th>
-                      <Th
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "", md: "13%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                        display={{ base: "none", md: "table-cell" }}
-                      >
-                        ゆるい予算
-                      </Th>
-                      <Th
-                        color="white"
-                        bg="teal.500"
-                        px="17px"
-                        w={{ base: "43%", md: "22%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                      >
-                        一言メモ
-                      </Th>
-                      <Th bg="teal.500" px="0" w={{ base: "7%", md: "8%" }} borderBottom="1px" borderColor="gray.400" />
-                    </Tr>
-                  </Thead>
+                  <TableThread />
                   {inCompleteMemo?.map((i: OkaimonoMemoData) => {
                     return (
                       <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
@@ -281,60 +229,7 @@ export const OkaimonoIndex: VFC = memo(() => {
               </TabPanel>
               <TabPanel p={1}>
                 <Table variant="simple" w="100%" bg="white" rounded={10}>
-                  <Thead>
-                    <Tr>
-                      <Th
-                        p={0}
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "35%", md: "20%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                      >
-                        お買い物予定日
-                      </Th>
-                      <Th
-                        p={0}
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "15%", md: "10%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                        // display={{ base: "none", md: "table-cell" }}
-                      >
-                        リスト数
-                      </Th>
-                      <Th
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "", md: "13%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                        display={{ base: "none", md: "table-cell" }}
-                      >
-                        ゆるい予算
-                      </Th>
-                      <Th
-                        color="white"
-                        bg="teal.500"
-                        px="17px"
-                        w={{ base: "43%", md: "22%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                      >
-                        一言メモ
-                      </Th>
-                      <Th bg="teal.500" px="0" w={{ base: "7%", md: "8%" }} borderBottom="1px" borderColor="gray.400" />
-                    </Tr>
-                  </Thead>
+                  <TableThread />
                   {readyShoppingMemo?.map((i: OkaimonoMemoData) => {
                     return (
                       <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
@@ -417,60 +312,7 @@ export const OkaimonoIndex: VFC = memo(() => {
               </TabPanel>
               <TabPanel p={1}>
                 <Table variant="simple" w="100%" bg="white" rounded={10}>
-                  <Thead>
-                    <Tr>
-                      <Th
-                        p={0}
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "35%", md: "20%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                      >
-                        お買い物予定日
-                      </Th>
-                      <Th
-                        p={0}
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "15%", md: "10%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                        // display={{ base: "none", md: "table-cell" }}
-                      >
-                        リスト数
-                      </Th>
-                      <Th
-                        color="white"
-                        bg="teal.500"
-                        w={{ base: "", md: "13%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                        display={{ base: "none", md: "table-cell" }}
-                      >
-                        ゆるい予算
-                      </Th>
-                      <Th
-                        color="white"
-                        bg="teal.500"
-                        px="17px"
-                        w={{ base: "43%", md: "22%" }}
-                        borderBottom="1px"
-                        borderColor="gray.400"
-                        textAlign="center"
-                        fontSize={{ base: "sm", md: "md" }}
-                      >
-                        一言メモ
-                      </Th>
-                      <Th bg="teal.500" px="0" w={{ base: "7%", md: "8%" }} borderBottom="1px" borderColor="gray.400" />
-                    </Tr>
-                  </Thead>
+                  <TableThread />
                   {finishedMemo?.map((i: OkaimonoMemoData) => {
                     return (
                       <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
