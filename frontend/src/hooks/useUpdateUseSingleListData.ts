@@ -3,22 +3,26 @@ import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
 import { ListFormParams, MergeParams } from "interfaces";
 import { memosUpdate } from "lib/api/update";
+import { UseFormSetValue } from "react-hook-form";
 
 type Props = {
   setReadOnly: (value: React.SetStateAction<boolean>) => void;
   readOnly: boolean;
   setLoading: (value: React.SetStateAction<boolean>) => void;
   oneListFormData: MergeParams;
+  setValue: UseFormSetValue<MergeParams>;
 };
 
 export const useUpdateUseSingleListData = () => {
   const { showMessage } = useMessage();
 
   const updateListData = async (props: Props) => {
-    const { setReadOnly, readOnly, setLoading, oneListFormData } = props;
+    const { setReadOnly, readOnly, setLoading, oneListFormData, setValue } = props;
+    const { indexNumber } = oneListFormData;
     setReadOnly(!readOnly);
     if (!readOnly) {
       setLoading(true);
+
       try {
         const listParams: ListFormParams = {
           memoId: oneListFormData.modifyId,
@@ -32,7 +36,11 @@ export const useUpdateUseSingleListData = () => {
           expiryDateStart: oneListFormData.modifyExpiryDateStart,
           expiryDateEnd: oneListFormData.modifyExpiryDateEnd,
         };
-        await memosUpdate([listParams]);
+        const updateResult = await memosUpdate([listParams]);
+        if (updateResult && typeof indexNumber === "number" && updateResult.status === 200) {
+          setValue(`listForm.${indexNumber}.purchaseName`, updateResult.data[0].purchaseName);
+          setValue(`listForm.${indexNumber}.amount`, updateResult.data[0].amount);
+        }
         setLoading(false);
         showMessage({ title: `お買い物リストの修正が完了しました。`, status: "success" });
       } catch (err) {

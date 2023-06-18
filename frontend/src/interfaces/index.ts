@@ -27,7 +27,7 @@ export interface User {
 }
 // メモページ
 export interface ListFormParams {
-  userId?: string,
+  userId?: string;
   shopId?: string;
   id?: string;
   asc?: string;
@@ -74,12 +74,13 @@ export interface MergeParams {
   modyfyShoppingDatumId?: string;
   modifyId?: string;
   modifyAsc?: string;
-  modifyShopId?: string
+  modifyShopId?: string;
   modifyListShoppingDate?: string;
   modifyListShoppingDatumId?: string;
   isBought?: boolean;
   isFinish?: boolean | null;
   isOpen?: boolean;
+  indexNumber?: number;
   listForm?: ListFormParams[];
 }
 // --------------------indexページのtype---------------------

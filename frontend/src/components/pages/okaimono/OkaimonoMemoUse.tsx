@@ -160,13 +160,10 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   };
   // ----------------------------------------------------------------------------------------------------------
   // リスト情報の単一修正論理式。(右の下矢印から編集を選び、編集する際に呼び出される論理式。)
-  const onOneSubmit = useCallback(
-    async (oneListFormData: MergeParams) => {
-      const listProps = { setReadOnly, readOnly, setLoading, oneListFormData };
-      updateListData(listProps);
-    },
-    [setReadOnly, readOnly, setLoading]
-  );
+  const onOneSubmit = async (oneListFormData: MergeParams) => {
+    const listProps = { setReadOnly, readOnly, setLoading, oneListFormData, setValue };
+    updateListData(listProps);
+  };
 
   const onCloseList = () => {
     setReadOnly(true);
@@ -236,6 +233,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             listSetValue("modifyShopId", listResponse.data.shopId);
             listSetValue("modifyListShoppingDate", listResponse.data.shoppingDate);
             listSetValue("modifyListShoppingDatumId", listResponse.data.shoppingDatumId);
+            listSetValue("indexNumber", index);
             onListOpen();
             setLoading(false);
           }
@@ -707,6 +705,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                 <Input type="hidden" {...listRegister(`modifyShopId`)} />
                 <Input type="hidden" {...listRegister(`modifyListShoppingDatumId`)} />
                 <Input type="hidden" {...listRegister(`modifyListShoppingDate`)} />
+                <Input type="hidden" {...listRegister(`indexNumber`)} />
               </VStack>
             </ModalBody>
             <ModalFooter>
