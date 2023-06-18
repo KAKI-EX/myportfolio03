@@ -147,7 +147,7 @@ export const OkaimonoShow: VFC = memo(() => {
       if (!readOnly) {
         const result = await sendUpdateToAPI(addFormData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
-          shoppingDataId: result?.data[0].shoppingDatumId,
+          shoppingDatumId: result?.data[0].shoppingDatumId,
         };
         // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
         const getList = await memosShow(memosProps);

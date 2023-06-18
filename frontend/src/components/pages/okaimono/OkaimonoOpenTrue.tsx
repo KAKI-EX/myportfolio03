@@ -76,7 +76,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   });
   const validationNumber = /^[0-9]+$/;
 
-  const { userId, id } = useParams<{ userId: string; id: string }>();
+  const { userId, shoppingDatumId } = useParams<{ userId: string; shoppingDatumId: string }>();
 
   // ----------------------------------------------------------------------------------------------------------
   // okaimono_memo_useのランディングページ用useForm呼び出し
@@ -251,7 +251,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     if (userId) {
       const memosProps = {
         userId,
-        shoppingDataId: id,
+        shoppingDatumId,
       };
       try {
         const shoppingDatumRes = await shoppingDatumShowOpenTrue(memosProps);
@@ -259,7 +259,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
         if (shoppingDatumRes?.status === 200) {
           setShoppingDatumValues(shoppingDatumRes.data);
           setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
-          setValue("shoppingDatumId", id);
+          setValue("shoppingDatumId", shoppingDatumId);
           setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
           setValue("isFinish", true);
           const shopProps = {
@@ -273,7 +273,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
             setValue("shopName", shopResponse.data.shopName);
             const listProps = {
               userId,
-              shoppingDataId: id,
+              shoppingDatumId,
             };
             // const shoppingListRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(listProps);
             const getList = await memosShowOpenTrue(listProps);
@@ -382,7 +382,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
         const result = await sendOpenDataToAPI(formData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
           userId,
-          shoppingDataId: result?.data[0].shoppingDatumId,
+          shoppingDatumId: result?.data[0].shoppingDatumId,
         };
         // const memosRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(memosProps);
         const getList = await memosShowOpenTrue(memosProps);

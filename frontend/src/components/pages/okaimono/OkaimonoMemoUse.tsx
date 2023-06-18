@@ -7,7 +7,6 @@ import {
   FormLabel,
   Heading,
   HStack,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -33,7 +32,6 @@ import {
   ListFormParams,
   MergeParams,
   OkaimonoMemoDataShow,
-  OkaimonoMemoDataShowResponse,
   OkaimonoMemosData,
   OkaimonoMemosDataResponse,
   OkaimonoShopModifingData,
@@ -41,17 +39,17 @@ import {
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
-import { ChevronDownIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
 import { memoProps, memoShow, memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
-import { useCookie } from "hooks/useCookie";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
-import { shopCreate } from "lib/api/post";
-import { memosUpdate, shoppingDatumUpdate } from "lib/api/update";
 import { useMemoUpdate } from "hooks/useMemoUpdate";
+import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
+import { useUpdateUseSingleListData } from "hooks/useUpdateUseSingleListData";
+import { useGetUseMemoListData } from "hooks/useGetUseMemoListData";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -60,6 +58,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
+  const updateShoppingData = useUpdateUseMemoData();
+  const updateListData = useUpdateUseSingleListData();
+  const getShoppingMemoList = useGetUseMemoListData();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -71,7 +72,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   });
   const validationNumber = /^[0-9]+$/;
 
-  const { id } = useParams<{ id: string }>();
+  const { shoppingDatumId } = useParams<{ shoppingDatumId: string }>();
 
   // ----------------------------------------------------------------------------------------------------------
   // okaimono_memo_useのランディングページ用useForm呼び出し
@@ -140,72 +141,32 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   );
   // ----------------------------------------------------------------------------------------------------------
   // shoppingDatumの更新部分。
-  const shoppingDatumSubmit = async (shoppingDatumFormData: MergeParams) => {
-    setReadOnly(!readOnly);
-    if (!readOnly) {
-      setLoading(true);
-      const { modifyShopName, modifyShoppingDate, modifyShoppingMemo, modifyEstimatedBudget, modyfyShoppingDatumId } =
-        shoppingDatumFormData;
-      const shopParams: MergeParams = { shopName: modifyShopName || "お店名称未設定でのお買い物" };
-      try {
-        const shopUpdateRes = await shopCreate(shopParams);
-        if (shopUpdateRes.status === 200) {
-          const shopId = shopUpdateRes.data.id;
-          const shoppingDataParams: MergeParams = {
-            shopId,
-            shoppingDate: modifyShoppingDate,
-            shoppingMemo: modifyShoppingMemo,
-            estimatedBudget: modifyEstimatedBudget,
-            shoppingDatumId: modyfyShoppingDatumId,
-          };
-          await shoppingDatumUpdate(shoppingDataParams);
-          setLoading(false);
-          showMessage({ title: `お買い物メモの修正が完了しました。`, status: "success" });
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        setLoading(false);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
-  };
+  const shoppingDatumSubmit = useCallback(
+    (formData: MergeParams) => {
+      const updateProps = {
+        setReadOnly,
+        readOnly,
+        setLoading,
+        shoppingDatumFormData: formData,
+      };
+      updateShoppingData(updateProps);
+    },
+    [setReadOnly, readOnly, setLoading]
+  );
 
   const onCloseShoppingDatum = () => {
-    getShoppingMemoList();
     setReadOnly(true);
     closeShoppingDatum();
   };
   // ----------------------------------------------------------------------------------------------------------
   // リスト情報の単一修正論理式。(右の下矢印から編集を選び、編集する際に呼び出される論理式。)
-  const onOneSubmit = async (oneListFormData: MergeParams) => {
-    setReadOnly(!readOnly);
-    if (!readOnly) {
-      setLoading(true);
-      try {
-        const listParams: ListFormParams = {
-          memoId: oneListFormData.modifyId,
-          shoppingDatumId: oneListFormData.modifyListShoppingDatumId,
-          shopId: oneListFormData.modifyShopId,
-          purchaseName: oneListFormData.modifyPurchaseName,
-          shoppingDetailMemo: oneListFormData.modifyMemo,
-          amount: oneListFormData.modifyAmount,
-          shoppingDate: oneListFormData.modifyListShoppingDate,
-          asc: oneListFormData.modifyAsc,
-          expiryDateStart: oneListFormData.modifyExpiryDateStart,
-          expiryDateEnd: oneListFormData.modifyExpiryDateEnd,
-        };
-        await memosUpdate([listParams]);
-        setLoading(false);
-        showMessage({ title: `お買い物リストの修正が完了しました。`, status: "success" });
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        setLoading(false);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
-  };
+  const onOneSubmit = useCallback(
+    async (oneListFormData: MergeParams) => {
+      const listProps = { setReadOnly, readOnly, setLoading, oneListFormData };
+      updateListData(listProps);
+    },
+    [setReadOnly, readOnly, setLoading]
+  );
 
   const onCloseList = () => {
     setReadOnly(true);
@@ -239,65 +200,22 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // ページ情報の初回読み込み
   useEffect(() => {
-    getShoppingMemoList();
+    const memoListProps = {
+      setLoading,
+      fields,
+      shoppingDatumId,
+      setShoppingDatumValues,
+      setValue,
+      setShopDataValues,
+      setListValues,
+      append,
+    };
+
+    getShoppingMemoList(memoListProps);
   }, []);
 
-  const getShoppingMemoList = async () => {
-    setLoading(true);
-    if (id) {
-      const memosProps = {
-        shoppingDataId: id,
-      };
-      try {
-        const shoppingDatumRes = await shoppingDatumShow(memosProps);
-        if (shoppingDatumRes?.status === 200) {
-          setShoppingDatumValues(shoppingDatumRes.data);
-          setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
-          setValue("shoppingDatumId", id);
-          setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
-          setValue("isFinish", true);
-          const shopProps = {
-            shopId: shoppingDatumRes.data.shopId,
-          };
-          const shopRes = await shopShow(shopProps);
-          if (shopRes && shopRes.status === 200) {
-            setShopDataValues(shopRes.data);
-            setValue("shopName", shopRes.data.shopName);
-            const listProps = {
-              shoppingDataId: id,
-            };
-            const listResponse = await memosShow(listProps);
-
-            if (listResponse && listResponse.status === 200) {
-              const shoppingListRes: OkaimonoMemosDataResponse = listResponse;
-
-              setListValues(shoppingListRes.data);
-              for (let i = fields.length; i < shoppingListRes.data.length; i++) {
-                append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
-              }
-              shoppingListRes.data.forEach((list, index) => {
-                setValue(`listForm.${index}.price`, list.price);
-                setValue(`listForm.${index}.amount`, list.amount);
-                setValue(`listForm.${index}.purchaseName`, list.purchaseName);
-                setValue(`listForm.${index}.amount`, list.amount);
-                setValue(`listForm.${index}.id`, list.id);
-                setValue(`listForm.${index}.asc`, list.asc);
-              });
-            }
-          }
-        }
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
-  };
-
   // ----------------------------------------------------------------------------------------------------------
-  // shoppingList単一の更新部分。(リスト部分で下矢印を押して編集)
+  // shoppingList単一の表示部分。(リスト部分で下矢印を押して編集)
   const onClickListModify = (index: number) => async (event: React.MouseEvent) => {
     setLoading(true);
     if (listValues) {
@@ -358,8 +276,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     async (formData: MergeParams) => {
       try {
         const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
+        console.log("result", result);
         const memosProps: memoProps = {
-          shoppingDataId: result?.data[0].shoppingDatumId,
+          shoppingDatumId: result?.data[0].shoppingDatumId,
         };
         // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
         const getAllList = await memosShow(memosProps);
@@ -456,7 +375,15 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             </Box>
             {fields.map((field, index) => {
               return (
-                <Box w={{ base: "100%", md: "50%" }} key={field.key} bg="white" py={4} px={2} rounded={10} boxShadow="md">
+                <Box
+                  w={{ base: "100%", md: "50%" }}
+                  key={field.key}
+                  bg="white"
+                  py={4}
+                  px={2}
+                  rounded={10}
+                  boxShadow="md"
+                >
                   <HStack>
                     <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isBought`)} />
                     <Input

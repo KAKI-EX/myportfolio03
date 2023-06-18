@@ -20,7 +20,7 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
     setLoading(true);
     try {
       if (id) {
-        const shoppingDatumProps = { shoppingDataId: id };
+        const shoppingDatumProps = { shoppingDatumId: id };
         const getShopping = await shoppingDatumShow(shoppingDatumProps);
         if (getShopping?.status === 200) {
           setValue("shoppingDate", getShopping.data.shoppingDate);
@@ -36,7 +36,7 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
             const shopResponse = getShopDatum;
             setValue("shopName", shopResponse.data.shopName);
             const memosProps: memoProps = {
-              shoppingDataId: getShopping.data.id,
+              shoppingDatumId: getShopping.data.id,
             };
             const getList = await memosShow(memosProps);
             if (getList && getList.status === 200) {

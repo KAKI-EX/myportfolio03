@@ -45,7 +45,7 @@ export const Router: VFC = memo(() => {
           </Switch>
         )}
       />
-      <Route path="/okaimono_memo_use_open/:userId/:id">
+      <Route path="/okaimono_memo_use_open/:userId/:shoppingDatumId">
         <HeaderLayout>
           <OkaimonoOpenTrue />
         </HeaderLayout>

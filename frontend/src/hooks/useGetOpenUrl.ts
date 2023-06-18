@@ -11,7 +11,7 @@ type Props = {
   setValue: UseFormSetValue<FieldValues>;
   onOpenUrl: () => void;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  shoppingDataId: string;
+  shoppingDatumId: string;
   event: React.MouseEvent<Element, MouseEvent>;
 };
 
@@ -20,10 +20,10 @@ export const useGetOpenUrl = (readyShoppingMemo: OkaimonoMemoData[] | null | und
 
   const getOpenUrl = useCallback(
     async (props: Props) => {
-      const { setOpenMessage, setValue, onOpenUrl, setLoading, shoppingDataId, event } = props;
+      const { setOpenMessage, setValue, onOpenUrl, setLoading, shoppingDatumId, event } = props;
       event.preventDefault();
       try {
-        const result = await shoppingDatumShow({ shoppingDataId });
+        const result = await shoppingDatumShow({ shoppingDatumId });
         if (result && result.status === 200) {
           const shoppingDatumShowRes: OkaimonoMemoDataShowResponse = result;
           if (shoppingDatumShowRes.data.isOpen) {

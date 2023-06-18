@@ -113,8 +113,8 @@ export const OkaimonoIndex: VFC = memo(() => {
   };
   // ---------------------------------------------------------------------------------
   // 公開用ページのopenModalとコピー機能(コピー機能はhttps環境下出ないと動作しないため注意)
-  const onClickShowOpenUrl = (shoppingDataId: string, event: React.MouseEvent) => {
-    const openUrlProps = { setOpenMessage, setValue, onOpenUrl, setLoading, shoppingDataId, event };
+  const onClickShowOpenUrl = (shoppingDatumId: string, event: React.MouseEvent) => {
+    const openUrlProps = { setOpenMessage, setValue, onOpenUrl, setLoading, shoppingDatumId, event };
     getOpenUrl(openUrlProps);
   };
 

@@ -27,7 +27,7 @@ export const OkaimonoRoutes = [
     children: <OkaimonoShopShow />,
   },
   {
-    path: "/okaimono_memo_use/:id",
+    path: "/okaimono_memo_use/:shoppingDatumId",
     exact: false,
     children: <OkaimonoMemoUse />,
   },

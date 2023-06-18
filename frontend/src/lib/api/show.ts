@@ -8,7 +8,8 @@ export type shopPropsType = {
 
 export type memoProps = {
   userId?: string;
-  shoppingDataId: string;
+  shoppingDataId?: string;
+  shoppingDatumId: string;
 };
 
 export type memoOpenProps = {
@@ -62,9 +63,9 @@ export const memosShow = async (props: memoProps) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
     return undefined;
   }
-  const { shoppingDataId } = props;
+  const { shoppingDatumId } = props;
   console.log("memosShowが走っています。");
-  const memosShowRes = await client.get(`okaimono/memo/show?shopping_id=${shoppingDataId}`);
+  const memosShowRes = await client.get(`okaimono/memo/show?shopping_id=${shoppingDatumId}`);
   return {
     data: memosShowRes.data,
     status: memosShowRes.status,
@@ -131,9 +132,9 @@ export const shoppingDatumShow = async (props: memoProps) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
     return undefined;
   }
-  const { shoppingDataId } = props;
+  const { shoppingDatumId } = props;
   console.log("shoppingDatumShowが走っています。");
-  const shoppingDatumShowRes = await client.get(`okaimono/shoppingdatum/show?shopping_datum_id=${shoppingDataId}`);
+  const shoppingDatumShowRes = await client.get(`okaimono/shoppingdatum/show?shopping_datum_id=${shoppingDatumId}`);
   return {
     data: shoppingDatumShowRes.data,
     status: shoppingDatumShowRes.status,
