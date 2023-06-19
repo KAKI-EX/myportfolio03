@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   Flex,
   FormLabel,
@@ -10,10 +9,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -27,24 +22,20 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
-import {
-  MergeParams,
-  OkaimonoMemoDataShow,
-  OkaimonoMemosData,
-  OkaimonoShopModifingData,
-} from "interfaces";
+import { MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModifingData } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
 import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
 import { useUpdateUseSingleListData } from "hooks/useUpdateUseSingleListData";
 import { useGetUseMemoListData } from "hooks/useGetUseMemoListData";
 import { useGetUseSingleListData } from "hooks/useGetUseSingleListData";
 import { useUpdateUseMemoListData } from "hooks/useUpdateUseMemoListData";
+import { OkaimonoMemoUseMemo } from "components/molecules/OkaimonoMemoUseMemo";
+import { OkaimonoMemoUseList } from "components/molecules/OkaimonoMemoUseList";
+import { OkaimonoMemoUseCalculate } from "components/molecules/OkaimonoMemoUseCalculate";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -79,7 +70,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     watch,
     getValues,
     handleSubmit: allListHandleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<MergeParams>({
     defaultValues: {
       shoppingDate: formattedDefaultShoppingDate,
@@ -274,191 +265,29 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               今日のお買物メモ
             </Heading>
             <Divider my={4} />
-            <Box bg="white" rounded="xl" w={{ base: "100%", md: "50%" }} boxShadow="md">
-              <HStack>
-                <Stack align="center" justify="center" py={6} spacing="3" w="95%" ml={5}>
-                  <Input
-                    isReadOnly={readOnly}
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    size="md"
-                    type="date"
-                    w="100%"
-                    fontSize={{ base: "sm", md: "md" }}
-                    {...register("shoppingDate")}
-                  />
-                  <Input
-                    isReadOnly={readOnly}
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    placeholder={readOnly ? "お店の名前" : ""}
-                    size="md"
-                    w="100%"
-                    fontSize={{ base: "sm", md: "md" }}
-                    {...register("shopName", {
-                      maxLength: { value: 35, message: "最大文字数は35文字までです。" },
-                    })}
-                  />
-                  {errors.shopName && errors.shopName.types?.maxLength && (
-                    <Box color="red">{errors.shopName.types.maxLength}</Box>
-                  )}
-                  <InputGroup w="100%">
-                    <Input
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
-                      size="md"
-                      placeholder={!readOnly ? "お買い物の予算" : ""}
-                      type="number"
-                      fontSize={{ base: "sm", md: "md" }}
-                      {...register("estimatedBudget")}
-                    />
-                    <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                      円
-                    </InputRightElement>
-                  </InputGroup>
-                  <Input type="hidden" {...register(`shoppingDatumId`)} />
-                  <Input type="hidden" {...register(`isFinish`)} />
-                </Stack>
-                <Box w="5%">
-                  <Menu>
-                    <MenuButton as={ChevronDownIcon} />
-                    <MenuList borderRadius="md" shadow="md">
-                      <MenuItem onClick={(event) => onClickShoppingDatumModify(event)}>確認&編集</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Box>
-              </HStack>
-            </Box>
-            {fields.map((field, index) => {
-              return (
-                <Box
-                  w={{ base: "100%", md: "50%" }}
-                  key={field.key}
-                  bg="white"
-                  py={4}
-                  px={2}
-                  rounded={10}
-                  boxShadow="md"
-                >
-                  <HStack>
-                    <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isBought`)} />
-                    <Input
-                      border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
-                      placeholder="商品名"
-                      w="50%"
-                      fontSize={{ base: "sm", md: "md" }}
-                      px={1}
-                      isReadOnly={!!getValues(`listForm.${index}.id`)}
-                      ml={0}
-                      {...register(`listForm.${index}.purchaseName`, {
-                        required: { value: true, message: "商品名が入力されていません" },
-                        maxLength: { value: 30, message: "最大文字数は30文字までです。" },
-                      })}
-                    />
-                    <InputGroup w="20%">
-                      <Input
-                        textAlign="center"
-                        px={1}
-                        border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
-                        isReadOnly={!!getValues(`listForm.${index}.id`)}
-                        fontSize={{ base: "sm", md: "md" }}
-                        size="md"
-                        type="number"
-                        {...register(`listForm.${index}.amount`, {
-                          max: { value: 99, message: "上限は99までです。" },
-                          pattern: { value: validationNumber, message: "半角整数で入力してください。" },
-                        })}
-                      />
-                      <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                        個
-                      </InputRightElement>
-                    </InputGroup>
-                    <InputGroup w="30%">
-                      <Input
-                        type="number"
-                        fontSize={{ base: "sm", md: "md" }}
-                        {...register(`listForm.${index}.price`, {
-                          pattern: { value: validationNumber, message: "半角整数で入力してください。" },
-                        })}
-                      />
-                      <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                        円
-                      </InputRightElement>
-                    </InputGroup>
-                    {errors.listForm && errors.listForm[index]?.price && (
-                      <Box color="red" fontSize="sm">
-                        {errors.listForm[index]?.price?.types?.pattern}
-                      </Box>
-                    )}
-                    <Input type="hidden" {...register(`listForm.${index}.id`)} />
-                    <Input type="hidden" {...register(`listForm.${index}.asc`)} />
-                    <Menu>
-                      <MenuButton as={ChevronDownIcon} />
-                      <MenuList borderRadius="md" shadow="md" zIndex="dropdown">
-                        {getValues(`listForm.${index}.id`) ? (
-                          <MenuItem onClick={(event) => onClickListModify(index, event)}>編集する</MenuItem>
-                        ) : null}
-                        <MenuItem
-                          onClick={() => {
-                            if (getValues) {
-                              const memoId = getValues(`listForm.${index}.id`);
-                              if (memoId) {
-                                if (setDeleteIds) {
-                                  setDeleteIds((prevIds) => [...(prevIds || []), memoId]);
-                                }
-                              }
-                            }
-                            remove(index);
-                          }}
-                        >
-                          削除する
-                        </MenuItem>
-                        <MenuItem onClick={() => insertInputForm(index)}>フォームを下に追加</MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </HStack>
-                  {errors.listForm && errors.listForm[index]?.purchaseName && (
-                    <Box color="red" fontSize="sm">
-                      {errors.listForm[index]?.purchaseName?.types?.required}
-                      {errors.listForm[index]?.purchaseName?.types?.maxLength}
-                    </Box>
-                  )}
-                  {errors.listForm && errors.listForm[index]?.amount && (
-                    <Box color="red" fontSize="sm">
-                      {errors.listForm[index]?.amount?.types?.max}
-                      {errors.listForm[index]?.amount?.types?.pattern}
-                    </Box>
-                  )}
-                </Box>
-              );
-            })}
-            <VStack
-              position="fixed"
-              bg="rgba(49,151,149,1)"
-              align="center"
-              justify="center"
-              w={{ base: "90%", md: "60%" }}
-              bottom="1.5%"
-              rounded="xl"
-              zIndex="10"
-              opacity="0.85"
-            >
-              <Box mt={4}>
-                <Box as="p" color="white">
-                  現在の合計(税別): {totalBudget}円
-                </Box>
-
-                <Box as="p" color={Number(shoppingBudgetField || "") < totalBudget ? "red.500" : "white"}>
-                  お買い物予算残り: {Number(shoppingBudgetField || "") - totalBudget}円
-                </Box>
-
-                <Box as="p" color="white">
-                  買い物予定残り： {calculateCheckbox}つ
-                </Box>
-              </Box>
-              <Stack w="80%" py="3%">
-                <PrimaryButtonForReactHookForm>お買い物終了！</PrimaryButtonForReactHookForm>
-                <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
-              </Stack>
-            </VStack>
+            <OkaimonoMemoUseMemo
+              readOnly={readOnly}
+              register={register}
+              errors={errors}
+              onClickShoppingDatumModify={onClickShoppingDatumModify}
+            />
+            <OkaimonoMemoUseList
+              fields={fields}
+              register={register}
+              getValues={getValues}
+              validationNumber={validationNumber}
+              onClickListModify={onClickListModify}
+              setDeleteIds={setDeleteIds}
+              remove={remove}
+              insertInputForm={insertInputForm}
+              errors={errors}
+            />
+            <OkaimonoMemoUseCalculate
+              totalBudget={totalBudget}
+              shoppingBudgetField={shoppingBudgetField}
+              calculateCheckbox={calculateCheckbox}
+              onClickBack={onClickBack}
+            />
             <Box h="15rem" />
           </VStack>
         </Flex>
