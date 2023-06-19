@@ -28,7 +28,6 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import {
-  ListFormParams,
   MergeParams,
   OkaimonoMemoDataShow,
   OkaimonoMemosData,
@@ -41,14 +40,11 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memosShow } from "lib/api/show";
-import { useMessage } from "hooks/useToast";
-import { AxiosError } from "axios";
-import { useMemoUpdate } from "hooks/useMemoUpdate";
 import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
 import { useUpdateUseSingleListData } from "hooks/useUpdateUseSingleListData";
 import { useGetUseMemoListData } from "hooks/useGetUseMemoListData";
 import { useGetUseSingleListData } from "hooks/useGetUseSingleListData";
+import { useUpdateUseMemoListData } from "hooks/useUpdateUseMemoListData";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -187,8 +183,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
 
-  const { showMessage } = useMessage();
-
   useEffect(() => {
     fields.forEach((field, index) => {
       setValue(`listForm.${index}.asc`, index.toString());
@@ -197,6 +191,11 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // ページ情報の初回読み込み
+  const memoListHooksProps = {
+    setLoading,
+    totalBudget,
+  };
+  const updateMemoListData = useUpdateUseMemoListData(memoListHooksProps);
   useEffect(() => {
     const memoListProps = {
       setLoading,
@@ -247,41 +246,19 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const calculateCheckbox = fields.length - checkboxCount;
   // ----------------------------------------------------------------------------------------------------------
   // 全体のリスト更新
-  const props = { setLoading, totalBudget };
-  const sendUpdateToAPI = useMemoUpdate(props);
-  const onAllSubmit = useCallback(
-    async (formData: MergeParams) => {
-      try {
-        const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
-        console.log("result", result);
-        const memosProps: memoProps = {
-          shoppingDatumId: result?.data[0].shoppingDatumId,
-        };
-        // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
-        const getAllList = await memosShow(memosProps);
-        if (getAllList) {
-          const listResponse = getAllList;
-          for (let i = fields.length; i < listResponse.data.length; i++) {
-            append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
-          }
-          listResponse.data.forEach((data: ListFormParams, index: number) => {
-            setValue(`listForm.${index}.purchaseName`, data.purchaseName);
-            setValue(`listForm.${index}.price`, data.price);
-            setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
-            setValue(`listForm.${index}.amount`, data.amount);
-            setValue(`listForm.${index}.id`, data.id);
-          });
-        }
-        history.push("/okaimono");
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    },
-    [sendUpdateToAPI]
-  );
+  const onAllSubmit = (formData: MergeParams) => {
+    const memoListProps = {
+      formData,
+      deleteIds,
+      setDeleteIds,
+      setLoading,
+      totalBudget,
+      fields,
+      append,
+      setValue,
+    };
+    updateMemoListData(memoListProps);
+  };
   // ----------------------------------------------------------------------------------------------------------
 
   return loading ? (
