@@ -28,12 +28,10 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import {
-  GetSingleMemo,
   ListFormParams,
   MergeParams,
   OkaimonoMemoDataShow,
   OkaimonoMemosData,
-  OkaimonoMemosDataResponse,
   OkaimonoShopModifingData,
 } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
@@ -43,13 +41,14 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memoShow, memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
+import { memoProps, memosShow } from "lib/api/show";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
 import { useMemoUpdate } from "hooks/useMemoUpdate";
 import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
 import { useUpdateUseSingleListData } from "hooks/useUpdateUseSingleListData";
 import { useGetUseMemoListData } from "hooks/useGetUseMemoListData";
+import { useGetUseSingleListData } from "hooks/useGetUseSingleListData";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -61,6 +60,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const updateShoppingData = useUpdateUseMemoData();
   const updateListData = useUpdateUseSingleListData();
   const getShoppingMemoList = useGetUseMemoListData();
+  const getSingleListData = useGetUseSingleListData();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -148,6 +148,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         readOnly,
         setLoading,
         shoppingDatumFormData: formData,
+        setValue,
       };
       updateShoppingData(updateProps);
     },
@@ -213,50 +214,28 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // shoppingList単一の表示部分。(リスト部分で下矢印を押して編集)
-  const onClickListModify = (index: number) => async (event: React.MouseEvent) => {
-    setLoading(true);
-    if (listValues) {
-      try {
-        const targetIdToFind = getValues(`listForm.${index}.id`);
-        const target = listValues.find((element) => element.id === targetIdToFind);
-        if (target) {
-          const getTargetMemo = await memoShow(target.id);
-          if (getTargetMemo && target) {
-            const listResponse: GetSingleMemo = getTargetMemo;
-            listSetValue("modifyPurchaseName", listResponse.data.purchaseName);
-            listSetValue("modifyAmount", listResponse.data.amount);
-            listSetValue("modifyMemo", listResponse.data.shoppingDetailMemo);
-            listSetValue("modifyExpiryDateStart", listResponse.data.expiryDateStart);
-            listSetValue("modifyExpiryDateEnd", listResponse.data.expiryDateEnd);
-            listSetValue("modifyId", listResponse.data.id);
-            listSetValue("modifyAsc", listResponse.data.asc);
-            listSetValue("modifyShopId", listResponse.data.shopId);
-            listSetValue("modifyListShoppingDate", listResponse.data.shoppingDate);
-            listSetValue("modifyListShoppingDatumId", listResponse.data.shoppingDatumId);
-            listSetValue("indexNumber", index);
-            onListOpen();
-            setLoading(false);
-          }
-        }
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
+  const onClickListModify = async (index: number, event: React.MouseEvent) => {
+    const listDataProps = {
+      index,
+      event,
+      setLoading,
+      getValues,
+      listValues,
+      listSetValue,
+      onListOpen,
+    };
+    getSingleListData(listDataProps);
   };
 
-  const onClickShoppingDatumModify = () => (event: React.MouseEvent) => {
-    if (shoppingDatumValues) {
+  const onClickShoppingDatumModify = (event: React.MouseEvent) => {
+    if (shoppingDatumValues && shopDataValue) {
+      console.log("shoppingDatumValues", shoppingDatumValues);
       shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
       shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
       shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);
       shoppingDatumSetValue("modyfyShoppingDatumId", shoppingDatumValues.id);
-      if (shopDataValue) {
-        shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
-        onShoppingDatumOpen();
-      }
+      shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
+      onShoppingDatumOpen();
     }
   };
 
@@ -365,7 +344,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                   <Menu>
                     <MenuButton as={ChevronDownIcon} />
                     <MenuList borderRadius="md" shadow="md">
-                      <MenuItem onClick={onClickShoppingDatumModify()}>確認&編集</MenuItem>
+                      <MenuItem onClick={(event) => onClickShoppingDatumModify(event)}>確認&編集</MenuItem>
                     </MenuList>
                   </Menu>
                 </Box>
@@ -438,7 +417,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
                       <MenuButton as={ChevronDownIcon} />
                       <MenuList borderRadius="md" shadow="md" zIndex="dropdown">
                         {getValues(`listForm.${index}.id`) ? (
-                          <MenuItem onClick={onClickListModify(index)}>編集する</MenuItem>
+                          <MenuItem onClick={(event) => onClickListModify(index, event)}>編集する</MenuItem>
                         ) : null}
                         <MenuItem
                           onClick={() => {

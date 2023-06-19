@@ -4,19 +4,21 @@ import { useMessage } from "hooks/useToast";
 import { MergeParams } from "interfaces";
 import { shopCreate } from "lib/api/post";
 import { shoppingDatumUpdate } from "lib/api/update";
+import { UseFormSetValue } from "react-hook-form";
 
 type Props = {
   setReadOnly: (value: React.SetStateAction<boolean>) => void;
   readOnly: boolean;
   setLoading: (value: React.SetStateAction<boolean>) => void;
   shoppingDatumFormData: MergeParams;
+  setValue: UseFormSetValue<MergeParams>;
 };
 
 export const useUpdateUseMemoData = () => {
   const { showMessage } = useMessage();
 
   const updateShoppingData = async (props: Props) => {
-    const { setReadOnly, readOnly, setLoading, shoppingDatumFormData } = props;
+    const { setReadOnly, readOnly, setLoading, shoppingDatumFormData, setValue } = props;
     setReadOnly(!readOnly);
     if (!readOnly) {
       setLoading(true);
@@ -34,7 +36,12 @@ export const useUpdateUseMemoData = () => {
             estimatedBudget: modifyEstimatedBudget,
             shoppingDatumId: modyfyShoppingDatumId,
           };
-          await shoppingDatumUpdate(shoppingDataParams);
+          const updateRes = await shoppingDatumUpdate(shoppingDataParams);
+          if (updateRes && updateRes.status === 200) {
+            setValue("shoppingDate", updateRes.data.shoppingDate);
+            setValue("shopName", shopUpdateRes.data.shopName);
+            setValue("estimatedBudget", updateRes.data.estimatedBudget);
+          }
           setLoading(false);
           showMessage({ title: `お買い物メモの修正が完了しました。`, status: "success" });
         }
