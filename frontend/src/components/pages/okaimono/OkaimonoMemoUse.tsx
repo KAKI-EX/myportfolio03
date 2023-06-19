@@ -1,23 +1,9 @@
 import {
   Box,
-  Button,
   Divider,
   Flex,
-  FormLabel,
   Heading,
-  HStack,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
-  Stack,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -26,7 +12,6 @@ import { MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModif
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
-import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { useHistory, useParams } from "react-router-dom";
 import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
 import { useUpdateUseSingleListData } from "hooks/useUpdateUseSingleListData";
@@ -36,6 +21,8 @@ import { useUpdateUseMemoListData } from "hooks/useUpdateUseMemoListData";
 import { OkaimonoMemoUseMemo } from "components/molecules/OkaimonoMemoUseMemo";
 import { OkaimonoMemoUseList } from "components/molecules/OkaimonoMemoUseList";
 import { OkaimonoMemoUseCalculate } from "components/molecules/OkaimonoMemoUseCalculate";
+import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMemoModal";
+import { OkaimonoMemoUseListModal } from "components/molecules/OkaimonoMemoUseListModal";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -115,7 +102,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   });
 
   // ----------------------------------------------------------------------------------------------------------
-
+  // 商品数と価格の計算部分
   const shoppingBudgetField = watch("estimatedBudget");
   const watchedPriceFields = fields.map((field, index) => ({
     price: watch(`listForm.${index}.price`),
@@ -294,217 +281,31 @@ export const OkaimonoMemoUse: VFC = memo(() => {
       </form>
 
       <form onSubmit={shoppiingDatumModifyHandleSubmit(shoppingDatumSubmit)}>
-        <Modal isOpen={isShoppingDatumOpen} onClose={closeShoppingDatum}>
-          <ModalOverlay />
-          <ModalContent bg="gray.100" maxW="95vw">
-            <ModalHeader>選択したお買い物メモ情報</ModalHeader>
-            <ModalCloseButton _focus={{ boxShadow: "none" }} />
-            <ModalBody>
-              <Box bg="white" rounded="xl">
-                <Stack align="center" justify="center" py={6} spacing="3">
-                  <Input
-                    isReadOnly={readOnly}
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    size="md"
-                    type="date"
-                    w="90%"
-                    fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modifyShoppingDate")}
-                  />
-                  <Input
-                    isReadOnly={readOnly}
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    placeholder={!readOnly ? "お店の名前" : ""}
-                    size="md"
-                    w="90%"
-                    fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modifyShopName", {
-                      maxLength: { value: 35, message: "最大文字数は35文字までです。" },
-                    })}
-                  />
-                  {shoppingDatumErrors.modifyShopName && shoppingDatumErrors.modifyShopName.types?.maxLength && (
-                    <Box color="red">{shoppingDatumErrors.modifyShopName.types.maxLength}</Box>
-                  )}
-                  <InputGroup w="90%">
-                    <Input
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
-                      size="md"
-                      placeholder={!readOnly ? "お買い物の予算" : ""}
-                      type="number"
-                      fontSize={{ base: "sm", md: "md" }}
-                      {...shoppingDatumRegister("modifyEstimatedBudget", {
-                        pattern: {
-                          value: validationNumber,
-                          message: "半角整数で入力してください。",
-                        },
-                      })}
-                    />
-                    <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                      円
-                    </InputRightElement>
-                  </InputGroup>
-                  {shoppingDatumErrors.modifyEstimatedBudget &&
-                    shoppingDatumErrors.modifyEstimatedBudget.types?.pattern && (
-                      <Box color="red">{shoppingDatumErrors.modifyEstimatedBudget.types.pattern}</Box>
-                    )}
-                  <Input
-                    isReadOnly={readOnly}
-                    bg={readOnly ? "blackAlpha.200" : "white"}
-                    placeholder={!readOnly ? "一言メモ" : ""}
-                    size="md"
-                    w="90%"
-                    fontSize={{ base: "sm", md: "md" }}
-                    {...shoppingDatumRegister("modifyShoppingMemo", {
-                      maxLength: { value: 150, message: "最大文字数は150文字です。" },
-                    })}
-                  />
-                  {shoppingDatumErrors.modifyShoppingMemo &&
-                    shoppingDatumErrors.modifyShoppingMemo.types?.maxLength && (
-                      <Box color="red">{shoppingDatumErrors.modifyShoppingMemo.types.maxLength}</Box>
-                    )}
-                  <Input type="hidden" {...shoppingDatumRegister(`modyfyShoppingDatumId`)} />
-                </Stack>
-              </Box>
-            </ModalBody>
-            <ModalFooter>
-              <HStack>
-                <Button bg="gray.400" color="white" mr={3} onClick={onCloseShoppingDatum}>
-                  閉じる
-                </Button>
-                <PrimaryButtonForReactHookForm onClick={shoppiingDatumModifyHandleSubmit(shoppingDatumSubmit)}>
-                  {readOnly ? "編集" : "保存"}{" "}
-                </PrimaryButtonForReactHookForm>
-              </HStack>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <OkaimonoMemoUseMemoModal
+          isShoppingDatumOpen={isShoppingDatumOpen}
+          closeShoppingDatum={closeShoppingDatum}
+          readOnly={readOnly}
+          shoppingDatumRegister={shoppingDatumRegister}
+          shoppingDatumErrors={shoppingDatumErrors}
+          validationNumber={validationNumber}
+          onCloseShoppingDatum={onCloseShoppingDatum}
+          shoppingDatumSubmit={shoppingDatumSubmit}
+          shoppiingDatumModifyHandleSubmit={shoppiingDatumModifyHandleSubmit}
+        />
       </form>
 
       <form onSubmit={oneListModifyHandleSubmit(onOneSubmit)}>
-        <Modal isOpen={isListOpen} onClose={onCloseList}>
-          <ModalOverlay />
-          <ModalContent bg="gray.100" maxW="95vw">
-            <ModalHeader>選択したリストの情報</ModalHeader>
-            <ModalCloseButton _focus={{ boxShadow: "none" }} />
-            <ModalBody>
-              <VStack w="100%">
-                <Box bg="white" p={3} rounded="md">
-                  <VStack>
-                    <HStack>
-                      <Input
-                        isReadOnly={readOnly}
-                        bg={readOnly ? "blackAlpha.200" : "white"}
-                        placeholder="商品名"
-                        w="70%"
-                        fontSize={{ base: "sm", md: "md" }}
-                        {...listRegister(`modifyPurchaseName`, {
-                          required: { value: true, message: "商品名が入力されていません" },
-                          maxLength: { value: 30, message: "最大文字数は30文字までです。" },
-                        })}
-                      />
-                      <InputGroup w="30%">
-                        <Input
-                          isReadOnly={readOnly}
-                          bg={readOnly ? "blackAlpha.200" : "white"}
-                          placeholder="個数"
-                          type="number"
-                          fontSize={{ base: "sm", md: "md" }}
-                          {...listRegister(`modifyAmount`, {
-                            max: { value: 99, message: "上限は99までです。" },
-                            pattern: { value: validationNumber, message: "半角整数で入力してください。" },
-                          })}
-                        />
-                        <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                          個
-                        </InputRightElement>
-                      </InputGroup>
-                    </HStack>
-                    {listErrors.modifyPurchaseName && (
-                      <Box color="red" fontSize="sm">
-                        {listErrors.modifyPurchaseName?.types?.required}
-                        {listErrors.modifyPurchaseName?.types?.maxLength}
-                      </Box>
-                    )}
-                    {listErrors.modifyAmount && (
-                      <Box color="red" fontSize="sm">
-                        {listErrors.modifyAmount?.types?.max}
-                        {listErrors.modifyAmount?.types?.pattern}
-                      </Box>
-                    )}
-                    <Input
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
-                      placeholder="メモ"
-                      fontSize={{ base: "sm", md: "md" }}
-                      {...listRegister(`modifyMemo`, {
-                        maxLength: { value: 150, message: "最大文字数は150文字です。" },
-                      })}
-                    />
-                    {listErrors.modifyMemo && (
-                      <Box color="red" fontSize="sm">
-                        {listErrors.modifyMemo?.types?.maxLength}
-                      </Box>
-                    )}
-                  </VStack>
-                </Box>
-                <HStack w="100%" bg="white" p={3} rounded="md">
-                  <Box w="50%">
-                    <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-                      消費期限 開始日
-                    </FormLabel>
-                    <Input
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
-                      type="date"
-                      placeholder="消費期限 開始"
-                      {...listRegister(`modifyExpiryDateStart`)}
-                    />
-                  </Box>
-                  <Box w="50%">
-                    <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-                      終了日
-                    </FormLabel>
-                    <Input
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
-                      type="date"
-                      placeholder="終了日"
-                      {...listRegister(`modifyExpiryDateEnd`, {
-                        validate: (value) =>
-                          !startDate ||
-                          !value ||
-                          new Date(value) >= new Date(startDate) ||
-                          "終了日は開始日以降の日付を選択してください。",
-                      })}
-                    />
-                  </Box>
-                </HStack>
-                {listErrors.modifyExpiryDateEnd && (
-                  <Box color="red" fontSize="sm">
-                    {listErrors.modifyExpiryDateEnd?.message}
-                  </Box>
-                )}
-                <Input type="hidden" {...listRegister(`modifyId`)} />
-                <Input type="hidden" {...listRegister(`modifyAsc`)} />
-                <Input type="hidden" {...listRegister(`modifyShopId`)} />
-                <Input type="hidden" {...listRegister(`modifyListShoppingDatumId`)} />
-                <Input type="hidden" {...listRegister(`modifyListShoppingDate`)} />
-                <Input type="hidden" {...listRegister(`indexNumber`)} />
-              </VStack>
-            </ModalBody>
-            <ModalFooter>
-              <HStack>
-                <Button bg="gray.400" color="white" mr={3} onClick={onCloseList}>
-                  閉じる
-                </Button>
-                <PrimaryButtonForReactHookForm onClick={oneListModifyHandleSubmit(onOneSubmit)}>
-                  {readOnly ? "編集" : "保存"}{" "}
-                </PrimaryButtonForReactHookForm>
-              </HStack>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <OkaimonoMemoUseListModal
+          isListOpen={isListOpen}
+          onCloseList={onCloseList}
+          readOnly={readOnly}
+          listRegister={listRegister}
+          validationNumber={validationNumber}
+          listErrors={listErrors}
+          startDate={startDate}
+          oneListModifyHandleSubmit={oneListModifyHandleSubmit}
+          onOneSubmit={onOneSubmit}
+        />
       </form>
     </>
   );
