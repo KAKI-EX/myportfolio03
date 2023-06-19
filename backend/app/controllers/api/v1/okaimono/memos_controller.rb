@@ -107,6 +107,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     else
       exsisting_memo = list_data.memos.find_by(id: one_memo_params[:memo_id])
       exsisting_memo.update(one_memo_params.except(:memo_id, :user_id))
+      render json: exsisting_memo.reload
     end
   end
 

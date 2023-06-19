@@ -185,6 +185,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   // リスト情報の単一修正論理式。(右の下矢印から編集を選び、編集する際に呼び出される論理式。)
   const onOneSubmit = async (oneListFormData: MergeParams) => {
     setReadOnly(!readOnly);
+    const { indexNumber } = oneListFormData;
     if (!readOnly) {
       setLoading(true);
       try {
@@ -201,7 +202,12 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
           expiryDateStart: oneListFormData.modifyExpiryDateStart,
           expiryDateEnd: oneListFormData.modifyExpiryDateEnd,
         };
-        await memoUpdateOpenTrue(listParams);
+        const updateResult = await memoUpdateOpenTrue(listParams);
+        console.log("updateResult", updateResult);
+        if (updateResult && typeof indexNumber === "number" && updateResult.status === 200) {
+          setValue(`listForm.${indexNumber}.purchaseName`, updateResult.data.purchaseName);
+          setValue(`listForm.${indexNumber}.amount`, updateResult.data.amount);
+        }
         setLoading(false);
         showMessage({ title: `お買い物リストの修正が完了しました。`, status: "success" });
       } catch (err) {
@@ -255,7 +261,6 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
       };
       try {
         const shoppingDatumRes = await shoppingDatumShowOpenTrue(memosProps);
-        console.log("aaaa", shoppingDatumRes);
         if (shoppingDatumRes?.status === 200) {
           setShoppingDatumValues(shoppingDatumRes.data);
           setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
@@ -331,6 +336,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
             listSetValue("modifyShopId", listResponse.data.shopId);
             listSetValue("modifyListShoppingDate", listResponse.data.shoppingDate);
             listSetValue("modifyListShoppingDatumId", listResponse.data.shoppingDatumId);
+            listSetValue("indexNumber", index);
             onListOpen();
             setLoading(false);
           }
@@ -804,6 +810,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
                 <Input type="hidden" {...listRegister(`modifyShopId`)} />
                 <Input type="hidden" {...listRegister(`modifyListShoppingDatumId`)} />
                 <Input type="hidden" {...listRegister(`modifyListShoppingDate`)} />
+                <Input type="hidden" {...listRegister(`indexNumber`)} />
               </VStack>
             </ModalBody>
             <ModalFooter>

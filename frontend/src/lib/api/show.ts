@@ -77,10 +77,10 @@ export const memosShowOpenTrue = async (props: memoProps) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
     return undefined;
   }
-  const { userId, shoppingDataId } = props;
+  const { userId, shoppingDatumId } = props;
   console.log("memosShowOpenTrueが走っています。");
   const memosShowOpenTrueRes = await client.get(
-    `okaimono/memo/show_open_memos?user_id=${userId}&shopping_id=${shoppingDataId}`
+    `okaimono/memo/show_open_memos?user_id=${userId}&shopping_id=${shoppingDatumId}`
   );
   return {
     data: memosShowOpenTrueRes.data,
@@ -146,10 +146,10 @@ export const shoppingDatumShowOpenTrue = async (props: memoProps) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
     return undefined;
   }
-  const { shoppingDataId, userId } = props;
+  const { shoppingDatumId, userId } = props;
   console.log("shopShowOpenTrueが走っています。");
   const shoppingDatumShowOpenTrueRes = await client.get(
-    `okaimono/shoppingdatum/show_open_memo?user_id=${userId}&shopping_datum_id=${shoppingDataId}`
+    `okaimono/shoppingdatum/show_open_memo?user_id=${userId}&shopping_datum_id=${shoppingDatumId}`
   );
   return {
     data: shoppingDatumShowOpenTrueRes.data,
