@@ -163,7 +163,12 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
             estimatedBudget: modifyEstimatedBudget,
             shoppingDatumId: modyfyShoppingDatumId,
           };
-          await shoppingDatumUpdate(shoppingDataParams);
+          const updateRes = await shoppingDatumUpdate(shoppingDataParams);
+          if (updateRes && updateRes.status === 200) {
+            setValue("shoppingDate", updateRes.data.shoppingDate);
+            setValue("shopName", shopUpdateRes.data.shopName);
+            setValue("estimatedBudget", updateRes.data.estimatedBudget);
+          }
           setLoading(false);
           showMessage({ title: `お買い物メモの修正が完了しました。`, status: "success" });
         }
@@ -177,7 +182,6 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   };
 
   const onCloseShoppingDatum = () => {
-    getShoppingMemoList();
     setReadOnly(true);
     closeShoppingDatum();
   };
