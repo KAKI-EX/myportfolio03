@@ -27,40 +27,20 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
-import {
-  GetSingleMemo,
-  ListFormParams,
-  MergeParams,
-  OkaimonoMemoDataShow,
-  OkaimonoMemosData,
-  OkaimonoShopModifingData,
-  OkaimonoShopDataResponse,
-  OkaimonoMemosDataResponse,
-  OkaimonoMemoData,
-  OkaimonoMemoDataShowResponse,
-} from "interfaces";
-import React, { memo, useCallback, useEffect, useState, VFC } from "react";
+import { MergeParams, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoMemoData } from "interfaces";
+import React, { memo, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { useHistory, useParams } from "react-router-dom";
-import {
-  memoProps,
-  memoShowOpenTrue,
-  memosShowOpenTrue,
-  shoppingDatumShowOpenTrue,
-  shopShowOpenTrue,
-} from "lib/api/show";
 import { useMessage } from "hooks/useToast";
-import { AxiosError } from "axios";
-import { shopCreate, shopCreateOpenTrue } from "lib/api/post";
-import { memoUpdateOpenTrue, shoppingDatumUpdate, shoppingDatumUpdateOpenTrue } from "lib/api/update";
-import { useOpenMemoUpdate } from "hooks/useOpenMemoUpdate";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { useUpdateUseOpenMemoData } from "hooks/useUpdateUseOpenMemoData";
 import { useUpdateUseSingleListOpenData } from "hooks/useUpdateUseSingleListOpenData";
 import { useGetUseMemoListOpenData } from "hooks/useGetUseMemoListOpenData";
+import { useGetUseSingleListOpenData } from "hooks/useGetUseSingleListOpenData";
+import { useUpdateUseMemoListOpenData } from "hooks/useUpdateUseMemoListOpenData";
 
 export const OkaimonoOpenTrue: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -73,6 +53,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const updateMemoOpenData = useUpdateUseOpenMemoData();
   const updateListData = useUpdateUseSingleListOpenData();
   const getShoppingMemoList = useGetUseMemoListOpenData();
+  const getSingleListData = useGetUseSingleListOpenData();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -230,44 +211,19 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   }, [fields]);
 
   // ----------------------------------------------------------------------------------------------------------
-
-  const onClickListModify = (index: number) => async (event: React.MouseEvent) => {
-    setLoading(true);
-    if (listValues) {
-      try {
-        const targetIdToFind = getValues(`listForm.${index}.id`);
-        const target = listValues.find((element) => element.id === targetIdToFind);
-        if (target) {
-          const showOpenProps = {
-            userId,
-            memoId: target.id,
-          };
-          // const getTargetMemo: GetSingleMemo = await memoShowOpenTrue(showOpenProps);
-          const getTargetMemo = await memoShowOpenTrue(showOpenProps);
-          if (getTargetMemo && target) {
-            const listResponse: GetSingleMemo = getTargetMemo;
-            listSetValue("modifyPurchaseName", listResponse.data.purchaseName);
-            listSetValue("modifyAmount", listResponse.data.amount);
-            listSetValue("modifyMemo", listResponse.data.shoppingDetailMemo);
-            listSetValue("modifyExpiryDateStart", listResponse.data.expiryDateStart);
-            listSetValue("modifyExpiryDateEnd", listResponse.data.expiryDateEnd);
-            listSetValue("modifyId", listResponse.data.id);
-            listSetValue("modifyAsc", listResponse.data.asc);
-            listSetValue("modifyShopId", listResponse.data.shopId);
-            listSetValue("modifyListShoppingDate", listResponse.data.shoppingDate);
-            listSetValue("modifyListShoppingDatumId", listResponse.data.shoppingDatumId);
-            listSetValue("indexNumber", index);
-            onListOpen();
-            setLoading(false);
-          }
-        }
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
+  // 単一のListを開く関数。(右側の下三角を押して編集。)
+  const onClickListModify = async (index: number, event: React.MouseEvent) => {
+    const singleListProps = {
+      setLoading,
+      event,
+      getValues,
+      index,
+      listValues,
+      listSetValue,
+      onListOpen,
+      userId,
+    };
+    getSingleListData(singleListProps);
   };
 
   const onClickShoppingDatumModify = () => (event: React.MouseEvent) => {
@@ -294,47 +250,26 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
 
   const onClickFinish = () => {
     const formData = getValues();
-    console.log("formData", formData);
     onAllSubmit(formData);
     closeConfirm();
   };
 
   const props = { setLoading, totalBudget };
-  const sendOpenDataToAPI = useOpenMemoUpdate(props);
-  const onAllSubmit = useCallback(
-    async (originFormData: MergeParams) => {
-      try {
-        const formData = { ...originFormData, userId };
-        const result = await sendOpenDataToAPI(formData, deleteIds, setDeleteIds);
-        const memosProps: memoProps = {
-          userId,
-          shoppingDatumId: result?.data[0].shoppingDatumId,
-        };
-        // const memosRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(memosProps);
-        const getList = await memosShowOpenTrue(memosProps);
-        if (getList) {
-          const listResponse = getList;
-          for (let i = fields.length; i < listResponse.data.length; i++) {
-            append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
-          }
-          listResponse.data.forEach((data: ListFormParams, index: number) => {
-            setValue(`listForm.${index}.purchaseName`, data.purchaseName);
-            setValue(`listForm.${index}.price`, data.price);
-            setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
-            setValue(`listForm.${index}.amount`, data.amount);
-            setValue(`listForm.${index}.id`, data.id);
-          });
-        }
-        history.push("/");
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    },
-    [sendOpenDataToAPI]
-  );
+  const updateMemoListData = useUpdateUseMemoListOpenData(props);
+
+  const onAllSubmit = (originFormData: MergeParams) => {
+    const updateMemoListProps = {
+      originFormData,
+      deleteIds,
+      setDeleteIds,
+      fields,
+      append,
+      setValue,
+      userId,
+    };
+
+    updateMemoListData(updateMemoListProps);
+  };
   // ----------------------------------------------------------------------------------------------------------
 
   return loading ? (
@@ -462,7 +397,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
                       <MenuButton as={ChevronDownIcon} />
                       <MenuList borderRadius="md" shadow="md" zIndex="dropdown">
                         {getValues(`listForm.${index}.id`) ? (
-                          <MenuItem onClick={onClickListModify(index)}>編集する</MenuItem>
+                          <MenuItem onClick={(event) => onClickListModify(index, event)}>編集する</MenuItem>
                         ) : null}
                         <MenuItem
                           onClick={() => {

@@ -5,19 +5,12 @@ import {
   ListFormParams,
   MergeParams,
   OkaimonoMemoData,
-  OkaimonoMemoDataShow,
   OkaimonoMemosData,
-  OkaimonoMemosDataResponse,
   OkaimonoShopModifingData,
 } from "interfaces";
-import { shopCreate } from "lib/api/post";
-import { shoppingDatumUpdate } from "lib/api/update";
 import {
-  memosShow,
   memosShowOpenTrue,
-  shoppingDatumShow,
   shoppingDatumShowOpenTrue,
-  shopShow,
   shopShowOpenTrue,
 } from "lib/api/show";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";

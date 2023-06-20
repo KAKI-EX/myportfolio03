@@ -171,11 +171,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // ページ情報の初回読み込み
-  const memoListHooksProps = {
-    setLoading,
-    totalBudget,
-  };
-  const updateMemoListData = useUpdateUseMemoListData(memoListHooksProps);
   useEffect(() => {
     const memoListProps = {
       setLoading,
@@ -226,6 +221,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const calculateCheckbox = fields.length - checkboxCount;
   // ----------------------------------------------------------------------------------------------------------
   // 全体のリスト更新
+
+  const memoListHooksProps = {
+    setLoading,
+    totalBudget,
+  };
+  const updateMemoListData = useUpdateUseMemoListData(memoListHooksProps);
+
   const onAllSubmit = (formData: MergeParams) => {
     const memoListProps = {
       formData,
