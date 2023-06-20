@@ -8,10 +8,11 @@ type Props = {
   shoppingBudgetField: string | undefined;
   calculateCheckbox: number;
   onClickBack: () => void;
+  userId?: string
 };
 
 export const OkaimonoMemoUseCalculate: VFC<Props> = memo((props) => {
-  const { totalBudget, shoppingBudgetField, calculateCheckbox, onClickBack } = props;
+  const { totalBudget, shoppingBudgetField, calculateCheckbox, onClickBack, userId } = props;
   return (
     <VStack
       position="fixed"
@@ -39,7 +40,7 @@ export const OkaimonoMemoUseCalculate: VFC<Props> = memo((props) => {
       </Box>
       <Stack w="80%" py="3%">
         <PrimaryButtonForReactHookForm>お買い物終了！</PrimaryButtonForReactHookForm>
-        <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
+        {!userId ? <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton> : null}
       </Stack>
     </VStack>
   );
