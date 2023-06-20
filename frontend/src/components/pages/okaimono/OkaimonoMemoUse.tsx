@@ -123,6 +123,8 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         setLoading,
         shoppingDatumFormData: formData,
         setValue,
+        setShoppingDatumValues,
+        setShopDataValues,
       };
       updateShoppingData(updateProps);
     },

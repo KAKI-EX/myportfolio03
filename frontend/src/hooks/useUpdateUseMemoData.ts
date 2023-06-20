@@ -1,7 +1,7 @@
 import React from "react";
 import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
-import { MergeParams } from "interfaces";
+import { MergeParams, OkaimonoMemoDataShow, OkaimonoShopModifingData } from "interfaces";
 import { shopCreate } from "lib/api/post";
 import { shoppingDatumUpdate } from "lib/api/update";
 import { UseFormSetValue } from "react-hook-form";
@@ -12,13 +12,23 @@ type Props = {
   setLoading: (value: React.SetStateAction<boolean>) => void;
   shoppingDatumFormData: MergeParams;
   setValue: UseFormSetValue<MergeParams>;
+  setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoDataShow | undefined>>;
+  setShopDataValues: React.Dispatch<React.SetStateAction<OkaimonoShopModifingData | undefined>>;
 };
 
 export const useUpdateUseMemoData = () => {
   const { showMessage } = useMessage();
 
   const updateShoppingData = async (props: Props) => {
-    const { setReadOnly, readOnly, setLoading, shoppingDatumFormData, setValue } = props;
+    const {
+      setReadOnly,
+      readOnly,
+      setLoading,
+      shoppingDatumFormData,
+      setValue,
+      setShoppingDatumValues,
+      setShopDataValues,
+    } = props;
     setReadOnly(!readOnly);
     if (!readOnly) {
       setLoading(true);
@@ -38,6 +48,8 @@ export const useUpdateUseMemoData = () => {
           };
           const updateRes = await shoppingDatumUpdate(shoppingDataParams);
           if (updateRes && updateRes.status === 200) {
+            setShoppingDatumValues(updateRes.data);
+            setShopDataValues(shopUpdateRes.data);
             setValue("shoppingDate", updateRes.data.shoppingDate);
             setValue("shopName", shopUpdateRes.data.shopName);
             setValue("estimatedBudget", updateRes.data.estimatedBudget);
