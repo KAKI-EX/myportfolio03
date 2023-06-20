@@ -33,9 +33,11 @@ import {
   MergeParams,
   OkaimonoMemoDataShow,
   OkaimonoMemosData,
-  OkaimonoMemosDataResponse,
-  OkaimonoShopDataResponse,
   OkaimonoShopModifingData,
+  OkaimonoShopDataResponse,
+  OkaimonoMemosDataResponse,
+  OkaimonoMemoData,
+  OkaimonoMemoDataShowResponse,
 } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -52,18 +54,21 @@ import {
 } from "lib/api/show";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
-import { shopCreate } from "lib/api/post";
-import { memoUpdateOpenTrue, shoppingDatumUpdate } from "lib/api/update";
+import { shopCreate, shopCreateOpenTrue } from "lib/api/post";
+import { memoUpdateOpenTrue, shoppingDatumUpdate, shoppingDatumUpdateOpenTrue } from "lib/api/update";
 import { useOpenMemoUpdate } from "hooks/useOpenMemoUpdate";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
+import { useUpdateUseOpenMemoData } from "hooks/useUpdateUseOpenMemoData";
 
 export const OkaimonoOpenTrue: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
   const [listValues, setListValues] = useState<OkaimonoMemosData[]>();
-  const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
+  const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoData>();
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
+
+  const updateMemoOpenData = useUpdateUseOpenMemoData();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -145,40 +150,17 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   );
   // ----------------------------------------------------------------------------------------------------------
   // shoppingDatumの更新部分。
-  const shoppingDatumSubmit = async (shoppingDatumFormData: MergeParams) => {
-    setReadOnly(!readOnly);
-    if (!readOnly) {
-      setLoading(true);
-      const { modifyShopName, modifyShoppingDate, modifyShoppingMemo, modifyEstimatedBudget, modyfyShoppingDatumId } =
-        shoppingDatumFormData;
-      const shopParams: MergeParams = { shopName: modifyShopName || "お店名称未設定でのお買い物" };
-      try {
-        const shopUpdateRes = await shopCreate(shopParams);
-        if (shopUpdateRes.status === 200) {
-          const shopId = shopUpdateRes.data.id;
-          const shoppingDataParams: MergeParams = {
-            shopId,
-            shoppingDate: modifyShoppingDate,
-            shoppingMemo: modifyShoppingMemo,
-            estimatedBudget: modifyEstimatedBudget,
-            shoppingDatumId: modyfyShoppingDatumId,
-          };
-          const updateRes = await shoppingDatumUpdate(shoppingDataParams);
-          if (updateRes && updateRes.status === 200) {
-            setValue("shoppingDate", updateRes.data.shoppingDate);
-            setValue("shopName", shopUpdateRes.data.shopName);
-            setValue("estimatedBudget", updateRes.data.estimatedBudget);
-          }
-          setLoading(false);
-          showMessage({ title: `お買い物メモの修正が完了しました。`, status: "success" });
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        setLoading(false);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
+  const shoppingDatumSubmit = (shoppingDatumFormData: MergeParams) => {
+    const updateMemoProps = {
+      setReadOnly,
+      readOnly,
+      setLoading,
+      shoppingDatumFormData,
+      setValue,
+      userId,
+      setShoppingDatumValues,
+    };
+    updateMemoOpenData(updateMemoProps);
   };
 
   const onCloseShoppingDatum = () => {
@@ -247,6 +229,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // リスト読み込み部分
   useEffect(() => {
+    console.log("test");
     getShoppingMemoList();
   }, []);
 
@@ -257,6 +240,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   }, [fields]);
 
   const getShoppingMemoList = async () => {
+    console.log("getShoppingMemoList");
     setLoading(true);
     if (userId) {
       const memosProps = {
