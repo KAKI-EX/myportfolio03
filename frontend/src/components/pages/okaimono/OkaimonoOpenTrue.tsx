@@ -59,6 +59,8 @@ import { memoUpdateOpenTrue, shoppingDatumUpdate, shoppingDatumUpdateOpenTrue } 
 import { useOpenMemoUpdate } from "hooks/useOpenMemoUpdate";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { useUpdateUseOpenMemoData } from "hooks/useUpdateUseOpenMemoData";
+import { useUpdateUseSingleListOpenData } from "hooks/useUpdateUseSingleListOpenData";
+import { useGetUseMemoListOpenData } from "hooks/useGetUseMemoListOpenData";
 
 export const OkaimonoOpenTrue: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -69,6 +71,8 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
   const updateMemoOpenData = useUpdateUseOpenMemoData();
+  const updateListData = useUpdateUseSingleListOpenData();
+  const getShoppingMemoList = useGetUseMemoListOpenData();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -170,39 +174,15 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // リスト情報の単一修正論理式。(右の下矢印から編集を選び、編集する際に呼び出される論理式。)
   const onOneSubmit = async (oneListFormData: MergeParams) => {
-    setReadOnly(!readOnly);
-    const { indexNumber } = oneListFormData;
-    if (!readOnly) {
-      setLoading(true);
-      try {
-        const listParams: MergeParams = {
-          userId,
-          memoId: oneListFormData.modifyId,
-          shoppingDatumId: oneListFormData.modifyListShoppingDatumId,
-          shopId: oneListFormData.modifyShopId,
-          purchaseName: oneListFormData.modifyPurchaseName,
-          shoppingDetailMemo: oneListFormData.modifyMemo,
-          amount: oneListFormData.modifyAmount,
-          shoppingDate: oneListFormData.modifyListShoppingDate,
-          asc: oneListFormData.modifyAsc,
-          expiryDateStart: oneListFormData.modifyExpiryDateStart,
-          expiryDateEnd: oneListFormData.modifyExpiryDateEnd,
-        };
-        const updateResult = await memoUpdateOpenTrue(listParams);
-        console.log("updateResult", updateResult);
-        if (updateResult && typeof indexNumber === "number" && updateResult.status === 200) {
-          setValue(`listForm.${indexNumber}.purchaseName`, updateResult.data.purchaseName);
-          setValue(`listForm.${indexNumber}.amount`, updateResult.data.amount);
-        }
-        setLoading(false);
-        showMessage({ title: `お買い物リストの修正が完了しました。`, status: "success" });
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        setLoading(false);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
-    }
+    const updateSingleListProps = {
+      setReadOnly,
+      readOnly,
+      setLoading,
+      oneListFormData,
+      setValue,
+      userId,
+    };
+    updateListData(updateSingleListProps);
   };
 
   const onCloseList = () => {
@@ -229,8 +209,18 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // リスト読み込み部分
   useEffect(() => {
-    console.log("test");
-    getShoppingMemoList();
+    const memoListProps = {
+      setLoading,
+      fields,
+      shoppingDatumId,
+      setShoppingDatumValues,
+      setValue,
+      setShopDataValues,
+      setListValues,
+      append,
+      userId,
+    };
+    getShoppingMemoList(memoListProps);
   }, []);
 
   useEffect(() => {
@@ -238,64 +228,6 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
       setValue(`listForm.${index}.asc`, index.toString());
     });
   }, [fields]);
-
-  const getShoppingMemoList = async () => {
-    console.log("getShoppingMemoList");
-    setLoading(true);
-    if (userId) {
-      const memosProps = {
-        userId,
-        shoppingDatumId,
-      };
-      try {
-        const shoppingDatumRes = await shoppingDatumShowOpenTrue(memosProps);
-        if (shoppingDatumRes?.status === 200) {
-          setShoppingDatumValues(shoppingDatumRes.data);
-          setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
-          setValue("shoppingDatumId", shoppingDatumId);
-          setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
-          setValue("isFinish", true);
-          const shopProps = {
-            userId,
-            shopId: shoppingDatumRes.data.shopId,
-          };
-          const getShop = await shopShowOpenTrue(shopProps);
-          if (getShop && getShop.status === 200) {
-            const shopResponse = getShop;
-            setShopDataValues(shopResponse.data);
-            setValue("shopName", shopResponse.data.shopName);
-            const listProps = {
-              userId,
-              shoppingDatumId,
-            };
-            // const shoppingListRes: OkaimonoMemosDataResponse = await memosShowOpenTrue(listProps);
-            const getList = await memosShowOpenTrue(listProps);
-            if (getList && getList.status === 200) {
-              const listResponse = getList;
-              setListValues(listResponse.data);
-              for (let i = fields.length; i < listResponse.data.length; i++) {
-                append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
-              }
-              listResponse.data.forEach((list: ListFormParams, index: number) => {
-                setValue(`listForm.${index}.price`, list.price);
-                setValue(`listForm.${index}.amount`, list.amount);
-                setValue(`listForm.${index}.purchaseName`, list.purchaseName);
-                setValue(`listForm.${index}.amount`, list.amount);
-                setValue(`listForm.${index}.id`, list.id);
-                setValue(`listForm.${index}.asc`, list.asc);
-              });
-            }
-          }
-        }
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: axiosError.response?.data.error, status: "error" });
-      }
-    }
-  };
 
   // ----------------------------------------------------------------------------------------------------------
 
