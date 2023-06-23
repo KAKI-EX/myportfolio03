@@ -96,6 +96,7 @@ export interface OkaimonoMemoData {
   totalBudget: string;
   updatedAt: string;
   isOpen: boolean;
+  isFinish: boolean | null;
 }
 
 export interface OkaimonoMemoResponse {

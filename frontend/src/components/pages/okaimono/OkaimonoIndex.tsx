@@ -55,7 +55,7 @@ import { useGetOpenUrl } from "hooks/useGetOpenUrl";
 import { TableThread } from "components/molecules/TableThread";
 
 export const OkaimonoIndex: VFC = memo(() => {
-  const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
+  // const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
   const [inCompleteMemo, setInCompleteMemo] = useState<OkaimonoMemoData[] | null>();
   const [readyShoppingMemo, setReadyShoppingMemo] = useState<OkaimonoMemoData[] | null>();
   const [finishedMemo, setFinishedMemo] = useState<OkaimonoMemoData[] | null>();
@@ -77,7 +77,7 @@ export const OkaimonoIndex: VFC = memo(() => {
   //------------------------------------------------------------------------
   // indexページのリスト読み込み
   useEffect(() => {
-    const props = { setLoading, setInCompleteMemo, setOkaimonoMemo, setReadyShoppingMemo, setFinishedMemo };
+    const props = { setLoading, setInCompleteMemo, setReadyShoppingMemo, setFinishedMemo };
     getIndex(props);
   }, []);
   //------------------------------------------------------------------------
@@ -87,10 +87,38 @@ export const OkaimonoIndex: VFC = memo(() => {
       onCloseAlert();
       const { id } = props;
       try {
-        if (okaimonoMemo) {
-          await shoppingDataDelete(id);
-          const res = await shoppingDataIndex();
-          setOkaimonoMemo(res);
+        await shoppingDataDelete(id);
+        const shoppingDataRes = await shoppingDataIndex();
+        if (inCompleteMemo?.find((item) => item.id === id)) {
+          if (shoppingDataRes) {
+            const isFinishNull = shoppingDataRes.data
+              .filter((resData: OkaimonoMemoData) => resData.isFinish === null)
+              .map((nullList: OkaimonoMemoData) => {
+                const inCompleteData = { ...nullList };
+                return inCompleteData;
+              });
+            setInCompleteMemo(isFinishNull);
+          }
+        } else if (readyShoppingMemo?.find((item) => item.id === id)) {
+          if (shoppingDataRes) {
+            const isFinishFalse = shoppingDataRes.data
+              .filter((resData: OkaimonoMemoData) => resData.isFinish === false)
+              .map((falseList: OkaimonoMemoData) => {
+                const readyShopping = { ...falseList };
+                return readyShopping;
+              });
+            setReadyShoppingMemo(isFinishFalse);
+          }
+        } else if (finishedMemo?.find((item) => item.id === id)) {
+          if (shoppingDataRes) {
+            const isFinishTrue = shoppingDataRes.data
+              .filter((resData: OkaimonoMemoData) => resData.isFinish === true)
+              .map((trueList: OkaimonoMemoData) => {
+                const finishedShopping = { ...trueList };
+                return finishedShopping;
+              });
+            setFinishedMemo(isFinishTrue);
+          }
         }
       } catch (err) {
         const axiosError = err as AxiosError;
@@ -98,7 +126,7 @@ export const OkaimonoIndex: VFC = memo(() => {
         showMessage({ title: axiosError.response?.data.errors, status: "error" });
       }
     },
-    [okaimonoMemo]
+    [inCompleteMemo, readyShoppingMemo, finishedMemo]
   );
   // ---------------------------------------------------------------------------------
   // paramsを使用してidを渡すリンク
@@ -136,13 +164,25 @@ export const OkaimonoIndex: VFC = memo(() => {
         <Box borderRadius="lg" overflow="hidden" backgroundColor="white" boxShadow="md">
           <Tabs isFitted>
             <TabList>
-              <Tab _focus={{ outline: "none" }} fontSize={{ base: "sm", md: "md" }}>
+              <Tab
+                _focus={{ outline: "none" }}
+                fontSize={{ base: "sm", md: "md" }}
+                isDisabled={inCompleteMemo?.length === 0}
+              >
                 一時保存中メモ
               </Tab>
-              <Tab _focus={{ outline: "none" }} fontSize={{ base: "sm", md: "md" }}>
+              <Tab
+                _focus={{ outline: "none" }}
+                fontSize={{ base: "sm", md: "md" }}
+                isDisabled={readyShoppingMemo?.length === 0}
+              >
                 買い物予定メモ
               </Tab>
-              <Tab _focus={{ outline: "none" }} fontSize={{ base: "sm", md: "md" }}>
+              <Tab
+                _focus={{ outline: "none" }}
+                fontSize={{ base: "sm", md: "md" }}
+                isDisabled={finishedMemo?.length === 0}
+              >
                 完了メモ
               </Tab>
             </TabList>
@@ -392,13 +432,6 @@ export const OkaimonoIndex: VFC = memo(() => {
               </TabPanel>
             </TabPanels>
           </Tabs>
-          {okaimonoMemo?.data.length === 0 ? (
-            <Flex align="center" justify="center">
-              <Box p="5%" my="10%" bg="teal.400" rounded={10} color="white">
-                <Text as="b">メモが未登録です。</Text>
-              </Box>
-            </Flex>
-          ) : null}
         </Box>
         <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onAlertOpen}>
           <AlertDialogOverlay>

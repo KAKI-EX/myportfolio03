@@ -7,7 +7,6 @@ import React from "react";
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setInCompleteMemo: React.Dispatch<React.SetStateAction<OkaimonoMemoData[] | null | undefined>>;
-  setOkaimonoMemo: React.Dispatch<React.SetStateAction<OkaimonoMemoResponse | null | undefined>>;
   setReadyShoppingMemo: React.Dispatch<React.SetStateAction<OkaimonoMemoData[] | null | undefined>>;
   setFinishedMemo: React.Dispatch<React.SetStateAction<OkaimonoMemoData[] | null | undefined>>;
 };
@@ -16,7 +15,7 @@ export const useGetOkaimonoIndex = () => {
   const { showMessage } = useMessage();
 
   const getIndex = async (props: Props) => {
-    const { setLoading, setInCompleteMemo, setOkaimonoMemo, setReadyShoppingMemo, setFinishedMemo } = props;
+    const { setLoading, setInCompleteMemo, setReadyShoppingMemo, setFinishedMemo } = props;
     try {
       setLoading(true);
       const indexRes = await shoppingDataIndex();
@@ -43,7 +42,6 @@ export const useGetOkaimonoIndex = () => {
           });
 
         setInCompleteMemo(isFinishNull);
-        setOkaimonoMemo(indexRes);
         setReadyShoppingMemo(isFinishFalse);
         setFinishedMemo(isFinishTrue);
         setLoading(false);
