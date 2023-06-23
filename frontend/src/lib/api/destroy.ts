@@ -1,12 +1,12 @@
 import client from "lib/api/client";
 
 // Delete
-export const memosDelete = (params: { memoId: string }[]) => {
+export const memosDelete = (params: { listId: string }[]) => {
   console.log("memosDeleteが走っています。");
   return client.post("okaimono/memo/delete", { memos: params });
 };
 
-export const memoDeleteOpenTrue = (params: { userId:string, memoId: string }[]) => {
+export const memoDeleteOpenTrue = (params: { userId:string, listId: string }[]) => {
   console.log("memoDeleteOpenTrueが走っています。");
   return client.post("okaimono/memo/delete_open_memo", { memos: params });
 };

@@ -32,7 +32,7 @@ export const useGetUseSingleListOpenData = () => {
           if (target) {
             const showOpenProps = {
               userId,
-              memoId: target.id,
+              listId: target.id,
             };
             // const getTargetMemo: GetSingleMemo = await memoShowOpenTrue(showOpenProps);
             const getTargetMemo = await memoShowOpenTrue(showOpenProps);

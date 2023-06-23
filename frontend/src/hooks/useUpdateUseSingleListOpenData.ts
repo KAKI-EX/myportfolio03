@@ -26,7 +26,7 @@ export const useUpdateUseSingleListOpenData = () => {
       try {
         const listParams: MergeParams = {
           userId,
-          memoId: oneListFormData.modifyId,
+          listId: oneListFormData.modifyId,
           shoppingDatumId: oneListFormData.modifyListShoppingDatumId,
           shopId: oneListFormData.modifyShopId,
           purchaseName: oneListFormData.modifyPurchaseName,

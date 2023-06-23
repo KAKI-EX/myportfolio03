@@ -39,7 +39,7 @@ export interface ListFormParams {
   shoppingDate?: string;
   expiryDateStart?: string;
   expiryDateEnd?: string;
-  memoId?: string;
+  listId?: string;
   isBought?: boolean;
   isFinish?: boolean | null;
 }
@@ -54,7 +54,7 @@ export interface MergeParams {
   shoppingDatumId?: string;
   purchaseName?: string;
   price?: string;
-  memoId?: string;
+  listId?: string;
   shoppingDetailMemo?: string;
   amount?: string;
   shoppingDate?: string;

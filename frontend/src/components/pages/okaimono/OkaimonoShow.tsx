@@ -133,7 +133,7 @@ export const OkaimonoShow: VFC = memo(() => {
   // Createアクション送信分はsendUpdateToAPIの中で削除している。その後にupdateアクションを行っているため、戻り値の中にCreateアクションの
   // データがない。そのため、sendUpdataToAPIの戻り値の配列0番目のshoppingDatumIdを元にShowアクションを実行してsetValueしている。
   // 戻り値をsetValueせずに反映しない方法(リロードすると消える)もあるが、その状態でupdateアクションを再度送ると、仕様上、新規作成アクションで
-  // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をmemoIdの有無で検知しているため)
+  // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をlistIdの有無で検知しているため)
   const props = { setLoading, totalBudget };
   const sendUpdateToAPI = useMemoUpdate(props);
   const onSubmit = useCallback(

@@ -57,7 +57,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   end
 
   def show_memo
-    memo = current_api_v1_user.memos.find_by(id: params[:memo_id])
+    memo = current_api_v1_user.memos.find_by(id: params[:list_id])
     if memo.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
@@ -66,7 +66,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   end
 
   def show_open_memo
-    memo = User.find_by(id: params[:user_id]).memos.find_by(id: params[:memo_id])
+    memo = User.find_by(id: params[:user_id]).memos.find_by(id: params[:list_id])
     if memo.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
@@ -80,11 +80,11 @@ class Api::V1::Okaimono::MemosController < ApplicationController
         shopping_data = current_api_v1_user.shopping_data.find(params[:shopping_datum_id])
         if (params[:expiry_date_start] && params[:expiry_date_end]).present?
           end_date = Date.parse(params[:expiry_date_end])
-          exsisting_memo = shopping_data.memos.find(params[:memo_id])
+          exsisting_memo = shopping_data.memos.find(params[:list_id])
           exsisting_memo.assign_attributes(is_expiry_date: true)
         else
-          exsisting_memo = shopping_data.memos.find(params[:memo_id])
-          exsisting_memo.update!(params.except(:memo_id, :user_id))
+          exsisting_memo = shopping_data.memos.find(params[:list_id])
+          exsisting_memo.update!(params.except(:list_id, :user_id))
         end
       end
         render json: update_memos
@@ -97,8 +97,8 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     Memo.transaction do
       update_memos = memos_params.each do |params|
         shopping_data = User.find_by(id: params[:user_id]).shopping_data.find(params[:shopping_datum_id])
-        exsisting_memo = shopping_data.memos.find(params[:memo_id])
-        exsisting_memo.update!(params.except(:memo_id, :user_id))
+        exsisting_memo = shopping_data.memos.find(params[:list_id])
+        exsisting_memo.update!(params.except(:list_id, :user_id))
       end
         render json: update_memos
       rescue ActiveRecord::RecordInvalid => e
@@ -111,8 +111,8 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     if list_data.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
-      exsisting_memo = list_data.memos.find_by(id: one_memo_params[:memo_id])
-      exsisting_memo.update(one_memo_params.except(:memo_id, :user_id))
+      exsisting_memo = list_data.memos.find_by(id: one_memo_params[:list_id])
+      exsisting_memo.update(one_memo_params.except(:list_id, :user_id))
       render json: exsisting_memo.reload
     end
   end
@@ -120,7 +120,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   def destroy
     Memo.transaction do
       memos_params.each do |params|
-        delete_memo = current_api_v1_user.memos.find(params[:memo_id])
+        delete_memo = current_api_v1_user.memos.find(params[:list_id])
         delete_memo.destroy!
       end
       render json: memos_params
@@ -132,7 +132,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   def destroy_open_memo
     Memo.transaction do
       memos_params.each do |params|
-        delete_memo = User.find_by(id: params[:user_id]).memos.find(params[:memo_id])
+        delete_memo = User.find_by(id: params[:user_id]).memos.find(params[:list_id])
         delete_memo.destroy!
       end
       render json: memos_params
@@ -155,7 +155,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
       :price,
       :shopping_date,
       :memo_type,
-      :memo_id,
+      :list_id,
       :asc,
       :expiry_date_start,
       :expiry_date_end,
@@ -176,7 +176,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
         :price,
         :shopping_date,
         :memo_type,
-        :memo_id,
+        :list_id,
         :asc,
         :expiry_date_start,
         :expiry_date_end,

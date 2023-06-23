@@ -59,7 +59,7 @@ export const useOpenMemoUpdate = (props: Props) => {
                 shoppingDetailMemo: data.shoppingDetailMemo,
                 amount: data.amount,
                 shoppingDate,
-                memoId: data.id,
+                listId: data.id,
                 asc: data.asc,
                 expiryDateStart: data.expiryDateStart,
                 expiryDateEnd: data.expiryDateEnd,
@@ -70,9 +70,9 @@ export const useOpenMemoUpdate = (props: Props) => {
           // ---------------------------------------------------------------
           // show画面でフォームを追加した場合を検知して新規で登録する。(updateアクションで対応できないため)
 
-          if (memosParams.memos.some((memo) => memo.memoId === "")) {
+          if (memosParams.memos.some((memo) => memo.listId === "")) {
             const catchNewMemo = memosParams.memos
-              .filter((newMemo) => !newMemo.memoId)
+              .filter((newMemo) => !newMemo.listId)
               .map((newMemo) => {
                 const updateCreate: ListFormParams = {
                   userId,
@@ -93,7 +93,7 @@ export const useOpenMemoUpdate = (props: Props) => {
           }
           // ---------------------------------------------------------------
           // 上記で登録したidが空文字の配列を削除。(既存メモのupdateではないのでエラーが発生するため)
-          const existingMemos = memosParams.memos.filter((newMemo) => newMemo.memoId);
+          const existingMemos = memosParams.memos.filter((newMemo) => newMemo.listId);
           // ---------------------------------------------------------------
           // 特定メモの削除。show画面で赤✗ボタンを押した際にdeleteIdsにはidが入り、保存ボタン押下で一括削除。
           if (deleteIds.length > 0) {
@@ -101,7 +101,7 @@ export const useOpenMemoUpdate = (props: Props) => {
               const deleteArrays = deleteIds.map((t) => {
                 const deleteArray = {
                   userId,
-                  memoId: t,
+                  listId: t,
                 };
                 return deleteArray;
               });

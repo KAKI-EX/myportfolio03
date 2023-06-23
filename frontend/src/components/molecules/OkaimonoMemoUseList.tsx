@@ -106,10 +106,10 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                   <MenuItem
                     onClick={() => {
                       if (getValues) {
-                        const memoId = getValues(`listForm.${index}.id`);
-                        if (memoId) {
+                        const listId = getValues(`listForm.${index}.id`);
+                        if (listId) {
                           if (setDeleteIds) {
-                            setDeleteIds((prevIds) => [...(prevIds || []), memoId]);
+                            setDeleteIds((prevIds) => [...(prevIds || []), listId]);
                           }
                         }
                       }

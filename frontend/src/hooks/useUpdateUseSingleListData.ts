@@ -25,7 +25,7 @@ export const useUpdateUseSingleListData = () => {
 
       try {
         const listParams: ListFormParams = {
-          memoId: oneListFormData.modifyId,
+          listId: oneListFormData.modifyId,
           shoppingDatumId: oneListFormData.modifyListShoppingDatumId,
           shopId: oneListFormData.modifyShopId,
           purchaseName: oneListFormData.modifyPurchaseName,
