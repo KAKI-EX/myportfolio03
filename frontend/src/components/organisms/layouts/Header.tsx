@@ -19,6 +19,7 @@ export const Header: VFC = memo(() => {
   const onClickMemoIndex = useCallback(() => history.push("/okaimono"), [history]);
   const onClickShopShow = useCallback(() => history.push("/okaimono/okaimono_shop_index"), [history]);
   const onClickMemoUse = useCallback(() => history.push("/okaimono/okaimono_memo_use"), [history]);
+  const onClickAlert = useCallback(() => history.push("/okaimono/okaimono_alert"), [history]);
 
   const { setLoading, isSignedIn, loading } = useContext(AuthContext);
 
@@ -58,11 +59,14 @@ export const Header: VFC = memo(() => {
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickMemoIndex}>お買物メモ一覧</Link>
           </Box>
-          <Box display={isSignedIn ? "block" : "none"}>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickShopShow}>お店情報の確認と編集</Link>
           </Box>
-          <Box display={isSignedIn ? "block" : "none"}>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickMemoUse}>お買い物メモを使う</Link>
+          </Box>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
+            <Link onClick={onClickAlert}>消費期限アラート</Link>
           </Box>
         </Flex>
         <MenuIconButton onOpen={onOpen} />
@@ -78,6 +82,7 @@ export const Header: VFC = memo(() => {
         onClickMemoIndex={onClickMemoIndex}
         onClickShopShow={onClickShopShow}
         onClickMemoUse={onClickMemoUse}
+        onClickAlert={onClickAlert}
       />
     </>
   );

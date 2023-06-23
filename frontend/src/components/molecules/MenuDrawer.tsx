@@ -13,6 +13,7 @@ type Props = {
   onClickMemoIndex: () => void;
   onClickShopShow: () => void;
   onClickMemoUse: () => void;
+  onClickAlert: () => void;
 };
 
 export const MenuDrawer: VFC<Props> = memo((props) => {
@@ -27,6 +28,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
     onClickMemoIndex,
     onClickShopShow,
     onClickMemoUse,
+    onClickAlert,
   } = props;
   const { isSignedIn } = useContext(AuthContext);
   return (
@@ -94,6 +96,14 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
               _focus={{ outline: "none" }}
             >
               サインアウト
+            </Button>
+            <Button
+              onClick={onClickAlert}
+              w="100%"
+              display={isSignedIn ? "block" : "none"}
+              _focus={{ outline: "none" }}
+            >
+              消費期限アラート
             </Button>
           </DrawerBody>
         </DrawerContent>

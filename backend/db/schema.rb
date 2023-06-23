@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_09_111516) do
+ActiveRecord::Schema.define(version: 2023_06_23_001421) do
 
   create_table "memos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "user_id", null: false
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(version: 2023_05_09_111516) do
     t.boolean "is_bought"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_display", default: true
+    t.boolean "is_expiry_date", default: false
     t.index ["shop_id"], name: "index_memos_on_shop_id"
   end
 

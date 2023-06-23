@@ -78,8 +78,14 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     Memo.transaction do
       update_memos = memos_params.each do |params|
         shopping_data = current_api_v1_user.shopping_data.find(params[:shopping_datum_id])
-        exsisting_memo = shopping_data.memos.find(params[:memo_id])
-        exsisting_memo.update!(params.except(:memo_id, :user_id))
+        if (params[:expiry_date_start] && params[:expiry_date_end]).present?
+          end_date = Date.parse(params[:expiry_date_end])
+          exsisting_memo = shopping_data.memos.find(params[:memo_id])
+          exsisting_memo.assign_attributes(is_expiry_date: true)
+        else
+          exsisting_memo = shopping_data.memos.find(params[:memo_id])
+          exsisting_memo.update!(params.except(:memo_id, :user_id))
+        end
       end
         render json: update_memos
       rescue ActiveRecord::RecordInvalid => e
@@ -174,7 +180,9 @@ class Api::V1::Okaimono::MemosController < ApplicationController
         :asc,
         :expiry_date_start,
         :expiry_date_end,
-        :is_bought
+        :is_bought,
+        :is_expiry_date,
+        :is_display
         )
     end
   end
