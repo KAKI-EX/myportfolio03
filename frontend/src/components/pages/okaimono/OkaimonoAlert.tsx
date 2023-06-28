@@ -22,11 +22,8 @@ import {
   Td,
   TableContainer,
   TableCaption,
-  Thead,
   Table,
-  Th,
   Tbody,
-  Tfoot,
 } from "@chakra-ui/react";
 
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
@@ -34,16 +31,14 @@ import { TbAlertTriangle, TbArrowBarRight, TbArrowBarToRight } from "react-icons
 import { BsCartCheck, BsShopWindow } from "react-icons/bs";
 import { AiOutlineMoneyCollect } from "react-icons/ai";
 import { BiCube } from "react-icons/bi";
-import { useMessage } from "hooks/useToast";
-import { AxiosError } from "axios";
-import { memosAlertShow, memoShow, shopShow } from "lib/api/show";
-import { alertParams, GetAlertIndex, ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
+import { alertParams, ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
 import { useDateConversion } from "hooks/useDateConversion";
-import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { useHistory } from "react-router-dom";
 import { useFieldArray, useForm } from "react-hook-form";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { alertListDelete } from "lib/api/update";
+import { useGetAlertList } from "hooks/useGetAlertList";
+import { useGetAlertShop } from "hooks/useGetAlertShop";
+import { useAlertListDelete } from "hooks/useAlertListDelete";
 
 export const OkaimonoAlert: VFC = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -51,117 +46,47 @@ export const OkaimonoAlert: VFC = memo(() => {
   const [alertListDetail, setAlertListDetail] = useState<ListFormParams | null>();
   const [alertListShop, setAlertListShop] = useState<OkaimonoShopsIndexData | null>();
   const [clickAlertDelete, setClickAlertDelete] = useState<boolean>(false);
-  // const [deleteIndexNum, setDeleteIndexNum] = useState<number[]>([]);
-  // const [deleteIds, setDeleteIds] = useState<{ listId: string }[]>([]);
 
-  const { showMessage } = useMessage();
   const { dateConversion } = useDateConversion();
+  const getAlert = useGetAlertList();
+  const getShop = useGetAlertShop();
+  const updateIsDisplay = useAlertListDelete();
 
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  let deleteIds: { listId: string }[] = [];
-  let deleteIndexNum: number[] = [];
-
-  const {
-    control,
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<MergeParams>({
+  const { control, register, handleSubmit } = useForm<MergeParams>({
     criteriaMode: "all",
     mode: "all",
   });
 
-  const { fields, append, insert, remove } = useFieldArray({
+  useFieldArray({
     control,
     name: "listForm",
     keyName: "key", // デフォルトではidだが、keyに変更。
   });
 
   const deleteSubmit = async (formData: alertParams) => {
-    console.log("formData", formData);
-    const test = formData.listForm?.find((item) => item.isDelete === true);
-    console.log("find((item) => item.isDelete === true)", test);
-    try {
-      if (
-        !clickAlertDelete &&
-        formData.listForm?.find((item) => item.isDelete === true) &&
-        Array.isArray(formData.listForm)
-      ) {
-        formData.listForm.forEach((form, index) => {
-          if (form.isDelete === true) {
-            console.log("index", index);
-            deleteIndexNum = [...deleteIndexNum, index];
-            if (alertLists) {
-              deleteIndexNum.forEach((num) => {
-                const deleteTarget = alertLists[num].id;
-                if (deleteTarget !== undefined) {
-                  deleteIds = [...deleteIds, { listId: deleteTarget }];
-                }
-              });
-            }
-          }
-        });
-        await alertListDelete(deleteIds);
-      }
-    } catch (err) {
-      const axiosError = err as AxiosError;
-      console.error(axiosError.response);
-      showMessage({ title: axiosError.response?.data.error, status: "error" });
-      setLoading(false);
-    }
+    const deleteProps = {
+      setLoading,
+      setAlertLists,
+      clickAlertDelete,
+      formData,
+      alertLists,
+    };
+    updateIsDisplay(deleteProps);
   };
-
-  // useEffect(() => {
-  //   const updateIsDisplay = async () => {
-  //     deleteIds = [];
-  //     try {
-  //       if (alertLists) {
-  //         deleteIndexNum.forEach((num) => {
-  //           console.log("num", num);
-  //           const deleteTarget = alertLists[num].id;
-  //           console.log("deleteTarget", deleteTarget);
-  //           if (deleteTarget !== undefined) {
-  //             deleteIds = [...deleteIds, { listId: deleteTarget }];
-  //           }
-  //         });
-  //         await alertListDelete(deleteIds);
-  //         // フック化したらここにgetAlertを追加。
-  //       }
-  //     } catch (err) {
-  //       const axiosError = err as AxiosError;
-  //       console.error(axiosError.response);
-  //       showMessage({ title: axiosError.response?.data.errors, status: "error" });
-  //       setLoading(false);
-  //     }
-  //   };
-  //   updateIsDisplay();
-  // }, [deleteIndexNum]);
 
   const onClickDeleteAlert = () => {
     setClickAlertDelete(!clickAlertDelete);
   };
 
   useEffect(() => {
-    const getAlert = async () => {
-      setLoading(true);
-      try {
-        const alertRes = await memosAlertShow();
-        if (alertRes?.status === 200 && alertRes) {
-          const alertListData: ListFormParams[] = alertRes.data;
-          setAlertLists(alertListData);
-          setLoading(false);
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error(axiosError.response);
-        showMessage({ title: axiosError.response?.data.errors, status: "error" });
-        setLoading(false);
-      }
+    const props = {
+      setLoading,
+      setAlertLists,
     };
-    getAlert();
+    getAlert(props);
   }, []);
 
   const onClickAlertListBody = useCallback(
@@ -175,23 +100,13 @@ export const OkaimonoAlert: VFC = memo(() => {
   );
 
   useEffect(() => {
-    const getShop = async () => {
-      if (alertListDetail) {
-        try {
-          const alertShopRes = await shopShow({ shopId: alertListDetail.shopId });
-          if (alertShopRes?.status === 200 && alertShopRes) {
-            setAlertListShop(alertShopRes.data);
-            onOpen();
-          }
-        } catch (err) {
-          const axiosError = err as AxiosError;
-          console.error(axiosError.response);
-          showMessage({ title: axiosError.response?.data.errors, status: "error" });
-          setLoading(false);
-        }
-      }
+    const props = {
+      setLoading,
+      setAlertListShop,
+      alertListDetail,
+      onOpen,
     };
-    getShop();
+    getShop(props);
   }, [alertListDetail]);
 
   const onClickClose = () => {
