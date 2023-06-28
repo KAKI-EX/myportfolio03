@@ -28,6 +28,12 @@ export const memosUpdateOpenTrue = (params: ListFormParams[]) => {
   return client.post("okaimono/memo/update_open_memos", { memos: params });
 };
 
+export const alertListDelete = (params: { listId: string }[]) => {
+  console.log("alertListDeleteが走っています。");
+  console.log("alertListDeleteParams", params);
+  return client.post("okaimono/memo/update_is_display", { memos: params });
+};
+
 // メモ情報更新
 export const memoUpdateOpenTrue = (params: MergeParams) => {
   console.log("memosUpdateOpenTrueが走っています。");

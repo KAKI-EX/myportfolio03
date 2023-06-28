@@ -232,8 +232,8 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     const memoListProps = {
       formData,
       deleteIds,
-      setDeleteIds,
       setLoading,
+      setDeleteIds,
       totalBudget,
       fields,
       append,

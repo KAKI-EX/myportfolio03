@@ -3,7 +3,7 @@ import client from "lib/api/client";
 
 export type shopPropsType = {
   userId?: string;
-  shopId: string;
+  shopId?: string;
 };
 
 export type memoProps = {
@@ -69,6 +69,19 @@ export const memosShow = async (props: memoProps) => {
   };
 };
 
+// メモ確認（複数メモ読み込み）
+export const memosAlertShow = async () => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
+  console.log("memosAlertShow が走っています。");
+  const memosShowRes = await client.get(`okaimono/memo/alert_show`);
+  return {
+    data: memosShowRes.data,
+    status: memosShowRes.status,
+  };
+};
+
 // メモ確認(公開用ページの複数メモ読み込み)
 export const memosShowOpenTrue = async (props: memoProps) => {
   const { userId, shoppingDatumId } = props;
@@ -83,12 +96,12 @@ export const memosShowOpenTrue = async (props: memoProps) => {
 };
 
 // メモ確認(単一のメモ読み込み)
-export const memoShow = async (listId: string) => {
+export const memoShow = async (listId: string | undefined) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
     return undefined;
   }
   console.log("memosShowOpenTrueが走っています。");
-  const memoshow = await client.get(`okaimono/memo/show_memo?memo_id=${listId}`);
+  const memoshow = await client.get(`okaimono/memo/show_memo?list_id=${listId}`);
   return {
     data: memoshow.data,
     status: memoshow.status,
@@ -99,7 +112,7 @@ export const memoShow = async (listId: string) => {
 export const memoShowOpenTrue = async (props: memoOpenProps) => {
   const { userId, listId } = props;
   console.log("memoShowOpenTrueが走っています。");
-  const memohow = await client.get(`okaimono/memo/show_open_memo?user_id=${userId}&memo_id=${listId}`);
+  const memohow = await client.get(`okaimono/memo/show_open_memo?user_id=${userId}&list_id=${listId}`);
   return {
     data: memohow.data,
     status: memohow.status,

@@ -22,8 +22,8 @@ export interface User {
   nickname?: string;
   image?: string;
   allowPasswordChange: boolean;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 // メモページ
 export interface ListFormParams {
@@ -42,6 +42,12 @@ export interface ListFormParams {
   listId?: string;
   isBought?: boolean;
   isFinish?: boolean | null;
+  differentDay?: number
+  isDelete?: boolean;
+}
+
+export interface alertParams{
+  listForm?: ListFormParams[];
 }
 
 export interface MergeParams {
@@ -58,7 +64,6 @@ export interface MergeParams {
   shoppingDetailMemo?: string;
   amount?: string;
   shoppingDate?: string;
-  shipping_datum_id?: string;
   asc?: string;
   expiryDateStart?: string;
   expiryDateEnd?: string;
@@ -196,5 +201,10 @@ export interface GetSingleMemoData {
 
 export interface GetSingleMemo {
   data: GetSingleMemoData;
+  status: number;
+}
+
+export interface GetAlertIndex {
+  data: ListFormParams[];
   status: number;
 }
