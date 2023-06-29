@@ -202,8 +202,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   };
 
   const onClickShoppingDatumModify = (event: React.MouseEvent) => {
+    event.preventDefault();
+
     if (shoppingDatumValues && shopDataValue) {
-      console.log("shoppingDatumValues", shoppingDatumValues);
       shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
       shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
       shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);

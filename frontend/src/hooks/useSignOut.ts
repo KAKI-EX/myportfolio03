@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { useMessage } from "./useToast";
 
 type Props = {
+  // eslint-disable-next-line no-unused-vars
   setLoading: (value: React.SetStateAction<boolean>) => void;
 };
 
@@ -17,7 +18,6 @@ export const useSignOut = (props: Props) => {
 
   const executionSignOut = useCallback(async () => {
     setLoading(true);
-    console.log("onClickSignOutが走っています");
     try {
       const res = await signOut();
       if (res.data.success === true) {
@@ -31,7 +31,6 @@ export const useSignOut = (props: Props) => {
 
       showMessage({ title: "サインアウトしました。", status: "success" });
     } catch (err: any) {
-      console.log(err.response);
       if (err.response && err.response.data && err.response.data.errors) {
         showMessage({
           title: err.response.data.errors,

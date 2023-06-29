@@ -74,7 +74,6 @@ export const OkaimonoShopShow: VFC = memo(() => {
   });
 
   const openModal = (shopData: OkaimonoShopsIndexData) => {
-    console.log("チェック", shopData.shopName);
     setValue("shopName", shopData.shopName);
     setValue("shopMemo", shopData.shopMemo);
     setValue("shopId", shopData.id);

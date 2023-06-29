@@ -32,7 +32,6 @@ export const useUpdateUseMemoListData = (hooksProps: HooksProps) => {
       const { formData, deleteIds, setDeleteIds, fields, append, setValue } = props;
       try {
         const result = await sendUpdateToAPI(formData, deleteIds, setDeleteIds);
-        console.log("result", result);
         const memosProps: memoProps = {
           shoppingDatumId: result?.data[0].shoppingDatumId,
         };
@@ -54,6 +53,7 @@ export const useUpdateUseMemoListData = (hooksProps: HooksProps) => {
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: "エラーが発生しました。", status: "error" });
       }

@@ -3,12 +3,10 @@ import { AxiosError } from "axios";
 import { shopsShow } from "lib/api/show";
 import { useMessage } from "hooks/useToast";
 import { OkaimonoShopsDataResponse } from "interfaces";
-import { useCookie } from "./useCookie";
 
 type SetShopsIndex = React.Dispatch<React.SetStateAction<OkaimonoShopsDataResponse | undefined>>;
 
 export const useGetShopIndex = (setShopsIndex: SetShopsIndex) => {
-  const { separateCookies } = useCookie();
   const { showMessage } = useMessage();
 
   const getShopsIndex = async (setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
@@ -22,6 +20,7 @@ export const useGetShopIndex = (setShopsIndex: SetShopsIndex) => {
       setLoading(false);
     } catch (err) {
       const axiosError = err as AxiosError;
+      // eslint-disable-next-line no-console
       console.error(axiosError.response);
       showMessage({ title: "エラーが発生しました。", status: "error" });
       setLoading(false);

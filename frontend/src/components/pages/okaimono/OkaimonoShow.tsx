@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { ListFormParams, MergeParams, OkaimonoMemosDataResponse } from "interfaces";
+import { ListFormParams, MergeParams } from "interfaces";
 import { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
@@ -143,7 +143,6 @@ export const OkaimonoShow: VFC = memo(() => {
         onOpen();
       }
       const addFormData = { ...formData, ...(pushTemporarilyButton ? { isFinish: null } : { isFinish: false }) };
-      console.log("addFormData", addFormData);
       if (!readOnly) {
         const result = await sendUpdateToAPI(addFormData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
@@ -176,7 +175,6 @@ export const OkaimonoShow: VFC = memo(() => {
 
   useEffect(() => {
     if (pushTemporarilyButton) {
-      console.log("一時保存ボタンを押した直後", pushTemporarilyButton);
       const formData = getValues();
       onSubmit(formData);
     }

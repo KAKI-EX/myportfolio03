@@ -2,13 +2,15 @@ import React, { useCallback } from "react";
 import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
 import { MergeParams, OkaimonoMemoData, OkaimonoMemoDataShowResponse, OkaimonoShopDataResponse } from "interfaces";
-import { shopCreate, shopCreateOpenTrue } from "lib/api/post";
-import { shoppingDatumUpdate, shoppingDatumUpdateOpenTrue } from "lib/api/update";
+import { shopCreateOpenTrue } from "lib/api/post";
+import { shoppingDatumUpdateOpenTrue } from "lib/api/update";
 import { UseFormSetValue } from "react-hook-form";
 
 type Props = {
+  // eslint-disable-next-line no-unused-vars
   setReadOnly: (value: React.SetStateAction<boolean>) => void;
   readOnly: boolean;
+  // eslint-disable-next-line no-unused-vars
   setLoading: (value: React.SetStateAction<boolean>) => void;
   shoppingDatumFormData: MergeParams;
   setValue: UseFormSetValue<MergeParams>;
@@ -55,6 +57,7 @@ export const useUpdateUseOpenMemoData = () => {
           }
         } catch (err) {
           const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
           console.error(axiosError.response);
           setLoading(false);
           showMessage({ title: "エラーが発生しました。", status: "error" });

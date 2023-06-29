@@ -8,8 +8,6 @@ import {
   OkaimonoMemosDataResponse,
   OkaimonoShopModifingData,
 } from "interfaces";
-import { shopCreate } from "lib/api/post";
-import { shoppingDatumUpdate } from "lib/api/update";
 import { memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";
 
@@ -86,6 +84,7 @@ export const useGetUseMemoListData = () => {
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: "エラーが発生しました。", status: "error" });
       }

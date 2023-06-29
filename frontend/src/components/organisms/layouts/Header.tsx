@@ -8,7 +8,6 @@ import { AuthContext } from "App";
 import { useSignOut } from "hooks/useSignOut";
 
 export const Header: VFC = memo(() => {
-  console.log("ヘッダーが走っています");
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -21,7 +20,7 @@ export const Header: VFC = memo(() => {
   const onClickMemoUse = useCallback(() => history.push("/okaimono/okaimono_memo_use"), [history]);
   const onClickAlert = useCallback(() => history.push("/okaimono/okaimono_alert"), [history]);
 
-  const { setLoading, isSignedIn, loading } = useContext(AuthContext);
+  const { setLoading, isSignedIn } = useContext(AuthContext);
 
   const props = { setLoading };
   const { executionSignOut } = useSignOut(props);
@@ -29,9 +28,6 @@ export const Header: VFC = memo(() => {
   const onClickSignOut = () => {
     executionSignOut();
   };
-
-  console.log("isSignedIn", isSignedIn);
-  console.log("loading", loading);
 
   return (
     <>

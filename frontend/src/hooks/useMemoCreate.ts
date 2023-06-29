@@ -3,7 +3,6 @@ import { ListFormParams, MergeParams } from "interfaces";
 import { memosCreate, shopCreate, shoppingDatumCreate } from "lib/api/post";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { useCookie } from "./useCookie";
 import { useMessage } from "./useToast";
 
 type Props = {
@@ -12,17 +11,11 @@ type Props = {
 };
 
 export const useMemoCreate = (props: Props) => {
-  console.log("カスタムフックuseMemoCreateが走っています");
-
-  const { separateCookies } = useCookie();
   const history = useHistory();
   const { showMessage } = useMessage();
-
   const { setLoading, totalBudget } = props;
 
   const sendDataToAPI = async (formData: MergeParams) => {
-    console.log("カスタムフックsendDataToAPIが走っています");
-
     const { shopName, shoppingDate, shoppingMemo, estimatedBudget, isFinish, isOpen } = formData;
     const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物" };
 
@@ -67,6 +60,7 @@ export const useMemoCreate = (props: Props) => {
       }
     } catch (err) {
       const axiosError = err as AxiosError;
+      // eslint-disable-next-line no-console
       console.error(axiosError.response);
       showMessage({ title: axiosError.response?.data.errors, status: "error" });
     }

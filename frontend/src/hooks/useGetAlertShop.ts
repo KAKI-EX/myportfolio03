@@ -5,6 +5,7 @@ import React from "react";
 import { useMessage } from "./useToast";
 
 type Props = {
+  // eslint-disable-next-line no-unused-vars
   setLoading: (value: React.SetStateAction<boolean>) => void;
   setAlertListShop: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData | null | undefined>>;
   alertListDetail: ListFormParams | null | undefined;
@@ -26,6 +27,7 @@ export const useGetAlertShop = () => {
         }
       } catch (err) {
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: axiosError.response?.data.error, status: "error" });
         setLoading(false);

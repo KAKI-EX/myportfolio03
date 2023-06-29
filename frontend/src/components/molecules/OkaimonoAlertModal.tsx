@@ -1,7 +1,5 @@
 import {
-  Box,
   Button,
-  Checkbox,
   HStack,
   Icon,
   Modal,
@@ -11,22 +9,17 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Stack,
   Table,
   TableCaption,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Tr,
   VStack,
 } from "@chakra-ui/react";
-import { DeleteButton } from "components/atoms/DeleteButton";
-import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
+import { ListFormParams, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, VFC } from "react";
-import { UseFormRegister } from "react-hook-form";
-import { TbAlertTriangle, TbArrowBarRight, TbArrowBarToRight } from "react-icons/tb";
+import { TbArrowBarRight, TbArrowBarToRight } from "react-icons/tb";
 import { useDateConversion } from "hooks/useDateConversion";
 import { BsCartCheck, BsShopWindow } from "react-icons/bs";
 import { AiOutlineMoneyCollect } from "react-icons/ai";
@@ -35,6 +28,7 @@ import { BiCube } from "react-icons/bi";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line no-unused-vars
   onClickShowMemo: (event: React.MouseEvent, id?: string) => void;
   alertListDetail: ListFormParams | null | undefined;
   alertListShop: OkaimonoShopsIndexData | null | undefined;

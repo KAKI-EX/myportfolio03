@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -30,6 +29,7 @@ type Props = {
   listErrors: FieldErrors<MergeParams>;
   startDate: string | undefined;
   oneListModifyHandleSubmit: UseFormHandleSubmit<MergeParams>;
+  // eslint-disable-next-line no-unused-vars
   onOneSubmit: (oneListFormData: MergeParams) => Promise<void>;
 };
 

@@ -34,8 +34,6 @@ import {
   Tbody,
   Td,
   Text,
-  Th,
-  Thead,
   Tr,
   useDisclosure,
   VStack,
@@ -44,7 +42,7 @@ import { useMessage } from "hooks/useToast";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { AxiosError } from "axios";
-import { OkaimonoMemoData, OkaimonoMemoResponse } from "interfaces";
+import { OkaimonoMemoData } from "interfaces";
 import { shoppingDataDelete } from "lib/api/destroy";
 import { useDateConversion } from "hooks/useDateConversion";
 import { shoppingDataIndex } from "lib/api/show";
@@ -122,6 +120,7 @@ export const OkaimonoIndex: VFC = memo(() => {
         }
       } catch (err) {
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: axiosError.response?.data.errors, status: "error" });
       }

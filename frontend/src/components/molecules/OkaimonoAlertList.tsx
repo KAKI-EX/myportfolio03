@@ -10,6 +10,7 @@ type Props = {
   alertLists: ListFormParams[] | undefined;
   clickAlertDelete: boolean;
   register: UseFormRegister<MergeParams>;
+  // eslint-disable-next-line no-unused-vars
   onClickAlertListBody: (listId: string | undefined, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 

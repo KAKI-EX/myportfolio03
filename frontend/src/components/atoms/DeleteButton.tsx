@@ -9,7 +9,6 @@ type Props = {
 };
 
 export const DeleteButton: VFC<Props> = memo((props) => {
-  console.log("DeleteButtonが走っています");
   const {
     children,
     disabled = false,

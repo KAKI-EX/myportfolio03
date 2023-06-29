@@ -5,7 +5,6 @@ import { SignUpParams, SignInParams } from "interfaces/index";
 
 // サインアップ（新規アカウント作成）
 export const signUp = (params: SignUpParams) => {
-  console.log("auth.ts signupが走っています。");
   return client.post("auth", params);
 };
 

@@ -10,7 +10,6 @@ import { useHistory } from "react-router-dom";
 import { useMessage } from "hooks/useToast";
 
 export const AccountUpdate: VFC = memo(() => {
-  console.log("AccountUpdateが走っています");
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
 
   const [userName, setUserName] = useState("");
@@ -40,12 +39,9 @@ export const AccountUpdate: VFC = memo(() => {
       passwordConfirmation: userPasswordConfirmation,
     };
 
-    console.log("SignUp.tsxが走っています");
-
     try {
       setLoading(true);
       const res = await signUp(params);
-      console.log(res);
       const cookieData = {
         _access_token: res.headers["access-token"],
         _client: res.headers.client,
@@ -53,7 +49,6 @@ export const AccountUpdate: VFC = memo(() => {
       };
       Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
 
-      console.log(document.cookie);
       setIsSignedIn(true);
       setCurrentUser(res?.data.data);
       history.push("/");

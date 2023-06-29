@@ -1,18 +1,8 @@
 import React from "react";
 import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
-import {
-  ListFormParams,
-  MergeParams,
-  OkaimonoMemoData,
-  OkaimonoMemosData,
-  OkaimonoShopModifingData,
-} from "interfaces";
-import {
-  memosShowOpenTrue,
-  shoppingDatumShowOpenTrue,
-  shopShowOpenTrue,
-} from "lib/api/show";
+import { ListFormParams, MergeParams, OkaimonoMemoData, OkaimonoMemosData, OkaimonoShopModifingData } from "interfaces";
+import { memosShowOpenTrue, shoppingDatumShowOpenTrue, shopShowOpenTrue } from "lib/api/show";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";
 
 type Props = {
@@ -92,6 +82,7 @@ export const useGetUseMemoListOpenData = () => {
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: axiosError.response?.data.error, status: "error" });
       }

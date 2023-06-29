@@ -3,6 +3,7 @@ import { MergeParams, ListFormParams } from "interfaces";
 import { memoProps, memosShow, shoppingDatumShow, shopPropsType, shopShow } from "lib/api/show";
 import React from "react";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";
+import { useMessage } from "hooks/useToast";
 
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const useSetOkaimonoShowIndex = (props: Props) => {
+  const { showMessage } = useMessage();
   const { setLoading, id, setValue, fields, append, setExpiryDate } = props;
 
   const showMemo = async () => {
@@ -63,16 +65,19 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
                 if (data.expiryDateStart) {
                   setExpiryDate(true);
                 }
+                setLoading(false);
               });
             }
           }
         }
       }
     } catch (err) {
+      setLoading(false);
       const axiosError = err as AxiosError;
+      // eslint-disable-next-line no-console
       console.error(axiosError.response);
+      showMessage({ title: "エラーが発生しました。", status: "error" });
     }
-    setLoading(false);
   };
   return showMemo;
 };

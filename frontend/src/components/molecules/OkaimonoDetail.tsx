@@ -27,6 +27,7 @@ import {
 
 type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
+  // eslint-disable-next-line no-unused-vars
   insertInputForm: (index: number) => void;
   SmallCloseIcon: ComponentWithAs<"svg", IconProps>;
   remove: UseFieldArrayRemove;
@@ -75,6 +76,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   onClick={(event) => {
                     if (readOnly) {
                       event.preventDefault();
+                      // eslint-disable-next-line no-alert
                       alert("確認画面では使用できません。");
                       return;
                     }
@@ -91,6 +93,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   boxSize={4}
                   onClick={() => {
                     if (readOnly) {
+                      // eslint-disable-next-line no-alert
                       alert("確認画面では使用できません。");
                       return;
                     }

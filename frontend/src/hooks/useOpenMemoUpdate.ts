@@ -1,10 +1,8 @@
 import { ListFormParams, MergeParams } from "interfaces";
-import { memoDeleteOpenTrue, memosDelete } from "lib/api/destroy";
-import { memosCreate, memosCreateOpenTrue, shopCreate, shopCreateOpenTrue } from "lib/api/post";
-import { memosUpdate, memosUpdateOpenTrue, shoppingDatumUpdate, shoppingDatumUpdateOpenTrue } from "lib/api/update";
+import { memoDeleteOpenTrue } from "lib/api/destroy";
+import { memosCreateOpenTrue, shopCreateOpenTrue } from "lib/api/post";
+import { memosUpdateOpenTrue, shoppingDatumUpdateOpenTrue } from "lib/api/update";
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { useCookie } from "./useCookie";
 import { useMessage } from "./useToast";
 
 type Props = {
@@ -13,8 +11,6 @@ type Props = {
 };
 
 export const useOpenMemoUpdate = (props: Props) => {
-  console.log("カスタムフックuseOpenMemoUpdateが走っています");
-  const history = useHistory();
   const { showMessage } = useMessage();
 
   const { setLoading, totalBudget } = props;
@@ -24,8 +20,7 @@ export const useOpenMemoUpdate = (props: Props) => {
     deleteIds: string[],
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
-    console.log("カスタムフックsendOpenDataToAPIが走っています");
-    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen, userId } =
+    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, userId } =
       formData;
     const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物", userId };
 
@@ -120,8 +115,8 @@ export const useOpenMemoUpdate = (props: Props) => {
       }
     } catch (err: any) {
       showMessage({ title: err.response.data.error, status: "error" });
+      // eslint-disable-next-line no-console
       console.error(err.response);
-      console.log(err.response.data.error);
       setLoading(false);
     }
   };

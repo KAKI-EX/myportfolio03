@@ -57,6 +57,7 @@ export const useUpdateUseMemoListOpenData = (hooksProps: HooksProps) => {
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: "エラーが発生しました。", status: "error" });
       }

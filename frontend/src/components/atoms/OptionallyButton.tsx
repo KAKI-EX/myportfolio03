@@ -9,7 +9,6 @@ type Props = {
 };
 
 export const OptionallyButton: VFC<Props> = memo((props) => {
-  console.log("PrimaryButtonが走っています");
   const {
     children,
     disabled = false,

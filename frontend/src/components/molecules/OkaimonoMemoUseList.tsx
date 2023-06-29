@@ -10,7 +10,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Stack,
 } from "@chakra-ui/react";
 import { MergeParams } from "interfaces";
 import React, { memo, VFC } from "react";
@@ -21,9 +20,11 @@ type Props = {
   register: UseFormRegister<MergeParams>;
   getValues: UseFormGetValues<MergeParams>;
   validationNumber: RegExp;
+  // eslint-disable-next-line no-unused-vars
   onClickListModify: (index: number, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   setDeleteIds: React.Dispatch<React.SetStateAction<string[]>>;
   remove: UseFieldArrayRemove;
+  // eslint-disable-next-line no-unused-vars
   insertInputForm: (index: number) => void;
   errors: FieldErrors<MergeParams>;
 };

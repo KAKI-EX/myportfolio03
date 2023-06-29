@@ -28,7 +28,6 @@ export const useDeleteShopData = (props: Props) => {
         showMessage({ title: updatedShop.data.message, status: "success" });
       } catch (err) {
         const axiosError = err as AxiosError;
-        console.error(axiosError.response);
         setLoading(false);
         showMessage({ title: axiosError.response?.data.errors, status: "error" });
       }

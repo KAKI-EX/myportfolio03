@@ -1,19 +1,9 @@
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   Flex,
-  FormLabel,
   Heading,
-  HStack,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -22,7 +12,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Stack,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -31,11 +20,7 @@ import { MergeParams, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoMemoD
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { useHistory, useParams } from "react-router-dom";
-import { useMessage } from "hooks/useToast";
-import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { useUpdateUseOpenMemoData } from "hooks/useUpdateUseOpenMemoData";
 import { useUpdateUseSingleListOpenData } from "hooks/useUpdateUseSingleListOpenData";
 import { useGetUseMemoListOpenData } from "hooks/useGetUseMemoListOpenData";
@@ -62,7 +47,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
-  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: closeConfirm } = useDisclosure();
+  const { isOpen: isConfirmOpen, onClose: closeConfirm } = useDisclosure();
 
   const defaultShoppingDate = new Date();
   const history = useHistory();
@@ -82,7 +67,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     watch,
     getValues,
     handleSubmit: allListHandleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<MergeParams>({
     defaultValues: {
       shoppingDate: formattedDefaultShoppingDate,
@@ -190,8 +175,6 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     });
   };
 
-  const { showMessage } = useMessage();
-
   // ----------------------------------------------------------------------------------------------------------
   // リスト読み込み部分
   useEffect(() => {
@@ -232,6 +215,8 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   };
 
   const onClickShoppingDatumModify = (event: React.MouseEvent) => {
+    event.preventDefault();
+
     if (shoppingDatumValues) {
       shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
       shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);

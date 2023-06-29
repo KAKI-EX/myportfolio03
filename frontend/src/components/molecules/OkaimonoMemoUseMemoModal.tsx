@@ -27,6 +27,7 @@ type Props = {
   shoppingDatumErrors: FieldErrors<MergeParams>;
   validationNumber: RegExp;
   onCloseShoppingDatum: () => void;
+  // eslint-disable-next-line no-unused-vars
   shoppingDatumSubmit: (formData: MergeParams) => void;
   shoppiingDatumModifyHandleSubmit: UseFormHandleSubmit<MergeParams>;
 };

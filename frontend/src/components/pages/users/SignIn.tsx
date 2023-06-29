@@ -23,7 +23,6 @@ import { useForm } from "react-hook-form";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 
 export const SignIn: VFC = memo(() => {
-  console.log("サインインが走っています");
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
@@ -41,19 +40,16 @@ export const SignIn: VFC = memo(() => {
     const { email, password } = formData;
     const params: SignInParams = { email, password };
 
-    console.log(params);
     try {
       setLoading(true);
       const res = await signIn(params);
       if (res?.status === 200) {
-        console.log(res);
         const cookieData = {
           _access_token: res.headers["access-token"],
           _client: res.headers.client,
           _uid: res.headers.uid,
         };
         Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
-        // console.log(document.cookie);
         setIsSignedIn(true);
         setCurrentUser(res?.data.data);
         history.push("/");
@@ -61,7 +57,6 @@ export const SignIn: VFC = memo(() => {
       }
       // エラーハンドリング
     } catch (err: any) {
-      console.log(err.response);
       if (err.response && err.response.data && err.response.data.errors) {
         showMessage({ title: `code:${err.response.status} ${err.response.data.errors}`, status: "error" });
       } else {

@@ -1,4 +1,4 @@
-import { ListFormParams, OkaimonoMemoData, OkaimonoMemoResponse } from "interfaces";
+import { ListFormParams, OkaimonoMemoData } from "interfaces";
 import { shoppingDataIndex } from "lib/api/show";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
@@ -51,6 +51,7 @@ export const useGetOkaimonoIndex = () => {
       }
     } catch (err) {
       const axiosError = err as AxiosError;
+      // eslint-disable-next-line no-console
       console.error(axiosError.response);
       showMessage({ title: axiosError.response?.data.errors, status: "error" });
       setLoading(false);

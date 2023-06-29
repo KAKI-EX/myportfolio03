@@ -1,11 +1,9 @@
-import { ChakraProvider, useToast } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { Router } from "router/Router";
 import theme from "components/theme/theme";
 import { BrowserRouter, Redirect } from "react-router-dom";
 import { User } from "interfaces";
 import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
-import { getCurrentUser } from "lib/api/auth";
-import Cookies from "js-cookie";
 import { useGetCurrentUser } from "hooks/useGetCurrentUser";
 import { useMessage } from "hooks/useToast";
 
@@ -36,8 +34,6 @@ export function Private({
 }) {
   const { showMessage } = useMessage();
   const toastCount = useRef(0);
-
-  console.log("Privateが走っています");
 
   if (!loading) {
     if (isSignedIn) {

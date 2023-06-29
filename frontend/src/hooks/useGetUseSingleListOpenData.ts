@@ -9,10 +9,10 @@ import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   event: React.MouseEvent<Element, MouseEvent>;
-  getValues: UseFormGetValues<MergeParams>
+  getValues: UseFormGetValues<MergeParams>;
   index: number;
-  listValues: OkaimonoMemosData[] | undefined
-  listSetValue: UseFormSetValue<MergeParams>
+  listValues: OkaimonoMemosData[] | undefined;
+  listSetValue: UseFormSetValue<MergeParams>;
   onListOpen: () => void;
   userId: string;
 };
@@ -34,7 +34,6 @@ export const useGetUseSingleListOpenData = () => {
               userId,
               listId: target.id,
             };
-            // const getTargetMemo: GetSingleMemo = await memoShowOpenTrue(showOpenProps);
             const getTargetMemo = await memoShowOpenTrue(showOpenProps);
             if (getTargetMemo && target) {
               const listResponse: GetSingleMemo = getTargetMemo;
@@ -56,6 +55,7 @@ export const useGetUseSingleListOpenData = () => {
         } catch (err) {
           setLoading(false);
           const axiosError = err as AxiosError;
+          // eslint-disable-next-line no-console
           console.error(axiosError.response);
           showMessage({ title: "エラーが発生しました。", status: "error" });
         }

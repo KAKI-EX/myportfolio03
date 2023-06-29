@@ -1,4 +1,4 @@
-import { ListFormParams, OkaimonoMemoData, OkaimonoMemoDataShowResponse } from "interfaces";
+import { OkaimonoMemoData, OkaimonoMemoDataShowResponse } from "interfaces";
 
 import { shoppingDatumShow } from "lib/api/show";
 import { useMessage } from "hooks/useToast";
@@ -40,6 +40,7 @@ export const useGetOpenUrl = (readyShoppingMemo: OkaimonoMemoData[] | null | und
       } catch (err) {
         setLoading(false);
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         showMessage({ title: "エラーが発生しました。", status: "error" });
       }

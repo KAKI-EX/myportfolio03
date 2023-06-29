@@ -1,4 +1,3 @@
-import { SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,

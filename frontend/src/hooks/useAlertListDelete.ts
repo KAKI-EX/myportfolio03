@@ -6,6 +6,7 @@ import { useGetAlertList } from "hooks/useGetAlertList";
 import { useMessage } from "./useToast";
 
 type Props = {
+  // eslint-disable-next-line no-unused-vars
   setLoading: (value: React.SetStateAction<boolean>) => void;
   setAlertLists: React.Dispatch<React.SetStateAction<ListFormParams[] | undefined>>;
   clickAlertDelete: boolean;
@@ -36,7 +37,6 @@ export const useAlertListDelete = () => {
         setLoading(true);
         formData.listForm.forEach((form, index) => {
           if (form.isDelete === true) {
-            console.log("index", index);
             deleteIndexNum = [...deleteIndexNum, index];
             if (alertLists) {
               deleteIndexNum.forEach((num) => {
@@ -54,6 +54,7 @@ export const useAlertListDelete = () => {
       }
     } catch (err) {
       const axiosError = err as AxiosError;
+      // eslint-disable-next-line no-console
       console.error(axiosError.response);
       showMessage({ title: axiosError.response?.data.error, status: "error" });
       setLoading(false);

@@ -36,6 +36,7 @@ export const useUpdateShopData = (props: Props) => {
         showMessage({ title: "お店情報の更新が完了しました", status: "success" });
       } catch (err) {
         const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
         console.error(axiosError.response);
         setLoading(false);
         showMessage({ title: axiosError.response?.data.errors, status: "error" });

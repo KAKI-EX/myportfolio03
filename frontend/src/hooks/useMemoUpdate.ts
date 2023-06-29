@@ -3,8 +3,6 @@ import { memosDelete } from "lib/api/destroy";
 import { memosCreate, shopCreate } from "lib/api/post";
 import { memosUpdate, shoppingDatumUpdate } from "lib/api/update";
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { useCookie } from "./useCookie";
 import { useMessage } from "./useToast";
 
 type Props = {
@@ -13,9 +11,6 @@ type Props = {
 };
 
 export const useMemoUpdate = (props: Props) => {
-  console.log("カスタムフックuseMemoUpdateが走っています");
-  const { separateCookies } = useCookie();
-  const history = useHistory();
   const { showMessage } = useMessage();
 
   const { setLoading, totalBudget } = props;
@@ -25,7 +20,6 @@ export const useMemoUpdate = (props: Props) => {
     deleteIds: string[],
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
-    console.log("カスタムフックsendUpdateToAPIが走っています");
     const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen } = formData;
     const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物" };
 
@@ -114,8 +108,8 @@ export const useMemoUpdate = (props: Props) => {
       }
     } catch (err: any) {
       showMessage({ title: err.response.data.error, status: "error" });
+      // eslint-disable-next-line no-console
       console.error(err.response);
-      console.log(err.response.data.error);
       setLoading(false);
     }
   };

@@ -1,11 +1,8 @@
-import { Button, Drawer, DrawerBody, DrawerContent, DrawerOverlay, Th, Thead, Tr } from "@chakra-ui/react";
-import { AuthContext } from "App";
-import { Children, memo, useContext, VFC } from "react";
+import { Th, Thead, Tr } from "@chakra-ui/react";
+import { memo, VFC } from "react";
 import { TableThreadTitle } from "components/atoms/ThreadTitle";
 
-type Props = {};
-
-export const TableThread: VFC<Props> = memo((props) => {
+export const TableThread: VFC = memo(() => {
   return (
     <Thead>
       <Tr>

@@ -19,6 +19,7 @@ type Props = {
   readOnly: boolean;
   register: UseFormRegister<MergeParams>;
   errors: FieldErrors<MergeParams>;
+  // eslint-disable-next-line no-unused-vars
   onClickShoppingDatumModify: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 

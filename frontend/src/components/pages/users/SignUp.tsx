@@ -11,7 +11,6 @@ import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonFor
 import { useForm } from "react-hook-form";
 
 export const SignUp: VFC = memo(() => {
-  console.log("サインアップが走っています");
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
 
   const history = useHistory();
@@ -36,12 +35,9 @@ export const SignUp: VFC = memo(() => {
       passwordConfirmation,
     };
 
-    console.log("SignUp.tsxが走っています");
-
     try {
       setLoading(true);
       const res = await signUp(params);
-      console.log(res);
       const cookieData = {
         _access_token: res.headers["access-token"],
         _client: res.headers.client,
@@ -49,7 +45,6 @@ export const SignUp: VFC = memo(() => {
       };
       Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
 
-      console.log(document.cookie);
       setIsSignedIn(true);
       setCurrentUser(res?.data.data);
       history.push("/");
@@ -61,6 +56,7 @@ export const SignUp: VFC = memo(() => {
           title: `${err.response.data.errors.fullMessages}`,
           status: "error",
         });
+        // eslint-disable-next-line no-console
         console.error(err.response);
       } else {
         showMessage({ title: "アカウントが作成できませんでした。", status: "error" });
@@ -164,8 +160,6 @@ export const SignUp: VFC = memo(() => {
                   message: "入力が必須の項目です。",
                 },
                 validate: (value) => {
-                  console.log(getValues("password"));
-                  console.log(getValues("passwordConfirmation"));
                   return value === getValues("password") || "メールアドレスが一致しません";
                 },
               })}
