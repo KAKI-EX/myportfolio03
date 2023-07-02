@@ -6,6 +6,12 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     render json: memos
   end
 
+  def suggestions_index
+    purchases = current_api_v1_user.memos.by_purchase_name_like(params[:purchase_name]).limit(10).select(:id, :purchase_name).reject(&:blank?)
+    purchases_json = purchases.map { |purc| { id: purc.id, purchase_name: purc.purchase_name } }
+    render json: purchases_json
+  end
+
   def create
     memos = memos_params.map { |param| current_api_v1_user.memos.new(param) }
 

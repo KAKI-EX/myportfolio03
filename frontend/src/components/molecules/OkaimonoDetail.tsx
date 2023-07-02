@@ -11,10 +11,11 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Text,
   VStack,
 } from "@chakra-ui/react";
-import { MergeParams } from "interfaces";
-import { Dispatch, memo, SetStateAction, VFC } from "react";
+import { ListFormParams, MergeParams } from "interfaces";
+import React, { Dispatch, memo, SetStateAction, VFC } from "react";
 import {
   FieldArrayWithId,
   FieldErrors,
@@ -22,6 +23,7 @@ import {
   UseFieldArrayRemove,
   UseFormGetValues,
   UseFormRegister,
+  UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
 
@@ -40,6 +42,11 @@ type Props = {
   setDeleteIds?: Dispatch<SetStateAction<string[]>>;
   watch: UseFormWatch<FieldValues>;
   expiryDate?: boolean;
+  // eslint-disable-next-line no-unused-vars
+  onListChange?: (event: React.ChangeEvent<HTMLInputElement>, index: number, newValue: string) => void;
+  purchaseNameSuggestions?: ListFormParams[];
+  setValue?: UseFormSetValue<MergeParams>;
+  setPurchaseNameSuggestions?: React.Dispatch<React.SetStateAction<ListFormParams[]>>;
 };
 
 export const OkaimonoDetail: VFC<Props> = memo((props) => {
@@ -56,14 +63,55 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     setDeleteIds,
     watch,
     expiryDate,
+    onListChange,
+    purchaseNameSuggestions,
+    setValue,
+    setPurchaseNameSuggestions,
   } = props;
 
+  const onClickSuggests = (
+    event: React.MouseEvent<HTMLParagraphElement, MouseEvent>,
+    purchaseName: string,
+    index: number
+  ) => {
+    event.preventDefault();
+    if (setValue && setPurchaseNameSuggestions && purchaseName) {
+      setValue(`listForm.${index}.purchaseName`, purchaseName);
+      setPurchaseNameSuggestions([]);
+    }
+  };
   return (
     <Box>
       <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
         お買い物リスト
       </Heading>
       {fields.map((field, index) => {
+        const {
+          ref,
+          onChange: registerOnChange,
+          ...rest
+        } = register(`listForm.${index}.purchaseName`, {
+          required: { value: true, message: "商品名が入力されていません" },
+          maxLength: { value: 35, message: "最大文字数は35文字までです。" },
+        });
+
+        const customOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+          // 親コンポーネントから渡された onChange ハンドラを実行
+          if (onListChange) {
+            onListChange(event, index, event.target.value);
+          }
+
+          // 入力が空の場合、候補リストをクリアする
+          if (setPurchaseNameSuggestions && event.target.value === "") {
+            setPurchaseNameSuggestions([]);
+          }
+
+          // React Hook Form の onChange ハンドラを実行
+          if (registerOnChange) {
+            registerOnChange(event);
+          }
+        };
+
         const startDate = watch(`listForm.${index}.expiryDateStart`);
         return (
           <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
@@ -121,12 +169,31 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                     fontSize={{ base: "sm", md: "md" }}
                     size="md"
                     w="100%"
-                    {...register(`listForm.${index}.purchaseName`, {
-                      required: { value: true, message: "商品名が入力されていません" },
-                      maxLength: { value: 30, message: "最大文字数は30文字までです。" },
-                    })}
+                    onChange={(event) => customOnChange(event)}
+                    ref={ref}
+                    {...rest}
                   />
                 </Box>
+                {purchaseNameSuggestions && purchaseNameSuggestions?.length > 0 && (
+                  <Box w="100%" position="relative" zIndex="dropdown">
+                    <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                      {purchaseNameSuggestions.map((value) => (
+                        <Box key={value.id} w="100%">
+                          <Divider w="100%" />
+                          <Text
+                            w="100%"
+                            onClick={(event) => (
+                              value.purchaseName ? onClickSuggests(event, value.purchaseName, index) : ""
+                            )}
+                            _hover={{ fontWeight: "bold" }}
+                          >
+                            {value.purchaseName}
+                          </Text>
+                        </Box>
+                      ))}
+                    </VStack>
+                  </Box>
+                )}
                 <Box w="30%">
                   <Input
                     isReadOnly={readOnly}

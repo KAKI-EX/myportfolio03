@@ -21,11 +21,11 @@ type Props = {
   validationNumber: RegExp;
   errors: FieldErrors<MergeParams>;
   readOnly?: boolean;
-  suggestions?: OkaimonoShopsIndexData[];
+  shopNameSuggestions?: OkaimonoShopsIndexData[];
   setValue?: UseFormSetValue<MergeParams>;
-  setSuggestions?: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
+  setShopNameSuggestions?: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
   // eslint-disable-next-line no-unused-vars
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
+  onShopChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
 };
 
 export const OkaimonoOverview: VFC<Props> = memo((props) => {
@@ -34,10 +34,10 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
     validationNumber,
     errors,
     readOnly = false,
-    onChange,
-    suggestions,
+    onShopChange,
+    shopNameSuggestions,
     setValue,
-    setSuggestions,
+    setShopNameSuggestions,
   } = props;
 
   const {
@@ -55,21 +55,21 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
     }
 
     // 入力が空の場合、候補リストをクリアする
-    if (setSuggestions && event.target.value === "") {
-      setSuggestions([]);
+    if (setShopNameSuggestions && event.target.value === "") {
+      setShopNameSuggestions([]);
     }
 
     // 親コンポーネントから渡された onChange ハンドラを実行
-    if (onChange) {
-      onChange(event, event.target.value);
+    if (onShopChange) {
+      onShopChange(event, event.target.value);
     }
   };
 
   const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, shopName: string) => {
     event.preventDefault();
-    if (setValue && setSuggestions && shopName) {
+    if (setValue && setShopNameSuggestions && shopName) {
       setValue("shopName", shopName);
-      setSuggestions([]);
+      setShopNameSuggestions([]);
     }
   };
 
@@ -97,10 +97,10 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
             ref={ref}
             {...rest}
           />
-          {suggestions && suggestions?.length > 0 && (
+          {shopNameSuggestions && shopNameSuggestions?.length > 0 && (
             <Box w="100%" position="relative" zIndex="dropdown">
               <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
-                {suggestions.map((value) => (
+                {shopNameSuggestions.map((value) => (
                   <Box key={value.id} w="100%">
                     <Divider w="100%" />
                     <Text

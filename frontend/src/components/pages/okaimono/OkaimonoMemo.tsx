@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { MergeParams } from "interfaces";
+import { ListFormParams, MergeParams } from "interfaces";
 import React, { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
@@ -32,7 +32,7 @@ import { AuthContext } from "App";
 import { useHistory } from "react-router-dom";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
 import { AxiosError } from "axios";
-import { shopsSearchSuggestions } from "lib/api/show";
+import { purchaseNameSearchSuggestions, shopsSearchSuggestions } from "lib/api/show";
 import { OkaimonoShopsIndexData } from "interfaces/index";
 
 export const OkaimonoMemo: VFC = memo(() => {
@@ -132,22 +132,23 @@ export const OkaimonoMemo: VFC = memo(() => {
   }, []);
 
   // ---------------------------------------------------------------------------
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
+  // 店名入力欄のsuggest機能
+  const [shopNameValue, setShopNameValue] = useState("");
+  const [shopNameSuggestions, setShopNameSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+  const onShopChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
     event.preventDefault();
 
-    setInputValue(newValue);
+    setShopNameValue(newValue);
   };
 
   useEffect(() => {
     const getSuggestionsShopName = async () => {
       try {
-        if (inputValue) {
-          const shopRes = await shopsSearchSuggestions(inputValue);
+        if (shopNameValue) {
+          const shopRes = await shopsSearchSuggestions(shopNameValue);
           if (shopRes?.status === 200 && shopRes) {
-            setSuggestions(shopRes.data);
+            setShopNameSuggestions(shopRes.data);
           }
         }
       } catch (err) {
@@ -159,7 +160,38 @@ export const OkaimonoMemo: VFC = memo(() => {
       }
     };
     getSuggestionsShopName();
-  }, [inputValue]);
+  }, [shopNameValue]);
+
+  // ---------------------------------------------------------------------------
+  // 商品名のsuggest機能
+  const [purchaseNameValue, setPurchaseNameValue] = useState("");
+  const [purchaseNameSuggestions, setPurchaseNameSuggestions] = useState<ListFormParams[]>([]);
+
+  const onListChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, newValue: string) => {
+    event.preventDefault();
+
+    setPurchaseNameValue(newValue);
+  };
+
+  useEffect(() => {
+    const getSuggestionsPurchaseName = async () => {
+      try {
+        if (purchaseNameValue) {
+          const purchaseRes = await purchaseNameSearchSuggestions(purchaseNameValue);
+          if (purchaseRes?.status === 200 && purchaseRes) {
+            setPurchaseNameSuggestions(purchaseRes.data);
+          }
+        }
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
+        console.error(axiosError.response);
+        setLoading(false);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
+    };
+    getSuggestionsPurchaseName();
+  }, [purchaseNameValue]);
 
   // ---------------------------------------------------------------------------
 
@@ -183,10 +215,10 @@ export const OkaimonoMemo: VFC = memo(() => {
               register={register}
               validationNumber={validationNumber}
               errors={errors}
-              onChange={onChange}
-              suggestions={suggestions}
+              onShopChange={onShopChange}
+              shopNameSuggestions={shopNameSuggestions}
               setValue={setValue}
-              setSuggestions={setSuggestions}
+              setShopNameSuggestions={setShopNameSuggestions}
             />
             <Divider my={4} />
             <OkaimonoDetail
@@ -199,6 +231,11 @@ export const OkaimonoMemo: VFC = memo(() => {
               validationNumber={validationNumber}
               watch={watch}
               expiryDate={expiryDate}
+              onListChange={onListChange}
+              getValues={getValues}
+              purchaseNameSuggestions={purchaseNameSuggestions}
+              setValue={setValue}
+              setPurchaseNameSuggestions={setPurchaseNameSuggestions}
             />
           </Box>
           <VStack

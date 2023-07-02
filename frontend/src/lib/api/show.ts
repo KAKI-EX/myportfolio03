@@ -57,10 +57,10 @@ export const shopsSearchSuggestions = async (shopName: string) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
     return undefined;
   }
-  const shopsSerchRes = await client.get(`okaimono/shops/suggestion?shop_name=${shopName}`,);
+  const shopsSearchRes = await client.get(`okaimono/shops/suggestion?shop_name=${shopName}`);
   return {
-    data: shopsSerchRes.data,
-    status: shopsSerchRes.status,
+    data: shopsSearchRes.data,
+    status: shopsSearchRes.status,
   };
 };
 
@@ -148,6 +148,17 @@ export const shoppingDatumShow = async (props: memoProps) => {
   };
 };
 
+// List部分の商品名suggest表示
+export const purchaseNameSearchSuggestions = async (purchaseName: string) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
+  const purchaseSearchRes = await client.get(`okaimono/memo/suggestion?purchase_name=${purchaseName}`);
+  return {
+    data: purchaseSearchRes.data,
+    status: purchaseSearchRes.status,
+  };
+};
 // overview部分(お買い物メモ部分)表示
 export const shoppingDatumShowOpenTrue = async (props: memoProps) => {
   const { shoppingDatumId, userId } = props;

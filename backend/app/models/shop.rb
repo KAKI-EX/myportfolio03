@@ -1,6 +1,6 @@
 class Shop < ApplicationRecord
   scope :by_shopname_like, lambda { |shop|
-  where('shop_name LIKE :value', { value: "#{sanitize_sql_like(shop)}%"})
+    where('shop_name LIKE :value', { value: "#{sanitize_sql_like(shop)}%"})
   }
 
   validates_uniqueness_of :shop_name, scope: :user_id

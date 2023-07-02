@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :okaimono do
         get    'memo/index/:id',                                    to: 'memos#index'
+        get    'memo/suggestion',                                   to: 'memos#suggestions_index'
         post   'memo/create',                                       to: 'memos#create'
         post   'memo/create_open_memos',                            to: 'memos#create_open_memos'
         get    'memo/show',                                         to: 'memos#show'
