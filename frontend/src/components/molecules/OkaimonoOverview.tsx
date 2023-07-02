@@ -1,5 +1,6 @@
 import {
   Box,
+  Divider,
   FormControl,
   FormLabel,
   HStack,
@@ -8,20 +9,70 @@ import {
   InputRightElement,
   Stack,
   Switch,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { MergeParams } from "interfaces";
-import { memo, VFC } from "react";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { MergeParams, OkaimonoShopsIndexData } from "interfaces";
+import React, { memo, VFC } from "react";
+import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 type Props = {
   register: UseFormRegister<MergeParams>;
   validationNumber: RegExp;
   errors: FieldErrors<MergeParams>;
   readOnly?: boolean;
+  suggestions?: OkaimonoShopsIndexData[];
+  setValue?: UseFormSetValue<MergeParams>;
+  setSuggestions?: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
+  // eslint-disable-next-line no-unused-vars
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
 };
 
 export const OkaimonoOverview: VFC<Props> = memo((props) => {
-  const { register, validationNumber, errors, readOnly = false } = props;
+  const {
+    register,
+    validationNumber,
+    errors,
+    readOnly = false,
+    onChange,
+    suggestions,
+    setValue,
+    setSuggestions,
+  } = props;
+
+  const {
+    ref,
+    onChange: registerOnChange,
+    ...rest
+  } = register("shopName", {
+    maxLength: { value: 35, message: "最大文字数は35文字までです。" },
+  });
+
+  const customOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // React Hook Form の onChange ハンドラを実行
+    if (registerOnChange) {
+      registerOnChange(event);
+    }
+
+    // 入力が空の場合、候補リストをクリアする
+    if (setSuggestions && event.target.value === "") {
+      setSuggestions([]);
+    }
+
+    // 親コンポーネントから渡された onChange ハンドラを実行
+    if (onChange) {
+      onChange(event, event.target.value);
+    }
+  };
+
+  const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, shopName: string) => {
+    event.preventDefault();
+    if (setValue && setSuggestions && shopName) {
+      setValue("shopName", shopName);
+      setSuggestions([]);
+    }
+  };
+
   return (
     <Box bg="white" rounded="xl">
       <Stack align="center" justify="center" py={6} spacing="3">
@@ -34,17 +85,37 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           fontSize={{ base: "sm", md: "md" }}
           {...register("shoppingDate")}
         />
-        <Input
-          isReadOnly={readOnly}
-          bg={readOnly ? "blackAlpha.200" : "white"}
-          placeholder={!readOnly ? "お店の名前" : ""}
-          size="md"
-          w="90%"
-          fontSize={{ base: "sm", md: "md" }}
-          {...register("shopName", {
-            maxLength: { value: 35, message: "最大文字数は35文字までです。" },
-          })}
-        />
+        <Box w="90%">
+          <Input
+            onChange={customOnChange}
+            isReadOnly={readOnly}
+            bg={readOnly ? "blackAlpha.200" : "white"}
+            placeholder={!readOnly ? "お店の名前" : ""}
+            size="md"
+            w="100%"
+            fontSize={{ base: "sm", md: "md" }}
+            ref={ref}
+            {...rest}
+          />
+          {suggestions && suggestions?.length > 0 && (
+            <Box w="100%" position="relative" zIndex="dropdown">
+              <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                {suggestions.map((value) => (
+                  <Box key={value.id} w="100%">
+                    <Divider w="100%" />
+                    <Text
+                      w="100%"
+                      onClick={(event) => onClickSuggests(event, value.shopName)}
+                      _hover={{ fontWeight: "bold" }}
+                    >
+                      {value.shopName}
+                    </Text>
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
+          )}
+        </Box>
         {errors.shopName && errors.shopName.types?.maxLength && (
           <Box color="red">{errors.shopName.types.maxLength}</Box>
         )}

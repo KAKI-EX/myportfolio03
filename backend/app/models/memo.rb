@@ -1,5 +1,5 @@
 class Memo < ApplicationRecord
-  scope :expirydate, -> { where(is_expiry_date: true, is_bought: true, is_display: true) }
+  scope :expirydate, lambda { where(is_expiry_date: true, is_bought: true, is_display: true) }
 
   validates :user_id, :shop_id, :shopping_datum_id, presence: true
   validates :shopping_date, presence: { message: "買い物をする日付けが入力されていません" }

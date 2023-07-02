@@ -52,6 +52,18 @@ export const shopsShow = async () => {
   };
 };
 
+// お店情報検索
+export const shopsSearchSuggestions = async (shopName: string) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
+  const shopsSerchRes = await client.get(`okaimono/shops/suggestion?shop_name=${shopName}`,);
+  return {
+    data: shopsSerchRes.data,
+    status: shopsSerchRes.status,
+  };
+};
+
 // メモ確認（複数メモ読み込み）
 export const memosShow = async (props: memoProps) => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {

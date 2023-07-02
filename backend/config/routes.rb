@@ -24,6 +24,7 @@ Rails.application.routes.draw do
         post   'shoppingdatum/update_open_memo',                    to: 'shopping_datum#update_open_memo'
         delete 'shoppingdatum/destroy/:shopping_datum_id',          to: 'shopping_datum#destroy'
         get    'shops/index',                                       to: 'shops#index'
+        get    'shops/suggestion',                                  to: 'shops#suggestions_index'
         post   'shops/create',                                      to: 'shops#create'
         post   'shops/create_open_memo',                            to: 'shops#create_open_memo'
         get    'shops/show',                                        to: 'shops#show'

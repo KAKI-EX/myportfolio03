@@ -20,7 +20,7 @@ import {
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { MergeParams } from "interfaces";
-import { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
+import React, { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -31,6 +31,9 @@ import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
 import { AuthContext } from "App";
 import { useHistory } from "react-router-dom";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
+import { AxiosError } from "axios";
+import { shopsSearchSuggestions } from "lib/api/show";
+import { OkaimonoShopsIndexData } from "interfaces/index";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
@@ -48,6 +51,7 @@ export const OkaimonoMemo: VFC = memo(() => {
     control,
     watch,
     getValues,
+    setValue,
     formState: { errors, isValid },
   } = useForm<MergeParams>({
     defaultValues: {
@@ -127,6 +131,38 @@ export const OkaimonoMemo: VFC = memo(() => {
     onClose();
   }, []);
 
+  // ---------------------------------------------------------------------------
+  const [inputValue, setInputValue] = useState("");
+  const [suggestions, setSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+    event.preventDefault();
+
+    setInputValue(newValue);
+  };
+
+  useEffect(() => {
+    const getSuggestionsShopName = async () => {
+      try {
+        if (inputValue) {
+          const shopRes = await shopsSearchSuggestions(inputValue);
+          if (shopRes?.status === 200 && shopRes) {
+            setSuggestions(shopRes.data);
+          }
+        }
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
+        console.error(axiosError.response);
+        setLoading(false);
+        showMessage({ title: "エラーが発生しました。", status: "error" });
+      }
+    };
+    getSuggestionsShopName();
+  }, [inputValue]);
+
+  // ---------------------------------------------------------------------------
+
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
@@ -143,7 +179,15 @@ export const OkaimonoMemo: VFC = memo(() => {
             お買い物情報
           </Heading>
           <Box>
-            <OkaimonoOverview register={register} validationNumber={validationNumber} errors={errors} />
+            <OkaimonoOverview
+              register={register}
+              validationNumber={validationNumber}
+              errors={errors}
+              onChange={onChange}
+              suggestions={suggestions}
+              setValue={setValue}
+              setSuggestions={setSuggestions}
+            />
             <Divider my={4} />
             <OkaimonoDetail
               fields={fields}

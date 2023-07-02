@@ -9,6 +9,12 @@ class Api::V1::Okaimono::ShopsController < ApplicationController
     render json: add_count
   end
 
+  def suggestions_index
+    shops = current_api_v1_user.shops.by_shopname_like(params[:shop_name]).limit(10).select(:id, :shop_name).reject(&:blank?)
+    shops_json = shops.map { |shop| { id: shop.id, shop_name: shop.shop_name } }
+    render json: shops_json
+  end
+
   def create
     shop = current_api_v1_user.shops.new(shop_params)
     existing_shop = current_api_v1_user.shops.where(shop_name: shop.shop_name)
