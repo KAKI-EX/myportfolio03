@@ -31,8 +31,6 @@ import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
 import { AuthContext } from "App";
 import { useHistory } from "react-router-dom";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
-import { AxiosError } from "axios";
-import { purchaseNameSearchSuggestions, shopsSearchSuggestions } from "lib/api/show";
 import { OkaimonoShopsIndexData } from "interfaces/index";
 import { useSuggestListCreate } from "hooks/useSuggestListCreate";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
