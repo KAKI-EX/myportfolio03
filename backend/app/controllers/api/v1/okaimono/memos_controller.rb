@@ -8,7 +8,8 @@ class Api::V1::Okaimono::MemosController < ApplicationController
 
   def suggestions_index
     purchases = current_api_v1_user.memos.by_purchase_name_like(params[:purchase_name]).limit(10).select(:id, :purchase_name).reject(&:blank?)
-    purchases_json = purchases.map { |purc| { id: purc.id, purchase_name: purc.purchase_name } }
+    unique_purchases = purchases.uniq { |purc| purc.purchase_name }
+    purchases_json = unique_purchases.map { |purc| { id: purc.id, purchase_name: purc.purchase_name } }
     render json: purchases_json
   end
 

@@ -34,10 +34,15 @@ import { OptionallyButton } from "components/atoms/OptionallyButton";
 import { AxiosError } from "axios";
 import { purchaseNameSearchSuggestions, shopsSearchSuggestions } from "lib/api/show";
 import { OkaimonoShopsIndexData } from "interfaces/index";
+import { useSuggestListCreate } from "hooks/useSuggestListCreate";
+import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 
 export const OkaimonoMemo: VFC = memo(() => {
-  const defaultShoppingDate = new Date();
   const { showMessage } = useMessage();
+  const getSuggestionsPurchaseName = useSuggestListCreate();
+  const getSuggestionsShopName = useSuggestShopCreate();
+
+  const defaultShoppingDate = new Date();
   const { setLoading, loading } = useContext(AuthContext);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
   const { isOpen, onClose } = useDisclosure();
@@ -143,55 +148,37 @@ export const OkaimonoMemo: VFC = memo(() => {
   };
 
   useEffect(() => {
-    const getSuggestionsShopName = async () => {
-      try {
-        if (shopNameValue) {
-          const shopRes = await shopsSearchSuggestions(shopNameValue);
-          if (shopRes?.status === 200 && shopRes) {
-            setShopNameSuggestions(shopRes.data);
-          }
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        // eslint-disable-next-line no-console
-        console.error(axiosError.response);
-        setLoading(false);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
+    const shopNameProps = {
+      shopNameValue,
+      setShopNameSuggestions,
     };
-    getSuggestionsShopName();
+
+    getSuggestionsShopName(shopNameProps);
   }, [shopNameValue]);
 
   // ---------------------------------------------------------------------------
   // 商品名のsuggest機能
   const [purchaseNameValue, setPurchaseNameValue] = useState("");
+  const [purchaseNameIndex, setPurchaseNameIndex] = useState<number>();
   const [purchaseNameSuggestions, setPurchaseNameSuggestions] = useState<ListFormParams[]>([]);
 
   const onListChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, newValue: string) => {
     event.preventDefault();
+    console.log("成功してる", newValue);
+    console.log("index", index);
 
     setPurchaseNameValue(newValue);
+    setPurchaseNameIndex(index);
   };
 
   useEffect(() => {
-    const getSuggestionsPurchaseName = async () => {
-      try {
-        if (purchaseNameValue) {
-          const purchaseRes = await purchaseNameSearchSuggestions(purchaseNameValue);
-          if (purchaseRes?.status === 200 && purchaseRes) {
-            setPurchaseNameSuggestions(purchaseRes.data);
-          }
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        // eslint-disable-next-line no-console
-        console.error(axiosError.response);
-        setLoading(false);
-        showMessage({ title: "エラーが発生しました。", status: "error" });
-      }
+    const purchaseProps = {
+      purchaseNameValue,
+      setPurchaseNameSuggestions,
     };
-    getSuggestionsPurchaseName();
-  }, [purchaseNameValue]);
+
+    getSuggestionsPurchaseName(purchaseProps);
+  }, [purchaseNameValue, purchaseNameIndex]);
 
   // ---------------------------------------------------------------------------
 
@@ -236,6 +223,7 @@ export const OkaimonoMemo: VFC = memo(() => {
               purchaseNameSuggestions={purchaseNameSuggestions}
               setValue={setValue}
               setPurchaseNameSuggestions={setPurchaseNameSuggestions}
+              purchaseNameIndex={purchaseNameIndex}
             />
           </Box>
           <VStack

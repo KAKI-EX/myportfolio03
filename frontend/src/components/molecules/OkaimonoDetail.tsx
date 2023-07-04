@@ -47,6 +47,7 @@ type Props = {
   purchaseNameSuggestions?: ListFormParams[];
   setValue?: UseFormSetValue<MergeParams>;
   setPurchaseNameSuggestions?: React.Dispatch<React.SetStateAction<ListFormParams[]>>;
+  purchaseNameIndex?: number;
 };
 
 export const OkaimonoDetail: VFC<Props> = memo((props) => {
@@ -67,6 +68,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     purchaseNameSuggestions,
     setValue,
     setPurchaseNameSuggestions,
+    purchaseNameIndex
   } = props;
 
   const onClickSuggests = (
@@ -173,27 +175,27 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                     ref={ref}
                     {...rest}
                   />
+                  {purchaseNameIndex === index && purchaseNameSuggestions && purchaseNameSuggestions?.length > 0 && (
+                    <Box w="100%" position="relative" zIndex="dropdown">
+                      <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                        {purchaseNameSuggestions.map((value) => (
+                          <Box key={value.id} w="100%">
+                            <Divider w="100%" />
+                            <Text
+                              w="100%"
+                              onClick={(event) => (
+                                value.purchaseName ? onClickSuggests(event, value.purchaseName, index) : ""
+                              )}
+                              _hover={{ fontWeight: "bold" }}
+                            >
+                              {value.purchaseName}
+                            </Text>
+                          </Box>
+                        ))}
+                      </VStack>
+                    </Box>
+                  )}
                 </Box>
-                {purchaseNameSuggestions && purchaseNameSuggestions?.length > 0 && (
-                  <Box w="100%" position="relative" zIndex="dropdown">
-                    <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
-                      {purchaseNameSuggestions.map((value) => (
-                        <Box key={value.id} w="100%">
-                          <Divider w="100%" />
-                          <Text
-                            w="100%"
-                            onClick={(event) => (
-                              value.purchaseName ? onClickSuggests(event, value.purchaseName, index) : ""
-                            )}
-                            _hover={{ fontWeight: "bold" }}
-                          >
-                            {value.purchaseName}
-                          </Text>
-                        </Box>
-                      ))}
-                    </VStack>
-                  </Box>
-                )}
                 <Box w="30%">
                   <Input
                     isReadOnly={readOnly}
