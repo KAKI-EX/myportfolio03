@@ -19,8 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { MergeParams } from "interfaces";
-import { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
+import { ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
+import React, { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -31,11 +31,16 @@ import { useHistory, useParams } from "react-router-dom";
 import { useSetOkaimonoShowIndex } from "hooks/useSetOkaimonoShowIndex";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
 import { useShowUpdateList } from "hooks/useShowUpdateList";
+import { useSuggestListCreate } from "hooks/useSuggestListCreate";
+import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 
 export const OkaimonoShow: VFC = memo(() => {
+  const getSuggestionsPurchaseName = useSuggestListCreate();
+  const getSuggestionsShopName = useSuggestShopCreate();
+  const { showMessage } = useMessage();
+
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
   const defaultShoppingDate = new Date();
-  const { showMessage } = useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
   const [pushTemporarilyButton, setPushTemporarilyButton] = useState<boolean>(false);
@@ -168,6 +173,49 @@ export const OkaimonoShow: VFC = memo(() => {
     setExpiryDate(true);
     onClose();
   }, []);
+  // ---------------------------------------------------------------------------
+  // 店名入力欄のsuggest機能
+  const [shopNameValue, setShopNameValue] = useState("");
+  const [shopNameSuggestions, setShopNameSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
+
+  const onShopChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+    event.preventDefault();
+
+    setShopNameValue(newValue);
+  };
+
+  useEffect(() => {
+    const shopNameProps = {
+      shopNameValue,
+      setShopNameSuggestions,
+    };
+
+    getSuggestionsShopName(shopNameProps);
+  }, [shopNameValue]);
+
+  // ---------------------------------------------------------------------------
+  // 商品名のsuggest機能
+  const [purchaseNameValue, setPurchaseNameValue] = useState("");
+  const [purchaseNameIndex, setPurchaseNameIndex] = useState<number>();
+  const [purchaseNameSuggestions, setPurchaseNameSuggestions] = useState<ListFormParams[]>([]);
+
+  const onListChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, newValue: string) => {
+    event.preventDefault();
+
+    setPurchaseNameValue(newValue);
+    setPurchaseNameIndex(index);
+  };
+
+  useEffect(() => {
+    const purchaseProps = {
+      purchaseNameValue,
+      setPurchaseNameSuggestions,
+    };
+
+    getSuggestionsPurchaseName(purchaseProps);
+  }, [purchaseNameValue, purchaseNameIndex]);
+
+  // ---------------------------------------------------------------------------
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -190,6 +238,10 @@ export const OkaimonoShow: VFC = memo(() => {
               validationNumber={validationNumber}
               errors={errors}
               readOnly={readOnly}
+              onShopChange={onShopChange}
+              shopNameSuggestions={shopNameSuggestions}
+              setValue={setValue}
+              setShopNameSuggestions={setShopNameSuggestions}
             />
             <Divider my={4} />
             <OkaimonoDetail
@@ -206,6 +258,11 @@ export const OkaimonoShow: VFC = memo(() => {
               setDeleteIds={setDeleteIds}
               watch={watch}
               expiryDate={expiryDate}
+              onListChange={onListChange}
+              purchaseNameSuggestions={purchaseNameSuggestions}
+              setValue={setValue}
+              setPurchaseNameSuggestions={setPurchaseNameSuggestions}
+              purchaseNameIndex={purchaseNameIndex}
             />
           </Box>
           <VStack
