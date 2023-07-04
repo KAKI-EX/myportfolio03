@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   HStack,
   Input,
   InputGroup,
@@ -13,11 +14,13 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { MergeParams } from "interfaces";
-import { memo, VFC } from "react";
-import { FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import { MergeParams, OkaimonoShopsIndexData } from "interfaces";
+import React, { memo, VFC } from "react";
+import { FieldErrors, UseFormHandleSubmit, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 type Props = {
   isShoppingDatumOpen: boolean;
@@ -30,6 +33,11 @@ type Props = {
   // eslint-disable-next-line no-unused-vars
   shoppingDatumSubmit: (formData: MergeParams) => void;
   shoppiingDatumModifyHandleSubmit: UseFormHandleSubmit<MergeParams>;
+  shopNameSuggestions?: OkaimonoShopsIndexData[];
+  setShopNameSuggestions?: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
+  shoppingDatumSetValue?: UseFormSetValue<MergeParams>;
+  // eslint-disable-next-line no-unused-vars
+  onShopChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
 };
 
 export const OkaimonoMemoUseMemoModal: VFC<Props> = memo((props) => {
@@ -43,7 +51,46 @@ export const OkaimonoMemoUseMemoModal: VFC<Props> = memo((props) => {
     onCloseShoppingDatum,
     shoppingDatumSubmit,
     shoppiingDatumModifyHandleSubmit,
+    shopNameSuggestions,
+    setShopNameSuggestions,
+    shoppingDatumSetValue,
+    onShopChange,
   } = props;
+
+  const {
+    ref,
+    onChange: registerOnChange,
+    ...rest
+  } = shoppingDatumRegister("modifyShopName", {
+    maxLength: { value: 35, message: "最大文字数は35文字までです。" },
+  });
+
+  const customOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // React Hook Form の onChange ハンドラを実行
+    if (registerOnChange) {
+      registerOnChange(event);
+    }
+
+    // 入力が空の場合、候補リストをクリアする
+    if (setShopNameSuggestions && event.target.value === "") {
+      setShopNameSuggestions([]);
+    }
+
+    // 親コンポーネントから渡された onChange ハンドラを実行
+    if (onShopChange) {
+      onShopChange(event, event.target.value);
+    }
+  };
+
+  const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, shopName: string) => {
+    event.preventDefault();
+
+    if (shoppingDatumSetValue && setShopNameSuggestions && shopName) {
+      shoppingDatumSetValue("modifyShopName", shopName);
+      setShopNameSuggestions([]);
+    }
+  };
+
   return (
     <Modal isOpen={isShoppingDatumOpen} onClose={closeShoppingDatum}>
       <ModalOverlay />
@@ -62,17 +109,37 @@ export const OkaimonoMemoUseMemoModal: VFC<Props> = memo((props) => {
                 fontSize={{ base: "sm", md: "md" }}
                 {...shoppingDatumRegister("modifyShoppingDate")}
               />
-              <Input
-                isReadOnly={readOnly}
-                bg={readOnly ? "blackAlpha.200" : "white"}
-                placeholder={!readOnly ? "お店の名前" : ""}
-                size="md"
-                w="90%"
-                fontSize={{ base: "sm", md: "md" }}
-                {...shoppingDatumRegister("modifyShopName", {
-                  maxLength: { value: 35, message: "最大文字数は35文字までです。" },
-                })}
-              />
+              <Box w="90%">
+                <Input
+                  onChange={customOnChange}
+                  isReadOnly={readOnly}
+                  bg={readOnly ? "blackAlpha.200" : "white"}
+                  placeholder={!readOnly ? "お店の名前" : ""}
+                  size="md"
+                  w="100%"
+                  fontSize={{ base: "sm", md: "md" }}
+                  ref={ref}
+                  {...rest}
+                />
+                {shopNameSuggestions && shopNameSuggestions?.length > 0 && (
+                  <Box w="100%" position="relative" zIndex="dropdown">
+                    <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                      {shopNameSuggestions.map((value) => (
+                        <Box key={value.id} w="100%">
+                          <Divider w="100%" />
+                          <Text
+                            w="100%"
+                            onClick={(event) => onClickSuggests(event, value.shopName)}
+                            _hover={{ fontWeight: "bold" }}
+                          >
+                            {value.shopName}
+                          </Text>
+                        </Box>
+                      ))}
+                    </VStack>
+                  </Box>
+                )}
+              </Box>
               {shoppingDatumErrors.modifyShopName && shoppingDatumErrors.modifyShopName.types?.maxLength && (
                 <Box color="red">{shoppingDatumErrors.modifyShopName.types.maxLength}</Box>
               )}

@@ -105,7 +105,6 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // 予算計算
-  //
   const totalBudget = watchedPriceFields.reduce(
     (acc, { price, amount }) => acc + Number(price || "") * Number(amount || "1"),
     0

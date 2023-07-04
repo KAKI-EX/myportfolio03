@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
-import { MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModifingData } from "interfaces";
+import { MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
@@ -23,6 +23,7 @@ import { OkaimonoMemoUseList } from "components/molecules/OkaimonoMemoUseList";
 import { OkaimonoMemoUseCalculate } from "components/molecules/OkaimonoMemoUseCalculate";
 import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMemoModal";
 import { OkaimonoMemoUseListModal } from "components/molecules/OkaimonoMemoUseListModal";
+import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -31,10 +32,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
+
   const updateShoppingData = useUpdateUseMemoData();
   const updateListData = useUpdateUseSingleListData();
   const getShoppingMemoList = useGetUseMemoListData();
   const getSingleListData = useGetUseSingleListData();
+  const getSuggestionsShopName = useSuggestShopCreate();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -243,6 +246,26 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     updateMemoListData(memoListProps);
   };
   // ----------------------------------------------------------------------------------------------------------
+    // 店名入力欄のsuggest機能
+    const [shopNameValue, setShopNameValue] = useState("");
+    const [shopNameSuggestions, setShopNameSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
+
+    const onShopChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+      event.preventDefault();
+
+      setShopNameValue(newValue);
+    };
+
+    useEffect(() => {
+      const shopNameProps = {
+        shopNameValue,
+        setShopNameSuggestions,
+      };
+
+      getSuggestionsShopName(shopNameProps);
+    }, [shopNameValue]);
+
+    // ---------------------------------------------------------------------------
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -296,6 +319,10 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           onCloseShoppingDatum={onCloseShoppingDatum}
           shoppingDatumSubmit={shoppingDatumSubmit}
           shoppiingDatumModifyHandleSubmit={shoppiingDatumModifyHandleSubmit}
+          onShopChange={onShopChange}
+          shopNameSuggestions={shopNameSuggestions}
+          shoppingDatumSetValue={shoppingDatumSetValue}
+          setShopNameSuggestions={setShopNameSuggestions}
         />
       </form>
 
