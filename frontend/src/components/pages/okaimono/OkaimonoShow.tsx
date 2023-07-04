@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { DeleteButton } from "components/atoms/DeleteButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { ListFormParams, MergeParams } from "interfaces";
+import { MergeParams } from "interfaces";
 import { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
@@ -28,10 +28,9 @@ import { useMessage } from "hooks/useToast";
 import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
 import { useHistory, useParams } from "react-router-dom";
-import { memoProps, memosShow } from "lib/api/show";
-import { useMemoUpdate } from "hooks/useMemoUpdate";
 import { useSetOkaimonoShowIndex } from "hooks/useSetOkaimonoShowIndex";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
+import { useShowUpdateList } from "hooks/useShowUpdateList";
 
 export const OkaimonoShow: VFC = memo(() => {
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
@@ -134,40 +133,25 @@ export const OkaimonoShow: VFC = memo(() => {
   // データがない。そのため、sendUpdataToAPIの戻り値の配列0番目のshoppingDatumIdを元にShowアクションを実行してsetValueしている。
   // 戻り値をsetValueせずに反映しない方法(リロードすると消える)もあるが、その状態でupdateアクションを再度送ると、仕様上、新規作成アクションで
   // 作成したはずのメモが再度作成されてしまう。(新規メモか否かの判断をlistIdの有無で検知しているため)
-  const props = { setLoading, totalBudget };
-  const sendUpdateToAPI = useMemoUpdate(props);
-  const onSubmit = useCallback(
-    async (formData: MergeParams) => {
-      setReadOnly(!readOnly);
-      if (readOnly && !expiryDate) {
-        onOpen();
-      }
-      const addFormData = { ...formData, ...(pushTemporarilyButton ? { isFinish: null } : { isFinish: false }) };
-      if (!readOnly) {
-        const result = await sendUpdateToAPI(addFormData, deleteIds, setDeleteIds);
-        const memosProps: memoProps = {
-          shoppingDatumId: result?.data[0].shoppingDatumId,
-        };
-        // const memosRes: OkaimonoMemosDataResponse = await memosShow(memosProps);
-        const getList = await memosShow(memosProps);
-        if (getList) {
-          const listResponse = getList;
-          for (let i = fields.length; i < listResponse.data.length; i++) {
-            append({ purchaseName: "", price: "", shoppingDetailMemo: "", amount: "", id: "", asc: "" });
-          }
-          listResponse.data.forEach((data: ListFormParams, index: number) => {
-            setValue(`listForm.${index}.purchaseName`, data.purchaseName);
-            setValue(`listForm.${index}.price`, data.price);
-            setValue(`listForm.${index}.shoppingDetailMemo`, data.shoppingDetailMemo);
-            setValue(`listForm.${index}.amount`, data.amount);
-            setValue(`listForm.${index}.id`, data.id);
-          });
-        }
-        setPushTemporarilyButton(false);
-      }
-    },
-    [readOnly, sendUpdateToAPI, pushTemporarilyButton]
-  );
+  const props = { setLoading, totalBudget, readOnly };
+
+  const updateList = useShowUpdateList(props);
+  const onSubmit = (formData: MergeParams) => {
+    const updateProps = {
+      setReadOnly,
+      expiryDate,
+      onOpen,
+      formData,
+      pushTemporarilyButton,
+      deleteIds,
+      setDeleteIds,
+      append,
+      fields,
+      setValue,
+      setPushTemporarilyButton,
+    };
+    updateList(updateProps);
+  };
 
   const onClickTemporarilySaved = () => {
     setPushTemporarilyButton(true);

@@ -1,4 +1,4 @@
-import { ListFormParams, OkaimonoMemoData, OkaimonoMemoDataShowResponse } from "interfaces";
+import { ListFormParams } from "interfaces";
 
 import { purchaseNameSearchSuggestions } from "lib/api/show";
 import { useMessage } from "hooks/useToast";

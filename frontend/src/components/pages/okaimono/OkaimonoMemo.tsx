@@ -162,8 +162,6 @@ export const OkaimonoMemo: VFC = memo(() => {
 
   const onListChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, newValue: string) => {
     event.preventDefault();
-    console.log("成功してる", newValue);
-    console.log("index", index);
 
     setPurchaseNameValue(newValue);
     setPurchaseNameIndex(index);

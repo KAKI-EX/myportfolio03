@@ -1,6 +1,6 @@
-import { ListFormParams, OkaimonoMemoData, OkaimonoMemoDataShowResponse, OkaimonoShopsIndexData } from "interfaces";
+import { OkaimonoShopsIndexData } from "interfaces";
 
-import { purchaseNameSearchSuggestions, shopsSearchSuggestions } from "lib/api/show";
+import { shopsSearchSuggestions } from "lib/api/show";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
 import React from "react";
