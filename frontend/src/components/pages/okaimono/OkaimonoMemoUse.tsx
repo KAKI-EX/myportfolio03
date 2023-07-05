@@ -320,6 +320,11 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               remove={remove}
               insertInputForm={insertInputForm}
               errors={errors}
+              purchaseNameIndex={purchaseNameIndex}
+              setValue={setValue}
+              setPurchaseNameSuggestions={setPurchaseNameSuggestions}
+              purchaseNameSuggestions={purchaseNameSuggestions}
+              onListChange={onListChange}
             />
             <OkaimonoMemoUseCalculate
               totalBudget={totalBudget}

@@ -2,6 +2,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
   Checkbox,
+  Divider,
   HStack,
   Input,
   InputGroup,
@@ -10,10 +11,19 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { MergeParams } from "interfaces";
+import { ListFormParams, MergeParams } from "interfaces";
 import React, { memo, VFC } from "react";
-import { FieldArrayWithId, FieldErrors, UseFieldArrayRemove, UseFormGetValues, UseFormRegister } from "react-hook-form";
+import {
+  FieldArrayWithId,
+  FieldErrors,
+  UseFieldArrayRemove,
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 
 type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
@@ -27,6 +37,12 @@ type Props = {
   // eslint-disable-next-line no-unused-vars
   insertInputForm: (index: number) => void;
   errors: FieldErrors<MergeParams>;
+  purchaseNameIndex?: number | undefined;
+  purchaseNameSuggestions?: ListFormParams[];
+  setValue?: UseFormSetValue<MergeParams>;
+  setPurchaseNameSuggestions?: React.Dispatch<React.SetStateAction<ListFormParams[]>>;
+  // eslint-disable-next-line no-unused-vars
+  onListChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string, index?: number) => void;
 };
 
 export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
@@ -40,27 +56,94 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
     remove,
     insertInputForm,
     errors,
+    purchaseNameIndex,
+    purchaseNameSuggestions,
+    setValue,
+    setPurchaseNameSuggestions,
+    onListChange,
   } = props;
+
+  const onClickSuggests = (
+    event: React.MouseEvent<HTMLParagraphElement, MouseEvent>,
+    purchaseName: string,
+    index: number
+  ) => {
+    event.preventDefault();
+    if (setValue && setPurchaseNameSuggestions && purchaseName) {
+      setValue(`listForm.${index}.purchaseName`, purchaseName);
+      setPurchaseNameSuggestions([]);
+    }
+  };
+
   return (
     <>
       {fields.map((field, index) => {
+        const {
+          ref,
+          onChange: registerOnChange,
+          ...rest
+        } = register(`listForm.${index}.purchaseName`, {
+          required: { value: true, message: "商品名が入力されていません" },
+          maxLength: { value: 35, message: "最大文字数は35文字までです。" },
+        });
+
+        const customOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+          // 親コンポーネントから渡された onChange ハンドラを実行
+          if (onListChange) {
+            onListChange(event, event.target.value, index);
+          }
+
+          // 入力が空の場合、候補リストをクリアする
+          if (setPurchaseNameSuggestions && event.target.value === "") {
+            setPurchaseNameSuggestions([]);
+          }
+
+          // React Hook Form の onChange ハンドラを実行
+          if (registerOnChange) {
+            registerOnChange(event);
+          }
+        };
         return (
           <Box w={{ base: "100%", md: "50%" }} key={field.key} bg="white" py={4} px={2} rounded={10} boxShadow="md">
             <HStack>
               <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isBought`)} />
-              <Input
-                border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
-                placeholder="商品名"
-                w="50%"
-                fontSize={{ base: "sm", md: "md" }}
-                px={1}
-                isReadOnly={!!getValues(`listForm.${index}.id`)}
-                ml={0}
-                {...register(`listForm.${index}.purchaseName`, {
-                  required: { value: true, message: "商品名が入力されていません" },
-                  maxLength: { value: 30, message: "最大文字数は30文字までです。" },
-                })}
-              />
+              <Box w="50%">
+                <Input
+                  onChange={(event) => customOnChange(event)}
+                  border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
+                  placeholder="商品名"
+                  w="100%"
+                  fontSize={{ base: "sm", md: "md" }}
+                  px={1}
+                  isReadOnly={!!getValues(`listForm.${index}.id`)}
+                  ml={0}
+                  ref={ref}
+                  {...rest}
+                />
+                {purchaseNameIndex === index && purchaseNameSuggestions && purchaseNameSuggestions?.length > 0 && (
+                  <Box w="100%" position="relative" zIndex="dropdown">
+                    <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                      {purchaseNameSuggestions.map((value) => (
+                        <Box key={value.id} w="100%">
+                          <Divider w="100%" />
+                          {/* prettier-ignore */}
+                          <Text
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            fontSize={{ base: "sm", md: "md" }}
+                            w="100%"
+                            onClick={(event) => (value.purchaseName ? onClickSuggests(event, value.purchaseName, index) : "")}
+                            _hover={{ fontWeight: "bold" }}
+                          >
+                            {value.purchaseName}
+                          </Text>
+                        </Box>
+                      ))}
+                    </VStack>
+                  </Box>
+                )}
+              </Box>
               <InputGroup w="20%">
                 <Input
                   textAlign="center"

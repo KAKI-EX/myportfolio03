@@ -104,6 +104,10 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
                   <Box key={value.id} w="100%">
                     <Divider w="100%" />
                     <Text
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                      fontSize={{ base: "sm", md: "md" }}
                       w="100%"
                       onClick={(event) => onClickSuggests(event, value.shopName)}
                       _hover={{ fontWeight: "bold" }}

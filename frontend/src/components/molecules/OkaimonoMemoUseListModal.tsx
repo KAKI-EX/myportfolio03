@@ -34,11 +34,11 @@ type Props = {
   // eslint-disable-next-line no-unused-vars
   onOneSubmit: (oneListFormData: MergeParams) => Promise<void>;
   purchaseNameValue?: string;
-  setPurchaseNameSuggestions: React.Dispatch<React.SetStateAction<ListFormParams[]>>;
-  listSetValue: UseFormSetValue<MergeParams>;
-  purchaseNameSuggestions: ListFormParams[];
+  setPurchaseNameSuggestions?: React.Dispatch<React.SetStateAction<ListFormParams[]>>;
+  listSetValue?: UseFormSetValue<MergeParams>;
+  purchaseNameSuggestions?: ListFormParams[];
   // eslint-disable-next-line no-unused-vars
-  onListChange: (event: React.ChangeEvent<HTMLInputElement>, newValue: string, index?: number) => void;
+  onListChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string, index?: number) => void;
 };
 
 export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
@@ -71,7 +71,7 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
   const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, purchaseName: string) => {
     event.preventDefault();
 
-    if (purchaseNameValue && setPurchaseNameSuggestions && purchaseName) {
+    if (listSetValue && purchaseNameValue && setPurchaseNameSuggestions && purchaseName) {
       listSetValue("modifyPurchaseName", purchaseName);
       setPurchaseNameSuggestions([]);
     }
@@ -84,7 +84,7 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
     }
 
     // 入力が空の場合、候補リストをクリアする
-    if (purchaseNameSuggestions && event.target.value === "") {
+    if (setPurchaseNameSuggestions && purchaseNameSuggestions && event.target.value === "") {
       setPurchaseNameSuggestions([]);
     }
 
@@ -104,13 +104,13 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
             <Box bg="white" p={3} rounded="md">
               <VStack>
                 <HStack>
-                  <Box w="100%">
+                  <Box w="70%">
                     <Input
                       onChange={customOnChange}
                       isReadOnly={readOnly}
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       placeholder="商品名"
-                      w="70%"
+                      w="100%"
                       fontSize={{ base: "sm", md: "md" }}
                       ref={ref}
                       {...rest}
@@ -121,9 +121,12 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                           {purchaseNameSuggestions.map((value) => (
                             <Box key={value.id} w="100%">
                               <Divider w="100%" />
+                              {/* prettier-ignore */}
                               <Text
-                                w="100%"
-                                // prettier-ignore
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                                fontSize={{ base: "sm", md: "md" }}
                                 onClick={(event) =>
                                   (value.purchaseName ? onClickSuggests(event, value.purchaseName) : "")}
                                 _hover={{ fontWeight: "bold" }}

@@ -68,7 +68,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     purchaseNameSuggestions,
     setValue,
     setPurchaseNameSuggestions,
-    purchaseNameIndex
+    purchaseNameIndex,
   } = props;
 
   const onClickSuggests = (
@@ -182,10 +182,14 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                           <Box key={value.id} w="100%">
                             <Divider w="100%" />
                             <Text
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                              whiteSpace="nowrap"
+                              fontSize={{ base: "sm", md: "md" }}
                               w="100%"
-                              onClick={(event) => (
+                              onClick={(event) =>
                                 value.purchaseName ? onClickSuggests(event, value.purchaseName, index) : ""
-                              )}
+                              }
                               _hover={{ fontWeight: "bold" }}
                             >
                               {value.purchaseName}
