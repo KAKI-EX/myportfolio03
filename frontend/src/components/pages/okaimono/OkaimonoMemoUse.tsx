@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
-import { MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoShopsIndexData } from "interfaces";
+import { ListFormParams, MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
@@ -24,6 +24,7 @@ import { OkaimonoMemoUseCalculate } from "components/molecules/OkaimonoMemoUseCa
 import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMemoModal";
 import { OkaimonoMemoUseListModal } from "components/molecules/OkaimonoMemoUseListModal";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
+import { useSuggestListCreate } from "hooks/useSuggestListCreate";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -38,6 +39,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const getShoppingMemoList = useGetUseMemoListData();
   const getSingleListData = useGetUseSingleListData();
   const getSuggestionsShopName = useSuggestShopCreate();
+  const getSuggestionsPurchaseName = useSuggestListCreate();
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
@@ -266,6 +268,28 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     }, [shopNameValue]);
 
     // ---------------------------------------------------------------------------
+  // 商品名のsuggest機能
+  const [purchaseNameValue, setPurchaseNameValue] = useState("");
+  const [purchaseNameIndex, setPurchaseNameIndex] = useState<number>();
+  const [purchaseNameSuggestions, setPurchaseNameSuggestions] = useState<ListFormParams[]>([]);
+
+  const onListChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string, index?: number) => {
+    event.preventDefault();
+
+    setPurchaseNameValue(newValue);
+    setPurchaseNameIndex(index);
+  };
+
+  useEffect(() => {
+    const purchaseProps = {
+      purchaseNameValue,
+      setPurchaseNameSuggestions,
+    };
+
+    getSuggestionsPurchaseName(purchaseProps);
+  }, [purchaseNameValue, purchaseNameIndex]);
+
+  // ---------------------------------------------------------------------------
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -337,6 +361,11 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           startDate={startDate}
           oneListModifyHandleSubmit={oneListModifyHandleSubmit}
           onOneSubmit={onOneSubmit}
+          purchaseNameValue={purchaseNameValue}
+          setPurchaseNameSuggestions={setPurchaseNameSuggestions}
+          listSetValue={listSetValue}
+          purchaseNameSuggestions={purchaseNameSuggestions}
+          onListChange={onListChange}
         />
       </form>
     </>
