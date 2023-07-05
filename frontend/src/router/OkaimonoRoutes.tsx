@@ -3,6 +3,7 @@ import { OkaimonoAlert } from "components/pages/okaimono/OkaimonoAlert";
 import { OkaimonoIndex } from "components/pages/okaimono/OkaimonoIndex";
 import { OkaimonoMemo } from "components/pages/okaimono/OkaimonoMemo";
 import { OkaimonoMemoUse } from "components/pages/okaimono/OkaimonoMemoUse";
+import { OkaimonoSearch } from "components/pages/okaimono/OkaimonoSearch";
 import { OkaimonoShopShow } from "components/pages/okaimono/OkaimonoShopShow";
 import { OkaimonoShow } from "components/pages/okaimono/OkaimonoShow";
 
@@ -36,6 +37,11 @@ export const OkaimonoRoutes = [
     path: "/okaimono_alert",
     exact: false,
     children: <OkaimonoAlert />,
+  },
+  {
+    path: "/okaimono_search",
+    exact: false,
+    children: <OkaimonoSearch />,
   },
   {
     path: "*",
