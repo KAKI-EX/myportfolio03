@@ -6,6 +6,7 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  w?: string;
 };
 
 export const PrimaryButton: VFC<Props> = memo((props) => {
@@ -14,6 +15,7 @@ export const PrimaryButton: VFC<Props> = memo((props) => {
     disabled = false,
     loading = false,
     onClick,
+    w,
   } = props;
   return (
     <Button
@@ -23,6 +25,7 @@ export const PrimaryButton: VFC<Props> = memo((props) => {
       disabled={disabled || loading}
       isLoading={loading}
       onClick={onClick}
+      w={w}
     >
       {children}
     </Button>

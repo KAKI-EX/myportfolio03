@@ -6,10 +6,11 @@ type Props = {
   children: ReactNode;
   disabled?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>
+  w?: string;
 };
 
 export const PrimaryButtonForReactHookForm: VFC<Props> = memo((props) => {
-  const { loading, children, disabled = false, onClick } = props;
+  const { loading, children, disabled = false, onClick, w } = props;
   return (
     <Button
       bg="teal.400"
@@ -19,6 +20,7 @@ export const PrimaryButtonForReactHookForm: VFC<Props> = memo((props) => {
       type="submit"
       disabled={disabled || loading}
       onClick={onClick}
+      w={w}
     >
       {children}
     </Button>
