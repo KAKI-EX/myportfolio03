@@ -12,11 +12,14 @@ import {
   HStack,
   Icon,
 } from "@chakra-ui/react";
+import { AxiosError } from "axios";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { useMessage } from "hooks/useToast";
 import { MergeParams } from "interfaces";
+import { shoppingDataIndexRecord } from "lib/api";
 
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
@@ -25,15 +28,13 @@ import { BiCube } from "react-icons/bi";
 import { BsCartCheck } from "react-icons/bs";
 
 export const OkaimonoSearch: VFC = memo(() => {
+  const { showMessage } = useMessage();
+
   const [loading, setLoading] = useState<boolean>(false);
   const defaultShoppingDate = new Date();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
-
-  const test = () => {
-    console.log("test");
-  };
 
   type UseForm = {
     startDate: string;
@@ -59,10 +60,32 @@ export const OkaimonoSearch: VFC = memo(() => {
     mode: "all",
   });
 
+  useEffect(() => {
+    setLoading(true);
+    const getOkaimonoRecordIndex = async () => {
+      try {
+        const OkaimonoRecordIndexRes = await shoppingDataIndexRecord();
+        console.log("OkaimonoRecordIndexRes", OkaimonoRecordIndexRes);
+        setLoading(false);
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
+        console.error(axiosError.response);
+        showMessage({ title: axiosError.response?.data.error, status: "error" });
+        setLoading(false);
+      }
+    };
+    getOkaimonoRecordIndex();
+  }, []);
+
   const startDate = watch("startDate");
 
   const onSubmit = (formData: UseForm) => {
-    console.log("formData", formData);
+    if (formData.searchSelect === "shopName") {
+      console.log("shopName");
+    } else if (formData.searchSelect === "purchaseName") {
+      console.log("purchaseName");
+    }
   };
 
   return loading ? (
@@ -88,7 +111,7 @@ export const OkaimonoSearch: VFC = memo(() => {
                   required: { value: true, message: "検索タイプが入力されていません" },
                 })}
               >
-                <option value="shopName">店名前</option>
+                <option value="shopName">お店名</option>
                 <option value="purchaseName">商品名</option>
               </Select>
               <Input

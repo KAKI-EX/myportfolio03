@@ -10,6 +10,15 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     render json: shapping
   end
 
+  def record_index
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true
+    if shopping_records.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    else
+      render json: shopping_records
+    end
+  end
+
   def create
     shopping = current_api_v1_user.shopping_data.new(shopping_params)
     if shopping.save

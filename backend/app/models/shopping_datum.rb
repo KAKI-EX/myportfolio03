@@ -1,4 +1,6 @@
 class ShoppingDatum < ApplicationRecord
+  scope :is_finish_true, lambda { where(is_finish: true) }
+
   before_create :set_uuid
   validates :user_id, :shop_id, :shopping_date, presence: true
   validates :shopping_memo, length: {maximum: 150, message: "買い物メモは%{count}文字以上の登録はできません。"}
