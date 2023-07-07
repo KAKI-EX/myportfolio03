@@ -11,11 +11,15 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def record_index
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true.page((params[:page] || 1)).per(2)
+    total_pages = shopping_records.total_pages
     if shopping_records.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
-      render json: shopping_records
+      shopping_records = shopping_records.map do |record|
+        record.attributes.merge({ 'memos_count': record.memos.count})
+      end
+      render json: { records: shopping_records, total_pages: total_pages }
     end
   end
 

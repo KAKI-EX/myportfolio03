@@ -44,6 +44,8 @@ export interface ListFormParams {
   isFinish?: boolean | null;
   differentDay?: number
   isDelete?: boolean;
+  memosCount?: number;
+  totalBudget?: number;
 }
 
 export interface alertParams{
@@ -206,5 +208,10 @@ export interface GetSingleMemo {
 
 export interface GetAlertIndex {
   data: ListFormParams[];
+  status: number;
+}
+
+export interface GetOkaimonoRecord {
+  data: {records: ListFormParams[], totalPages: number};
   status: number;
 }
