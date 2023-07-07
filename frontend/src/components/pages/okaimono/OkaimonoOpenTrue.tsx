@@ -245,12 +245,13 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     closeConfirm();
   };
 
-  const props = { setLoading, totalBudget };
+  const props = { setLoading };
   const updateMemoListData = useUpdateUseMemoListOpenData(props);
 
   const onAllSubmit = (originFormData: MergeParams) => {
+    const formData = { ...originFormData, totalBudget };
     const updateMemoListProps = {
-      originFormData,
+      formData,
       deleteIds,
       setDeleteIds,
       fields,

@@ -7,20 +7,20 @@ import { useMessage } from "./useToast";
 
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  totalBudget: number;
 };
 
 export const useMemoUpdate = (props: Props) => {
   const { showMessage } = useMessage();
 
-  const { setLoading, totalBudget } = props;
+  const { setLoading } = props;
 
   const sendUpdateToAPI = async (
     formData: MergeParams,
     deleteIds: string[],
     setDleteIds: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
-    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen } = formData;
+    const { shopName, shoppingDate, shoppingMemo, estimatedBudget, shoppingDatumId, isFinish, isOpen, totalBudget } =
+      formData;
     const shopParams: MergeParams = { shopName: shopName || "お店名称未設定でのお買い物" };
 
     try {

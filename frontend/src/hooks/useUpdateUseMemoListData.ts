@@ -8,7 +8,6 @@ import { useHistory } from "react-router-dom";
 import { useMemoUpdate } from "./useMemoUpdate";
 
 type HooksProps = {
-  totalBudget: number;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 

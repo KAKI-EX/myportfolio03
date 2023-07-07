@@ -9,7 +9,6 @@ import { useMemoUpdate } from "./useMemoUpdate";
 import { useOpenMemoUpdate } from "./useOpenMemoUpdate";
 
 type HooksProps = {
-  totalBudget: number;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -19,7 +18,7 @@ type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
   append: UseFieldArrayAppend<MergeParams, "listForm">;
   setValue: UseFormSetValue<MergeParams>;
-  originFormData: MergeParams;
+  formData: MergeParams;
   userId: string;
 };
 
@@ -31,10 +30,10 @@ export const useUpdateUseMemoListOpenData = (hooksProps: HooksProps) => {
 
   const updateMemoListData = useCallback(
     async (props: Props) => {
-      const { originFormData, deleteIds, setDeleteIds, fields, append, setValue, userId } = props;
+      const { formData, deleteIds, setDeleteIds, fields, append, setValue, userId } = props;
       try {
-        const formData = { ...originFormData, userId };
-        const result = await sendOpenDataToAPI(formData, deleteIds, setDeleteIds);
+        const addFormData = { ...formData, userId };
+        const result = await sendOpenDataToAPI(addFormData, deleteIds, setDeleteIds);
         const memosProps: memoProps = {
           userId,
           shoppingDatumId: result?.data[0].shoppingDatumId,

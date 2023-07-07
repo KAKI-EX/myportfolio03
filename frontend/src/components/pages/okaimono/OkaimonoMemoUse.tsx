@@ -1,14 +1,13 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  Spinner,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, Spinner, useDisclosure, VStack } from "@chakra-ui/react";
 import { format } from "date-fns";
-import { ListFormParams, MergeParams, OkaimonoMemoDataShow, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoShopsIndexData } from "interfaces";
+import {
+  ListFormParams,
+  MergeParams,
+  OkaimonoMemoDataShow,
+  OkaimonoMemosData,
+  OkaimonoShopModifingData,
+  OkaimonoShopsIndexData,
+} from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
@@ -234,7 +233,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   };
   const updateMemoListData = useUpdateUseMemoListData(memoListHooksProps);
 
-  const onAllSubmit = (formData: MergeParams) => {
+  const onAllSubmit = (originFormData: MergeParams) => {
+    const formData = { ...originFormData, totalBudget };
+    console.log("formData", formData);
     const memoListProps = {
       formData,
       deleteIds,
@@ -248,26 +249,26 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     updateMemoListData(memoListProps);
   };
   // ----------------------------------------------------------------------------------------------------------
-    // 店名入力欄のsuggest機能
-    const [shopNameValue, setShopNameValue] = useState("");
-    const [shopNameSuggestions, setShopNameSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
+  // 店名入力欄のsuggest機能
+  const [shopNameValue, setShopNameValue] = useState("");
+  const [shopNameSuggestions, setShopNameSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
 
-    const onShopChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
-      event.preventDefault();
+  const onShopChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+    event.preventDefault();
 
-      setShopNameValue(newValue);
+    setShopNameValue(newValue);
+  };
+
+  useEffect(() => {
+    const shopNameProps = {
+      shopNameValue,
+      setShopNameSuggestions,
     };
 
-    useEffect(() => {
-      const shopNameProps = {
-        shopNameValue,
-        setShopNameSuggestions,
-      };
+    getSuggestionsShopName(shopNameProps);
+  }, [shopNameValue]);
 
-      getSuggestionsShopName(shopNameProps);
-    }, [shopNameValue]);
-
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // 商品名のsuggest機能
   const [purchaseNameValue, setPurchaseNameValue] = useState("");
   const [purchaseNameIndex, setPurchaseNameIndex] = useState<number>();

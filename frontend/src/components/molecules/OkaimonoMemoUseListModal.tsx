@@ -70,7 +70,6 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
 
   const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, purchaseName: string) => {
     event.preventDefault();
-
     if (listSetValue && purchaseNameValue && setPurchaseNameSuggestions && purchaseName) {
       listSetValue("modifyPurchaseName", purchaseName);
       setPurchaseNameSuggestions([]);
