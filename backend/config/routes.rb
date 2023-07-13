@@ -19,6 +19,7 @@ Rails.application.routes.draw do
         post   'memo/delete_open_memo',                             to: 'memos#destroy_open_memo'
         get    'shoppingdatum/index',                               to: 'shopping_datum#index'
         get    'shopping_data/record_index',                        to: 'shopping_datum#record_index'
+        get    'shopping_data/search_by_shop',                      to: 'shopping_datum#search_by_shop'
         post   'shoppingdatum/create',                              to: 'shopping_datum#create'
         get    'shoppingdatum/show',                                to: 'shopping_datum#show'
         get    'shoppingdatum/show_open_memo',                      to: 'shopping_datum#show_open_memo'

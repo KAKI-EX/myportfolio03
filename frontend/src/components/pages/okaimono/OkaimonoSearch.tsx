@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useMessage } from "hooks/useToast";
 import { ListFormParams, MergeParams } from "interfaces";
-import { shoppingDataIndexRecord } from "lib/api";
+import { shoppingDataIndexRecord, shoppingDataIndexRecordByShop } from "lib/api";
 
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
@@ -33,16 +33,19 @@ export const OkaimonoSearch: VFC = memo(() => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [okaimonoRecord, setOkaimonoRecord] = useState<ListFormParams[]>();
+  const [searchCurrentPage, setSearchCurrentPage] = useState<number>(1);
+  const [okaimonoRecord, setOkaimonoRecord] = useState<ListFormParams[]>([]);
   const [totalPages, setTotalPages] = useState<number>();
-  const defaultShoppingDate = new Date();
-  const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
-    locale: ja,
-  });
+  const [clickOnSearch, setClickOnSearch] = useState<boolean>(false);
+
+  // const defaultShoppingDate = new Date();
+  // const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
+  //   locale: ja,
+  // });
 
   type UseForm = {
-    startDate: string;
-    endDate: string;
+    startDate: Date;
+    endDate: Date;
     shoppingDate: string;
     searchSelect: string;
     searchWord: string;
@@ -57,15 +60,12 @@ export const OkaimonoSearch: VFC = memo(() => {
     setValue,
     formState: { errors, isValid },
   } = useForm<UseForm>({
-    defaultValues: {
-      shoppingDate: formattedDefaultShoppingDate,
-    },
     criteriaMode: "all",
     mode: "all",
   });
 
   useEffect(() => {
-    setLoading(true);
+    console.log("ただし");
     const getOkaimonoRecordIndex = async () => {
       try {
         const OkaimonoRecordIndexRes = await shoppingDataIndexRecord(currentPage);
@@ -86,15 +86,66 @@ export const OkaimonoSearch: VFC = memo(() => {
     getOkaimonoRecordIndex();
   }, [currentPage]);
 
+  console.log("totalPages", totalPages);
+  console.log("clickOnSearch", clickOnSearch);
+  console.log("currentPage", currentPage);
+  console.log("searchCurrentPage", searchCurrentPage);
+
   const startDate = watch("startDate");
 
-  const onSubmit = (formData: UseForm) => {
+  const onSubmit = async (originFormData: UseForm) => {
+    console.log("★★★★onSubmit");
+    const formData = { ...originFormData, searchCurrentPage };
     if (formData.searchSelect === "shopName") {
-      console.log("shopName");
-    } else if (formData.searchSelect === "purchaseName") {
-      console.log("purchaseName");
+      try {
+        setClickOnSearch(true);
+        const shoppingSearchByShopRes = await shoppingDataIndexRecordByShop(formData);
+        if (shoppingSearchByShopRes?.status === 200 && shoppingSearchByShopRes) {
+          console.log("okaimonoRecord", okaimonoRecord);
+          console.log("shoppingSearchByShopRes", shoppingSearchByShopRes);
+          setOkaimonoRecord(shoppingSearchByShopRes.data.records);
+          setTotalPages(shoppingSearchByShopRes.data.totalPages);
+          setLoading(false);
+        }
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
+        console.error(axiosError.response);
+        showMessage({ title: axiosError.response?.data.error, status: "error" });
+        setLoading(false);
+      }
     }
   };
+
+  useEffect(() => {
+    const onClickPagination = async (originFormData: UseForm) => {
+      const formData = { ...originFormData, searchCurrentPage };
+      if (formData.searchSelect === "shopName") {
+        console.log(formData);
+        console.log("★★★★onClickPagination");
+
+        try {
+          setClickOnSearch(true);
+          const shoppingSearchByShopRes = await shoppingDataIndexRecordByShop(formData);
+          if (shoppingSearchByShopRes?.status === 200 && shoppingSearchByShopRes) {
+            console.log("okaimonoRecord", okaimonoRecord);
+            console.log("shoppingSearchByShopRes", shoppingSearchByShopRes);
+            setOkaimonoRecord(shoppingSearchByShopRes.data.records);
+            setTotalPages(shoppingSearchByShopRes.data.totalPages);
+            setLoading(false);
+          }
+        } catch (err) {
+          const axiosError = err as AxiosError;
+          // eslint-disable-next-line no-console
+          console.error(axiosError.response);
+          showMessage({ title: axiosError.response?.data.error, status: "error" });
+          setLoading(false);
+        }
+      }
+    };
+    const props = getValues();
+    onClickPagination(props);
+  }, [searchCurrentPage]);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -189,8 +240,35 @@ export const OkaimonoSearch: VFC = memo(() => {
           ))}
         </VStack>
         <Box>
-          <Button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}>前のページ</Button>
-          <Button onClick={() => setCurrentPage((prev) => prev + 1)}>次のページ</Button>
+          {!(currentPage === 1 && searchCurrentPage === 1) && (
+            <Button
+              onClick={() => {
+                setLoading(true);
+                if (clickOnSearch === true) {
+                  setSearchCurrentPage((prev) => Math.max(prev - 1, 1));
+                } else {
+                  setCurrentPage((prev) => Math.max(prev - 1, 1));
+                }
+              }}
+            >
+              前のページ
+            </Button>
+          )}
+
+          {!(currentPage === totalPages || searchCurrentPage === totalPages) && (
+            <Button
+              onClick={() => {
+                setLoading(true);
+                if (clickOnSearch === true) {
+                  setSearchCurrentPage((prev) => prev + 1);
+                } else {
+                  setCurrentPage((prev) => prev + 1);
+                }
+              }}
+            >
+              次のページ
+            </Button>
+          )}
         </Box>
       </VStack>
     </Flex>
