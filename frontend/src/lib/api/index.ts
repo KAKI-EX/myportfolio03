@@ -33,3 +33,17 @@ export const shoppingDataIndexRecordByShop = async (formData: byShopProps) => {
     status: shoppingRecordRes.status,
   };
 };
+
+export const shoppingDataIndexRecordByPurchase = async (formData: byShopProps) => {
+  if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) {
+    return undefined;
+  }
+  const { searchSelect, searchWord, startDate, endDate, searchCurrentPage } = formData;
+  const shoppingRecordRes = await client.get(
+    `okaimono/shopping_data/search_by_purchase?page=${searchCurrentPage}&select=${searchSelect}&word=${searchWord}&start=${startDate}&end=${endDate}`
+  );
+  return {
+    data: shoppingRecordRes.data,
+    status: shoppingRecordRes.status,
+  };
+};

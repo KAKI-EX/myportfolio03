@@ -4,7 +4,6 @@ import {
   VStack,
   Spinner,
   Heading,
-  useDisclosure,
   Text,
   Divider,
   Input,
@@ -14,19 +13,17 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { AxiosError } from "axios";
-import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 import { useMessage } from "hooks/useToast";
-import { ListFormParams, MergeParams } from "interfaces";
-import { shoppingDataIndexRecord, shoppingDataIndexRecordByShop } from "lib/api";
+import { ListFormParams } from "interfaces";
+import { shoppingDataIndexRecord, shoppingDataIndexRecordByPurchase, shoppingDataIndexRecordByShop } from "lib/api";
 
-import React, { memo, useCallback, useEffect, useState, VFC } from "react";
+import React, { memo, useEffect, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineMoneyCollect } from "react-icons/ai";
 import { BiCube } from "react-icons/bi";
 import { BsCartCheck } from "react-icons/bs";
+import { useHistory } from "react-router-dom";
 
 export const OkaimonoSearch: VFC = memo(() => {
   const { showMessage } = useMessage();
@@ -37,6 +34,8 @@ export const OkaimonoSearch: VFC = memo(() => {
   const [okaimonoRecord, setOkaimonoRecord] = useState<ListFormParams[]>([]);
   const [totalPages, setTotalPages] = useState<number>();
   const [clickOnSearch, setClickOnSearch] = useState<boolean>(false);
+
+  const history = useHistory();
 
   // const defaultShoppingDate = new Date();
   // const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
@@ -54,10 +53,8 @@ export const OkaimonoSearch: VFC = memo(() => {
   const {
     register,
     handleSubmit,
-    control,
     watch,
     getValues,
-    setValue,
     formState: { errors, isValid },
   } = useForm<UseForm>({
     criteriaMode: "all",
@@ -65,12 +62,11 @@ export const OkaimonoSearch: VFC = memo(() => {
   });
 
   useEffect(() => {
-    console.log("ただし");
+    setLoading(true);
     const getOkaimonoRecordIndex = async () => {
       try {
         const OkaimonoRecordIndexRes = await shoppingDataIndexRecord(currentPage);
         if (OkaimonoRecordIndexRes?.status === 200 && OkaimonoRecordIndexRes) {
-          console.log("OkaimonoRecordIndexRes", OkaimonoRecordIndexRes);
           setOkaimonoRecord(OkaimonoRecordIndexRes.data.records);
           setTotalPages(OkaimonoRecordIndexRes.data.totalPages);
           setLoading(false);
@@ -86,25 +82,34 @@ export const OkaimonoSearch: VFC = memo(() => {
     getOkaimonoRecordIndex();
   }, [currentPage]);
 
-  console.log("totalPages", totalPages);
-  console.log("clickOnSearch", clickOnSearch);
-  console.log("currentPage", currentPage);
-  console.log("searchCurrentPage", searchCurrentPage);
-
   const startDate = watch("startDate");
 
   const onSubmit = async (originFormData: UseForm) => {
-    console.log("★★★★onSubmit");
+    setCurrentPage(1);
     const formData = { ...originFormData, searchCurrentPage };
     if (formData.searchSelect === "shopName") {
       try {
         setClickOnSearch(true);
         const shoppingSearchByShopRes = await shoppingDataIndexRecordByShop(formData);
         if (shoppingSearchByShopRes?.status === 200 && shoppingSearchByShopRes) {
-          console.log("okaimonoRecord", okaimonoRecord);
-          console.log("shoppingSearchByShopRes", shoppingSearchByShopRes);
           setOkaimonoRecord(shoppingSearchByShopRes.data.records);
           setTotalPages(shoppingSearchByShopRes.data.totalPages);
+          setLoading(false);
+        }
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        // eslint-disable-next-line no-console
+        console.error(axiosError.response);
+        showMessage({ title: axiosError.response?.data.error, status: "error" });
+        setLoading(false);
+      }
+    } else if (formData.searchSelect === "purchaseName") {
+      try {
+        setClickOnSearch(true);
+        const shoppingSearchByPurchaseRes = await shoppingDataIndexRecordByPurchase(formData);
+        if (shoppingSearchByPurchaseRes?.status === 200 && shoppingSearchByPurchaseRes) {
+          setOkaimonoRecord(shoppingSearchByPurchaseRes.data.records);
+          setTotalPages(shoppingSearchByPurchaseRes.data.totalPages);
           setLoading(false);
         }
       } catch (err) {
@@ -119,19 +124,31 @@ export const OkaimonoSearch: VFC = memo(() => {
 
   useEffect(() => {
     const onClickPagination = async (originFormData: UseForm) => {
+      setCurrentPage(1);
       const formData = { ...originFormData, searchCurrentPage };
       if (formData.searchSelect === "shopName") {
-        console.log(formData);
-        console.log("★★★★onClickPagination");
-
         try {
           setClickOnSearch(true);
           const shoppingSearchByShopRes = await shoppingDataIndexRecordByShop(formData);
           if (shoppingSearchByShopRes?.status === 200 && shoppingSearchByShopRes) {
-            console.log("okaimonoRecord", okaimonoRecord);
-            console.log("shoppingSearchByShopRes", shoppingSearchByShopRes);
             setOkaimonoRecord(shoppingSearchByShopRes.data.records);
             setTotalPages(shoppingSearchByShopRes.data.totalPages);
+            setLoading(false);
+          }
+        } catch (err) {
+          const axiosError = err as AxiosError;
+          // eslint-disable-next-line no-console
+          console.error(axiosError.response);
+          showMessage({ title: axiosError.response?.data.error, status: "error" });
+          setLoading(false);
+        }
+      } else if (formData.searchSelect === "purchaseName") {
+        try {
+          setClickOnSearch(true);
+          const shoppingSearchByPurchaseRes = await shoppingDataIndexRecordByPurchase(formData);
+          if (shoppingSearchByPurchaseRes?.status === 200 && shoppingSearchByPurchaseRes) {
+            setOkaimonoRecord(shoppingSearchByPurchaseRes.data.records);
+            setTotalPages(shoppingSearchByPurchaseRes.data.totalPages);
             setLoading(false);
           }
         } catch (err) {
@@ -146,6 +163,11 @@ export const OkaimonoSearch: VFC = memo(() => {
     const props = getValues();
     onClickPagination(props);
   }, [searchCurrentPage]);
+
+  const onClickList = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
+    event.preventDefault();
+    history.push(`/okaimono/okaimono_show/${id}`);
+  };
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -220,8 +242,17 @@ export const OkaimonoSearch: VFC = memo(() => {
           </Box>
         </form>
         <VStack w="100%">
-          {okaimonoRecord?.map((record, index) => (
-            <Box boxShadow="lg" bg="white" rounded="xl" p={5} mt={5} w="100%" key={record.id}>
+          {okaimonoRecord?.map((record) => (
+            <Box
+              boxShadow="lg"
+              bg="white"
+              rounded="xl"
+              p={5}
+              mt={5}
+              w="100%"
+              key={record.id}
+              onClick={(event) => (record.id ? onClickList(event, record.id) : undefined)}
+            >
               <HStack>
                 <Text fontSize={{ base: "sm", md: "md" }} mr={2} w="40%">
                   <Icon as={BsCartCheck} w={5} h={5} mb={-1} mr={1} />
@@ -229,11 +260,11 @@ export const OkaimonoSearch: VFC = memo(() => {
                 </Text>
                 <Text fontSize={{ base: "sm", md: "md" }} mr={2} w="20%">
                   <Icon as={BiCube} w={5} h={5} mb={-1} mr={1} />
-                  {record.memosCount}
+                  {record.memosCount}つ
                 </Text>
                 <Text fontSize={{ base: "sm", md: "md" }} mr={2} w="30%">
                   <Icon as={AiOutlineMoneyCollect} w={5} h={5} mb={-1} mr={1} />
-                  {record.totalBudget}
+                  {record.totalBudget}円
                 </Text>
               </HStack>
             </Box>

@@ -235,7 +235,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   const onAllSubmit = (originFormData: MergeParams) => {
     const formData = { ...originFormData, totalBudget };
-    console.log("formData", formData);
     const memoListProps = {
       formData,
       deleteIds,
