@@ -11,7 +11,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def record_index
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true.page((params[:page] || 1)).per(5)
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
     total_pages = shopping_records.total_pages
     if shopping_records.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
@@ -29,7 +29,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       render json: { error: 'お店が見つかりませんでした' }, status: :not_found
       return
     end
-    shopping_records = shop.shopping_datum.is_finish_true.page((params[:page] || 1)).per(5);
+    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5);
     total_pages = shopping_records.total_pages
 
     if shopping_records.empty?
@@ -57,7 +57,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       return
     end
     shopping_datum_ids = purchase.pluck(:shopping_datum_id)
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true.where(id: shopping_datum_ids)
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).where(id: shopping_datum_ids)
 
     if params[:start].present? && params[:end].present?
       shopping_records = shopping_records.where(shopping_date: params[:start]..params[:end])
