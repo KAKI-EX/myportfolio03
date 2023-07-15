@@ -14,8 +14,10 @@ import {
 } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
+import { useSuggestListCreate } from "hooks/useSuggestListCreate";
+import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 import { useMessage } from "hooks/useToast";
-import { ListFormParams } from "interfaces";
+import { ListFormParams, OkaimonoShopsIndexData } from "interfaces";
 import { shoppingDataIndexRecord, shoppingDataIndexRecordByPurchase, shoppingDataIndexRecordByShop } from "lib/api";
 
 import React, { memo, useEffect, useState, VFC } from "react";
@@ -36,6 +38,8 @@ export const OkaimonoSearch: VFC = memo(() => {
   const [clickOnSearch, setClickOnSearch] = useState<boolean>(false);
 
   const history = useHistory();
+  const getSuggestionsShopName = useSuggestShopCreate();
+  const getSuggestionsPurchaseName = useSuggestListCreate();
 
   // const defaultShoppingDate = new Date();
   // const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
@@ -55,12 +59,14 @@ export const OkaimonoSearch: VFC = memo(() => {
     handleSubmit,
     watch,
     getValues,
+    setValue,
     formState: { errors, isValid },
   } = useForm<UseForm>({
     criteriaMode: "all",
     mode: "all",
   });
 
+  // 初回読み込み時のindex取得
   useEffect(() => {
     setLoading(true);
     const getOkaimonoRecordIndex = async () => {
@@ -169,6 +175,101 @@ export const OkaimonoSearch: VFC = memo(() => {
     history.push(`/okaimono/okaimono_show/${id}`);
   };
 
+  // ----------------------------------------------------------------------------------------------------------
+  // 店名入力欄のsuggest機能
+  const [searchWordValue, setSearchWordValue] = useState("");
+  const [searchWordShopSuggestions, setSearchWordShopSuggestions] = useState<OkaimonoShopsIndexData[]>([]);
+
+  const onShopChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+    event.preventDefault();
+
+    setSearchWordValue(newValue);
+  };
+
+  useEffect(() => {
+    const searchFlag = getValues("searchSelect");
+    if (searchFlag === "shopName") {
+      const searchWordProps = {
+        shopNameValue: searchWordValue,
+        setShopNameSuggestions: setSearchWordShopSuggestions,
+      };
+
+      getSuggestionsShopName(searchWordProps);
+    }
+  }, [searchWordValue]);
+
+  // ---------------------------------------------------------------------------
+  // 商品名のsuggest機能
+  const [searchWordPurchaseSuggestions, setSearchWordPurchaseSuggestions] = useState<ListFormParams[]>([]);
+
+  const onListChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
+    event.preventDefault();
+
+    setSearchWordValue(newValue);
+  };
+
+  useEffect(() => {
+    const searchFlag = getValues("searchSelect");
+    if (searchFlag === "purchaseName") {
+      const purchaseProps = {
+        purchaseNameValue: searchWordValue,
+        setPurchaseNameSuggestions: setSearchWordPurchaseSuggestions,
+      };
+
+      getSuggestionsPurchaseName(purchaseProps);
+    }
+  }, [searchWordValue]);
+
+  // ---------------------------------------------------------------------------
+  const {
+    ref,
+    onChange: registerOnChange,
+    ...rest
+  } = register("searchWord", {
+    required: { value: true, message: "検索語句が入力されていません" },
+  });
+
+  const customOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchFlag = getValues("searchSelect");
+    // React Hook Form の onChange ハンドラを実行
+    if (registerOnChange) {
+      registerOnChange(event);
+    }
+
+    // 入力が空の場合、候補リストをクリアする
+    if ((setSearchWordShopSuggestions || setSearchWordPurchaseSuggestions) && event.target.value === "") {
+      setSearchWordShopSuggestions([]);
+      setSearchWordPurchaseSuggestions([]);
+    }
+
+    // shopNameのsuggestへ分岐
+    if (searchFlag === "shopName" && onShopChange) {
+      onShopChange(event, event.target.value);
+    }
+
+    if (searchFlag === "purchaseName" && onListChange) {
+      onListChange(event, event.target.value);
+    }
+  };
+
+  // suggestionをクリックしたときの動作
+  const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, value: string) => {
+    event.preventDefault();
+    if (setValue && (setSearchWordShopSuggestions || setSearchWordPurchaseSuggestions) && value) {
+      setValue("searchWord", value);
+      setSearchWordShopSuggestions([]);
+      setSearchWordPurchaseSuggestions([]);
+    }
+  };
+
+  useEffect(() => {}, [searchWordShopSuggestions, searchWordPurchaseSuggestions]);
+
+  const isOkaimonoShopsIndexData = (
+    value: OkaimonoShopsIndexData | ListFormParams
+  ): value is OkaimonoShopsIndexData => {
+    return (value as OkaimonoShopsIndexData).shopName !== undefined;
+  };
+
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
@@ -195,14 +296,47 @@ export const OkaimonoSearch: VFC = memo(() => {
                 <option value="shopName">お店名</option>
                 <option value="purchaseName">商品名</option>
               </Select>
-              <Input
-                placeholder="検索語句"
-                size="md"
-                fontSize={{ base: "sm", md: "md" }}
-                {...register("searchWord", {
-                  required: { value: true, message: "検索語句が入力されていません" },
-                })}
-              />
+              <Box>
+                <Input
+                  onChange={customOnChange}
+                  placeholder="検索語句"
+                  size="md"
+                  fontSize={{ base: "sm", md: "md" }}
+                  ref={ref}
+                  {...rest}
+                />
+                {((searchWordShopSuggestions && searchWordShopSuggestions?.length > 0) ||
+                  (searchWordPurchaseSuggestions && searchWordPurchaseSuggestions?.length > 0)) && (
+                  <Box w="100%" position="relative" zIndex="dropdown">
+                    <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                      {(searchWordShopSuggestions.length > 0
+                        ? searchWordShopSuggestions
+                        : searchWordPurchaseSuggestions
+                      ).map((value) => (
+                        <Box key={value.id} w="100%">
+                          <Divider w="100%" />
+                          <Text
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            fontSize={{ base: "sm", md: "md" }}
+                            w="100%"
+                            // prettier-ignore
+                            onClick={(event) =>
+                              onClickSuggests(
+                                event,
+                                isOkaimonoShopsIndexData(value) ? value.shopName || "" : value.purchaseName || ""
+                              )}
+                            _hover={{ fontWeight: "bold" }}
+                          >
+                            {isOkaimonoShopsIndexData(value) ? value.shopName || "" : value.purchaseName || ""}
+                          </Text>
+                        </Box>
+                      ))}
+                    </VStack>
+                  </Box>
+                )}
+              </Box>
             </HStack>
             {errors.searchWord && (
               <Box color="red" fontSize="sm">
