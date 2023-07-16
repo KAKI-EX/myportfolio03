@@ -215,3 +215,11 @@ export interface GetOkaimonoRecord {
   data: {records: ListFormParams[], totalPages: number};
   status: number;
 }
+
+export interface UseFormOnSearchPage {
+  startDate: Date;
+  endDate: Date;
+  shoppingDate: string;
+  searchSelect: string;
+  searchWord: string;
+};
