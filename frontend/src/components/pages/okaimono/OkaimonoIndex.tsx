@@ -1,59 +1,28 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
-  Button,
   Flex,
   Heading,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
-  Tab,
-  Table,
-  TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Tbody,
-  Td,
-  Text,
-  Tr,
   useDisclosure,
-  VStack,
 } from "@chakra-ui/react";
-import { useMessage } from "hooks/useToast";
-import React, { memo, useCallback, useEffect, useState, VFC } from "react";
+import React, { memo, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
-import { AxiosError } from "axios";
 import { OkaimonoMemoData } from "interfaces";
-import { shoppingDataDelete } from "lib/api/destroy";
-import { useDateConversion } from "hooks/useDateConversion";
-import { shoppingDataIndex } from "lib/api/show";
 import { useForm } from "react-hook-form";
-import { PrimaryButton } from "components/atoms/PrimaryButton";
 import { useGetOkaimonoIndex } from "hooks/useGetOkaimonoIndex";
 import { useGetOpenUrl } from "hooks/useGetOpenUrl";
-import { TableThread } from "components/molecules/TableThread";
+import { useOkaimonoIndexDelete } from "hooks/useOkaimonoIndexDelete";
+import { OkaimonoIndexTabList } from "components/molecules/OkaimonoIndexTabList";
+import { OkaimonoIndexTabPanelTemporary } from "components/molecules/OkaimonoIndexTabPanelTemporary";
+import { OkaimonoIndexTapPanelConfimed } from "components/molecules/OkaimonoIndexTapPanelConfimed";
+import { OkaimonoIndexTabPanelCompleted } from "components/molecules/OkaimonoIndexTabPanelCompleted";
+import { DeleteConfimationDialog } from "components/molecules/DeleteConfimationDialog";
+import { OkaimonoCheckOpenUrlModal } from "components/molecules/OkaimonoCheckOpenUrlModal";
 
 export const OkaimonoIndex: VFC = memo(() => {
-  // const [okaimonoMemo, setOkaimonoMemo] = useState<OkaimonoMemoResponse | null>();
   const [inCompleteMemo, setInCompleteMemo] = useState<OkaimonoMemoData[] | null>();
   const [readyShoppingMemo, setReadyShoppingMemo] = useState<OkaimonoMemoData[] | null>();
   const [finishedMemo, setFinishedMemo] = useState<OkaimonoMemoData[] | null>();
@@ -61,10 +30,8 @@ export const OkaimonoIndex: VFC = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
 
-  const { showMessage } = useMessage();
   const getIndex = useGetOkaimonoIndex();
   const getOpenUrl = useGetOpenUrl(readyShoppingMemo);
-  const { dateConversion } = useDateConversion();
 
   const history = useHistory();
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onCloseAlert } = useDisclosure();
@@ -80,53 +47,20 @@ export const OkaimonoIndex: VFC = memo(() => {
   }, []);
   //------------------------------------------------------------------------
   // indexページの特定のメモ削除機能
-  const onClickDelete = useCallback(
-    async (props: OkaimonoMemoData) => {
-      onCloseAlert();
-      const { id } = props;
-      try {
-        await shoppingDataDelete(id);
-        const shoppingDataRes = await shoppingDataIndex();
-        if (inCompleteMemo?.find((item) => item.id === id)) {
-          if (shoppingDataRes) {
-            const isFinishNull = shoppingDataRes.data
-              .filter((resData: OkaimonoMemoData) => resData.isFinish === null)
-              .map((nullList: OkaimonoMemoData) => {
-                const inCompleteData = { ...nullList };
-                return inCompleteData;
-              });
-            setInCompleteMemo(isFinishNull);
-          }
-        } else if (readyShoppingMemo?.find((item) => item.id === id)) {
-          if (shoppingDataRes) {
-            const isFinishFalse = shoppingDataRes.data
-              .filter((resData: OkaimonoMemoData) => resData.isFinish === false)
-              .map((falseList: OkaimonoMemoData) => {
-                const readyShopping = { ...falseList };
-                return readyShopping;
-              });
-            setReadyShoppingMemo(isFinishFalse);
-          }
-        } else if (finishedMemo?.find((item) => item.id === id)) {
-          if (shoppingDataRes) {
-            const isFinishTrue = shoppingDataRes.data
-              .filter((resData: OkaimonoMemoData) => resData.isFinish === true)
-              .map((trueList: OkaimonoMemoData) => {
-                const finishedShopping = { ...trueList };
-                return finishedShopping;
-              });
-            setFinishedMemo(isFinishTrue);
-          }
-        }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        // eslint-disable-next-line no-console
-        console.error(axiosError.response);
-        showMessage({ title: axiosError.response?.data.errors, status: "error" });
-      }
-    },
-    [inCompleteMemo, readyShoppingMemo, finishedMemo]
-  );
+  const customHookProps = {
+    onCloseAlert,
+    inCompleteMemo,
+    setInCompleteMemo,
+    readyShoppingMemo,
+    setReadyShoppingMemo,
+    finishedMemo,
+    setFinishedMemo,
+    setLoading,
+  };
+  const deleteShopData = useOkaimonoIndexDelete(customHookProps);
+  const onClickDelete = (deleteId: OkaimonoMemoData) => {
+    deleteShopData(deleteId);
+  };
   // ---------------------------------------------------------------------------------
   // paramsを使用してidを渡すリンク
   const onClickShowMemo = (id: string) => (event: React.MouseEvent) => {
@@ -162,317 +96,55 @@ export const OkaimonoIndex: VFC = memo(() => {
         </Heading>
         <Box borderRadius="lg" overflow="hidden" backgroundColor="white" boxShadow="md">
           <Tabs isFitted>
-            <TabList>
-              <Tab
-                _focus={{ outline: "none" }}
-                fontSize={{ base: "sm", md: "md" }}
-                isDisabled={inCompleteMemo?.length === 0}
-              >
-                一時保存中メモ
-              </Tab>
-              <Tab
-                _focus={{ outline: "none" }}
-                fontSize={{ base: "sm", md: "md" }}
-                isDisabled={readyShoppingMemo?.length === 0}
-              >
-                買い物予定メモ
-              </Tab>
-              <Tab
-                _focus={{ outline: "none" }}
-                fontSize={{ base: "sm", md: "md" }}
-                isDisabled={finishedMemo?.length === 0}
-              >
-                完了メモ
-              </Tab>
-            </TabList>
+            <OkaimonoIndexTabList
+              inCompleteMemo={inCompleteMemo}
+              readyShoppingMemo={readyShoppingMemo}
+              finishedMemo={finishedMemo}
+            />
             <TabPanels>
               <TabPanel p={1}>
-                <Table variant="simple" w="100%" bg="white" rounded={10}>
-                  <TableThread />
-                  {inCompleteMemo?.map((i: OkaimonoMemoData) => {
-                    return (
-                      <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
-                        <Tr>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            textAlign="center"
-                            onClick={onClickShowMemo(i.id)}
-                            px={0}
-                          >
-                            {dateConversion(i.shoppingDate)}
-                          </Td>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            // display={{ base: "none", md: "table-cell" }}
-                            textAlign="center"
-                            onClick={onClickShowMemo(i.id)}
-                          >
-                            {i.memosCount}
-                          </Td>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            display={{ base: "none", md: "table-cell" }}
-                            textAlign="center"
-                            onClick={onClickShowMemo(i.id)}
-                          >
-                            {i.totalBudget}円
-                          </Td>
-                          <Td
-                            px="17px"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            textAlign="left"
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                            maxWidth="100px"
-                            onClick={onClickShowMemo(i.id)}
-                          >
-                            {i.shoppingMemo}
-                          </Td>
-                          <Td
-                            px="0"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            textAlign="center"
-                            display={{ base: "table-cell" }}
-                          >
-                            <Menu>
-                              <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
-                              <MenuList borderRadius="md" shadow="md">
-                                <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                                <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
-                                <MenuItem
-                                  onClick={() => {
-                                    setDeletePost(i);
-                                    onAlertOpen();
-                                  }}
-                                >
-                                  削除する
-                                </MenuItem>
-                              </MenuList>
-                            </Menu>
-                          </Td>
-                        </Tr>
-                      </Tbody>
-                    );
-                  })}
-                </Table>
+                <OkaimonoIndexTabPanelTemporary
+                  onClickShowMemo={onClickShowMemo}
+                  inCompleteMemo={inCompleteMemo}
+                  setDeletePost={setDeletePost}
+                  onAlertOpen={onAlertOpen}
+                />
               </TabPanel>
               <TabPanel p={1}>
-                <Table variant="simple" w="100%" bg="white" rounded={10}>
-                  <TableThread />
-                  {readyShoppingMemo?.map((i: OkaimonoMemoData) => {
-                    return (
-                      <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
-                        <Tr>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            textAlign="center"
-                            onClick={onClickMemoUse(i.id)}
-                            px={0}
-                          >
-                            {dateConversion(i.shoppingDate)}
-                          </Td>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            // display={{ base: "none", md: "table-cell" }}
-                            textAlign="center"
-                            onClick={onClickMemoUse(i.id)}
-                          >
-                            {i.memosCount}
-                          </Td>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            display={{ base: "none", md: "table-cell" }}
-                            textAlign="center"
-                            onClick={onClickMemoUse(i.id)}
-                          >
-                            {i.totalBudget}円
-                          </Td>
-                          <Td
-                            px="17px"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            textAlign="left"
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                            maxWidth="100px"
-                            onClick={onClickMemoUse(i.id)}
-                          >
-                            {i.shoppingMemo}
-                          </Td>
-                          <Td
-                            px="0"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            textAlign="center"
-                            display={{ base: "table-cell" }}
-                          >
-                            <Menu>
-                              <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
-                              <MenuList borderRadius="md" shadow="md">
-                                <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem>
-                                <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                                <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>
-                                  公開用URLを確認する
-                                </MenuItem>
-                                <MenuItem
-                                  onClick={() => {
-                                    setDeletePost(i);
-                                    onAlertOpen();
-                                  }}
-                                >
-                                  削除する
-                                </MenuItem>
-                              </MenuList>
-                            </Menu>
-                          </Td>
-                        </Tr>
-                      </Tbody>
-                    );
-                  })}
-                </Table>
+                <OkaimonoIndexTapPanelConfimed
+                  onClickShowMemo={onClickShowMemo}
+                  setDeletePost={setDeletePost}
+                  onAlertOpen={onAlertOpen}
+                  readyShoppingMemo={readyShoppingMemo}
+                  onClickMemoUse={onClickMemoUse}
+                  onClickShowOpenUrl={onClickShowOpenUrl}
+                />
               </TabPanel>
               <TabPanel p={1}>
-                <Table variant="simple" w="100%" bg="white" rounded={10}>
-                  <TableThread />
-                  {finishedMemo?.map((i: OkaimonoMemoData) => {
-                    return (
-                      <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
-                        <Tr>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            textAlign="center"
-                            onClick={onClickShowMemo(i.id)}
-                            px={0}
-                          >
-                            {dateConversion(i.shoppingDate)}
-                          </Td>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            // display={{ base: "none", md: "table-cell" }}
-                            textAlign="center"
-                            onClick={onClickShowMemo(i.id)}
-                          >
-                            {i.memosCount}
-                          </Td>
-                          <Td
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            display={{ base: "none", md: "table-cell" }}
-                            textAlign="center"
-                            onClick={onClickShowMemo(i.id)}
-                          >
-                            {i.totalBudget}円
-                          </Td>
-                          <Td
-                            px="17px"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            fontSize={{ base: "sm", md: "md" }}
-                            textAlign="left"
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                            maxWidth="100px"
-                            onClick={onClickShowMemo(i.id)}
-                          >
-                            {i.shoppingMemo}
-                          </Td>
-                          <Td
-                            px="0"
-                            borderTop="1px"
-                            borderColor="gray.300"
-                            textAlign="center"
-                            display={{ base: "table-cell" }}
-                          >
-                            <Menu>
-                              <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
-                              <MenuList borderRadius="md" shadow="md">
-                                <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                                <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
-                                <MenuItem
-                                  onClick={() => {
-                                    setDeletePost(i);
-                                    onAlertOpen();
-                                  }}
-                                >
-                                  削除する
-                                </MenuItem>
-                              </MenuList>
-                            </Menu>
-                          </Td>
-                        </Tr>
-                      </Tbody>
-                    );
-                  })}
-                </Table>
+                <OkaimonoIndexTabPanelCompleted
+                  onClickShowMemo={onClickShowMemo}
+                  setDeletePost={setDeletePost}
+                  onAlertOpen={onAlertOpen}
+                  finishedMemo={finishedMemo}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>
         </Box>
-        <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onAlertOpen}>
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                {dateConversion(deletePost?.shoppingDate)} のメモを削除しますか？
-              </AlertDialogHeader>
-              <AlertDialogBody>メモに保存されているリストも削除されます。</AlertDialogBody>
-              <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={onAlertOpen}>
-                  やっぱりやめる
-                </Button>
-                <Button colorScheme="red" onClick={() => (deletePost ? onClickDelete(deletePost) : undefined)} ml={3}>
-                  削除する
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
-        <Modal isOpen={isOpenUrl} onClose={onCloseUrl}>
-          <ModalOverlay />
-          <ModalContent maxW="95vw">
-            <ModalHeader>公開用URL</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <VStack>
-                <Text fontSize={{ base: "sm", md: "md" }}>{openMessage}</Text>
-                <InputGroup>
-                  <Input pr="4.5rem" {...register("openMemoUrl")} />
-                  <InputRightElement width="3.5rem">
-                    <Button colorScheme="blue" h="1.75rem" size="sm" color="white" onClick={onClickUrlCopy}>
-                      コピー
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </VStack>
-            </ModalBody>
-            <ModalFooter>
-              <PrimaryButton onClick={onCloseUrl}>閉じる</PrimaryButton>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <DeleteConfimationDialog
+          onCloseAlert={onCloseAlert}
+          isAlertOpen={isAlertOpen}
+          cancelRef={cancelRef}
+          deletePost={deletePost}
+          onClickDelete={onClickDelete}
+        />
+        <OkaimonoCheckOpenUrlModal
+          isOpenUrl={isOpenUrl}
+          onCloseUrl={onCloseUrl}
+          openMessage={openMessage}
+          register={register}
+          onClickUrlCopy={onClickUrlCopy}
+        />
       </Box>
     </Flex>
   );

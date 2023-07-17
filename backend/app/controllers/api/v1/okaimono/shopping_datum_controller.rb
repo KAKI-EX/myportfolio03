@@ -3,7 +3,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   before_action :authenticate_api_v1_user!, except: [:show_open_memo, :update_open_memo]
 
   def index
-    shopping = current_api_v1_user.shopping_data
+    shopping = current_api_v1_user.shopping_data.order(shopping_date: "DESC")
     shapping = shopping.map do |s_data|
       s_data.attributes.merge({ 'memos_count': s_data.memos.count })
     end
