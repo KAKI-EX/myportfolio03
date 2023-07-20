@@ -1,37 +1,35 @@
 import { fireEvent, render } from "@testing-library/react";
-import { DeleteButton } from "components/atoms/DeleteButton";
+import { OptionallyButton } from "components/atoms/OptionallyButton";
 
-describe("DeleteButton", () => {
+describe("OptionallyButton", () => {
+  const onClickMock = jest.fn();
   test("childrenが表示されること", () => {
-    const { getByText } = render(<DeleteButton>テストボタン</DeleteButton>);
+    const { getByText } = render(<OptionallyButton onClick={onClickMock}>テストボタン</OptionallyButton>);
     expect(getByText("テストボタン")).toBeInTheDocument();
   });
   test("disabledがfalseの場合、ボタンをクリックできること", () => {
-    const onClickMock = jest.fn();
     const { getByText } = render(
-      <DeleteButton onClick={onClickMock} disabled={false}>
+      <OptionallyButton onClick={onClickMock} disabled={false}>
         テストボタン
-      </DeleteButton>
+      </OptionallyButton>
     );
     fireEvent.click(getByText("テストボタン"));
     expect(onClickMock).toHaveBeenCalled();
   });
   test("disabledがTrueの場合、ボタンをクリックできないこと", () => {
-    const onClickMock = jest.fn();
     const { getByText } = render(
-      <DeleteButton onClick={onClickMock} disabled={true}>
+      <OptionallyButton onClick={onClickMock} disabled={true}>
         テストボタン
-      </DeleteButton>
+      </OptionallyButton>
     );
     fireEvent.click(getByText("テストボタン"));
     expect(onClickMock).not.toHaveBeenCalled();
   });
   test("isLoadingがtrueのとき、ボタンをクリックできないこと", () => {
-    const onClickMock = jest.fn();
     const { getByText } = render(
-      <DeleteButton onClick={onClickMock} disabled={true}>
+      <OptionallyButton onClick={onClickMock} disabled={true}>
         テストボタン
-      </DeleteButton>
+      </OptionallyButton>
     );
     fireEvent.click(getByText("テストボタン"));
     expect(onClickMock).not.toHaveBeenCalled();

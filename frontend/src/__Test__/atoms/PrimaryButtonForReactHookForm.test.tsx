@@ -1,17 +1,17 @@
 import { fireEvent, render } from "@testing-library/react";
-import { DeleteButton } from "components/atoms/DeleteButton";
+import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 
-describe("DeleteButton", () => {
+describe("PrimaryButtonForReactHookForm", () => {
   test("childrenが表示されること", () => {
-    const { getByText } = render(<DeleteButton>テストボタン</DeleteButton>);
+    const { getByText } = render(<PrimaryButtonForReactHookForm>テストボタン</PrimaryButtonForReactHookForm>);
     expect(getByText("テストボタン")).toBeInTheDocument();
   });
   test("disabledがfalseの場合、ボタンをクリックできること", () => {
     const onClickMock = jest.fn();
     const { getByText } = render(
-      <DeleteButton onClick={onClickMock} disabled={false}>
+      <PrimaryButtonForReactHookForm onClick={onClickMock} disabled={false}>
         テストボタン
-      </DeleteButton>
+      </PrimaryButtonForReactHookForm>
     );
     fireEvent.click(getByText("テストボタン"));
     expect(onClickMock).toHaveBeenCalled();
@@ -19,9 +19,9 @@ describe("DeleteButton", () => {
   test("disabledがTrueの場合、ボタンをクリックできないこと", () => {
     const onClickMock = jest.fn();
     const { getByText } = render(
-      <DeleteButton onClick={onClickMock} disabled={true}>
+      <PrimaryButtonForReactHookForm onClick={onClickMock} disabled={true}>
         テストボタン
-      </DeleteButton>
+      </PrimaryButtonForReactHookForm>
     );
     fireEvent.click(getByText("テストボタン"));
     expect(onClickMock).not.toHaveBeenCalled();
@@ -29,9 +29,9 @@ describe("DeleteButton", () => {
   test("isLoadingがtrueのとき、ボタンをクリックできないこと", () => {
     const onClickMock = jest.fn();
     const { getByText } = render(
-      <DeleteButton onClick={onClickMock} disabled={true}>
+      <PrimaryButtonForReactHookForm onClick={onClickMock} disabled={true}>
         テストボタン
-      </DeleteButton>
+      </PrimaryButtonForReactHookForm>
     );
     fireEvent.click(getByText("テストボタン"));
     expect(onClickMock).not.toHaveBeenCalled();
