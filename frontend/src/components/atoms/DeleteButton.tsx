@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import React, { memo, ReactNode, VFC } from "react";
 
 type Props = {
-  children: ReactNode;
+  children: string;
   disabled?: boolean;
   loading?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -23,6 +23,7 @@ export const DeleteButton: VFC<Props> = memo((props) => {
       disabled={disabled || loading}
       isLoading={loading}
       onClick={onClick}
+      aria-label={children}
     >
       {children}
     </Button>
