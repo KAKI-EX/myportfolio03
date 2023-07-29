@@ -44,7 +44,7 @@ export const OkaimonoAlertModal: VFC<Props> = memo((props) => {
       <ModalOverlay />
       <ModalContent bg="gray.100" maxW="95vw">
         <ModalHeader>選択したアラートの情報</ModalHeader>
-        <ModalCloseButton _focus={{ boxShadow: "none" }} />
+        <ModalCloseButton _focus={{ boxShadow: "none" }} data-testid="close-button" />
         <ModalBody>
           <VStack alignItems="left" bg="white" boxShadow="md" rounded={10}>
             <TableContainer>
