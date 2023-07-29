@@ -32,7 +32,7 @@ export const OkaimonoCheckOpenUrlModal: VFC<Props> = memo((props) => {
       <ModalOverlay />
       <ModalContent maxW="95vw">
         <ModalHeader>公開用URL</ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton data-testid="modalCloseButton"/>
         <ModalBody>
           <VStack>
             <Text fontSize={{ base: "sm", md: "md" }}>{openMessage}</Text>
