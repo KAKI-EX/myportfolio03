@@ -216,6 +216,8 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ---------------------------------------------------------------------------
 
+  useEffect(() => onOpen(), []);
+
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />

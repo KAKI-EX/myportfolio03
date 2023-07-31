@@ -43,7 +43,7 @@ export const OkaimonoMemo: VFC = memo(() => {
   const defaultShoppingDate = new Date();
   const { setLoading, loading } = useContext(AuthContext);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
-  const { isOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -177,6 +177,8 @@ export const OkaimonoMemo: VFC = memo(() => {
   }, [purchaseNameValue, purchaseNameIndex]);
 
   // ---------------------------------------------------------------------------
+
+  useEffect(() => onOpen(), []);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
