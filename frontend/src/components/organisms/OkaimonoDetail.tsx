@@ -14,6 +14,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { AddIconButton } from "components/atoms/AddIconButton";
 import { ListFormParams, MergeParams } from "interfaces";
 import React, { Dispatch, memo, SetStateAction, VFC } from "react";
 import {
@@ -119,20 +120,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
           <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
             <VStack spacing={1} w="5%">
               <Box display={fields.length < 20 || readOnly ? "block" : "none"}>
-                <SmallAddIcon
-                  bg="teal.500"
-                  rounded="full"
-                  color="white"
-                  onClick={(event) => {
-                    if (readOnly) {
-                      event.preventDefault();
-                      // eslint-disable-next-line no-alert
-                      alert("確認画面では使用できません。");
-                      return;
-                    }
-                    insertInputForm(index);
-                  }}
-                />
+                <AddIconButton readOnly={readOnly} insertInputForm={insertInputForm} index={index} />
               </Box>
               <Box display={fields.length > 1 ? "block" : "none"}>
                 <Icon
