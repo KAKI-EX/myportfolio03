@@ -3,6 +3,7 @@ import { memo, VFC } from "react";
 
 type Props = {
   readOnly?: boolean;
+  // eslint-disable-next-line no-unused-vars
   insertInputForm: (index: number) => void;
   index: number;
 };

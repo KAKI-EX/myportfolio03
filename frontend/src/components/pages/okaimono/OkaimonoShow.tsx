@@ -26,7 +26,7 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useMessage } from "hooks/useToast";
 import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
-import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
+import { OkaimonoDetail } from "components/organisms/OkaimonoDetail";
 import { useHistory, useParams } from "react-router-dom";
 import { useSetOkaimonoShowIndex } from "hooks/useSetOkaimonoShowIndex";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
