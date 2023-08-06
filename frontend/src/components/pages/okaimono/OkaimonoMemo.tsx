@@ -27,7 +27,7 @@ import { ja } from "date-fns/locale";
 import { useMessage } from "hooks/useToast";
 import { useMemoCreate } from "hooks/useMemoCreate";
 import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
-import { OkaimonoDetail } from "components/molecules/OkaimonoDetail";
+import { OkaimonoDetail } from "components/organisms/OkaimonoDetail";
 import { AuthContext } from "App";
 import { useHistory } from "react-router-dom";
 import { OptionallyButton } from "components/atoms/OptionallyButton";
