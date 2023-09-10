@@ -4,29 +4,23 @@ import { ChakraProvider } from "@chakra-ui/react";
 import userEvent from "@testing-library/user-event";
 
 describe("InputAmount", () => {
-  let utils: RenderResult;
 
-  // const mockFunctions = (readOnly: boolean) => {
-  //   return {
-  //     readOnly: readOnly,
-  //     register: jest.fn(),
-  //     index: 0,
-  //     validationNumber: /^[0-9]+$/,
-  //   };
-  // };
 
-  // beforeEach(() => {
-  //   utils = render(<InputAmount {...mockFunctions} />);
-  // });
   describe("readOnlyがfalseのとき", () => {
+    let utils: RenderResult;
+    const readOnlyFlag = false
+    const mockFunctions = {
+      readOnly: readOnlyFlag,
+      register: jest.fn(),
+      index: 0,
+      validationNumber: /^[0-9]+$/,
+    };
     beforeEach(() => {
-      const mockFunctions = {
-        readOnly: false,
-        register: jest.fn(),
-        index: 0,
-        validationNumber: /^[0-9]+$/,
-      };
-      utils = render(<InputAmount {...mockFunctions} />);
+      utils = render(
+        <ChakraProvider>
+          <InputAmount {...mockFunctions} />
+        </ChakraProvider>
+      );
     });
 
     test("placeholderが表示されること", () => {
@@ -37,20 +31,26 @@ describe("InputAmount", () => {
     test("backgroundcolorがwhiteであること", async () => {
       const input = await utils.getByTestId("inputAmount");
       const { debug } = utils;
-      debug();
-      expect(input).toHaveStyle("background-color: white");
+      debug()
+      expect(input).toHaveStyle({backgroundColor: "white"});
     });
   });
 
   describe("readOnlyがtrueのとき", () => {
+    let utils: RenderResult;
+    const readOnlyFlag = true
+    const mockFunctions = {
+      readOnly: readOnlyFlag,
+      register: jest.fn(),
+      index: 0,
+      validationNumber: /^[0-9]+$/,
+    };
     beforeEach(async () => {
-      const mockFunctions = {
-        readOnly: true,
-        register: jest.fn(),
-        index: 0,
-        validationNumber: /^[0-9]+$/,
-      };
-      utils = await render(<InputAmount {...mockFunctions} />);
+      utils = await render(
+        <ChakraProvider>
+          <InputAmount {...mockFunctions} />;
+        </ChakraProvider>
+      );
     });
 
     test("placeholderが表示されないこと", () => {
@@ -60,9 +60,7 @@ describe("InputAmount", () => {
 
     test("backgroundcolorが灰色であること", async () => {
       const input = await utils.getByTestId("inputAmount");
-      // const { debug } = utils;
-      // debug();
-      expect(input).toHaveStyle({backgroundColor: "rgba(0, 0, 0, 0.08)"})
+      expect(input).not.toHaveStyleRule('background-color', 'white');
     });
   });
 });

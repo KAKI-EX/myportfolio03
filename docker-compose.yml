@@ -41,5 +41,17 @@ services:
     ports:
       - "4000:3000"
 
+  nginx:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.nginx
+    volumes:
+      - public-data:/myportfolio/public
+      - tmp-data:/myportfolio/tmp
+    ports:
+      - 80:80
+
 volumes:
   mysql-data:
+  public-data:
+  tmp-data:

@@ -12,16 +12,17 @@ type Props = {
 
 export const InputAmount: VFC<Props> = memo((props) => {
   const { readOnly, register, index, validationNumber } = props;
+  console.log(readOnly);
   return (
     <Input
       data-testid="inputAmount"
       isReadOnly={readOnly}
-      bg={readOnly ? "blackAlpha.200" : "white"}
-      placeholder={!readOnly ? "個数" : ""}
+      placeholder={readOnly ? "" : "個数"}
       fontSize={{ base: "sm", md: "md" }}
       size="md"
       w="100%"
       type="number"
+      bg={readOnly ? "blackAlpha.200" : "white"}
       {...register(`listForm.${index}.amount`, {
         max: { value: 99, message: "上限は99までです。" },
         pattern: { value: validationNumber, message: "半角整数で入力してください。" },
