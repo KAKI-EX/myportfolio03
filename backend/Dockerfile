@@ -20,7 +20,4 @@ ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
 
 # Start the main process.
-#下記を一旦コメントアウト
-#CMD ["rails", "server", "-b", "0.0.0.0"]
-#以下を本番用に追加
-CMD ["/bin/sh", "-c", "bundle exec rails db:create && bundle exec rails db:migrate && bundle exec unicorn -p 3000 -c /app/config/unicorn.rb -E production"]
+CMD ["rails", "server", "-b", "0.0.0.0"]

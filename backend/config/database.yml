@@ -48,8 +48,16 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# production:
+#   <<: *default
+#   database: myapp_production
+#   username: myapp
+#   password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
+
 production:
   <<: *default
-  database: myapp_production
-  username: myapp
-  password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
+  database: <%= ENV['DATABASE_NAME'] %> # ここにデータベース名を指定
+  username: <%= ENV['DATABASE_USERNAME'] %> # ここにマスターユーザー名を指定
+  password: <%= ENV['DATABASE_PASSWORD'] %> # ここにマスターユーザーのパスワードを指定
+  host: <%= ENV['DATABASE_HOST'] %> # ここにRDSインスタンスのエンドポイントURLを指定
+  port: <%= ENV['DATABASE_PORT'] %> # ここにポートを指定 (通常は3306 for MySQL, 5432 for PostgreSQL)
