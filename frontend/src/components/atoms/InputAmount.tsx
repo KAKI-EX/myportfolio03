@@ -12,7 +12,6 @@ type Props = {
 
 export const InputAmount: VFC<Props> = memo((props) => {
   const { readOnly, register, index, validationNumber } = props;
-  console.log(readOnly);
   return (
     <Input
       data-testid="inputAmount"

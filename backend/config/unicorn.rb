@@ -4,7 +4,10 @@ worker_processes 1
 
 working_directory app_path
 
-listen 3000
+# 以下localhost時に使用
+# listen 3000
+
+listen "0.0.0.0:3000"
 
 pid "#{app_path}/tmp/pids/unicorn.pid"
 

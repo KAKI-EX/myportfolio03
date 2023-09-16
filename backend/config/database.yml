@@ -55,7 +55,10 @@ test:
 #   password: <%= ENV['MYAPP_DATABASE_PASSWORD'] %>
 
 production:
-  <<: *default
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  socket: /var/lib/mysql/mysql.sock
   database: <%= ENV['DATABASE_NAME'] %> # ここにデータベース名を指定
   username: <%= ENV['DATABASE_USERNAME'] %> # ここにマスターユーザー名を指定
   password: <%= ENV['DATABASE_PASSWORD'] %> # ここにマスターユーザーのパスワードを指定

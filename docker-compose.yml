@@ -43,7 +43,7 @@ services:
 
   nginx:
     build:
-      context: ./backend/
+      context: ./backend/prd/nginx/
       dockerfile: Dockerfile.nginx
     volumes:
       - public-data:/myportfolio/public

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'health_check', to: 'health_checks#index'
   namespace :api do
     namespace :v1 do
       namespace :okaimono do
