@@ -1,3 +1,4 @@
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import {
   Box,
   Divider,
@@ -7,6 +8,13 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
   Switch,
   Text,
@@ -166,6 +174,17 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
             </FormLabel>
             <Switch isReadOnly={readOnly} fontSize={{ base: "sm", md: "lg" }} {...register("isOpen")} />
           </FormControl>
+          <Popover>
+            <PopoverTrigger>
+              <QuestionOutlineIcon w={5} h={5} mb={-2} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap" />
+            </PopoverTrigger>
+            <PopoverContent _focus={{ outline: "none" }}>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <PopoverHeader>おつかい機能？</PopoverHeader>
+              <PopoverBody>オンにすると、URLを送ることでお買い物メモを共有できます！</PopoverBody>
+            </PopoverContent>
+          </Popover>
         </HStack>
         <Input type="hidden" {...register(`shoppingDatumId`)} />
         <Input type="hidden" {...register(`isFinish`)} />

@@ -27,7 +27,7 @@ export const useGetOpenUrl = (readyShoppingMemo: OkaimonoMemoData[] | null | und
         if (result && result.status === 200) {
           const shoppingDatumShowRes: OkaimonoMemoDataShowResponse = result;
           if (shoppingDatumShowRes.data.isOpen) {
-            const url = `/okaimono_memo_use_open/${shoppingDatumShowRes.data.userId}/${shoppingDatumShowRes.data.id}`;
+            const url = `${process.env.REACT_APP_API_DOMEIN}/okaimono_memo_use_open/${shoppingDatumShowRes.data.userId}/${shoppingDatumShowRes.data.id}`;
             setOpenMessage("おつかいをお願いしたい人に送ってみましょう");
             setValue("openMemoUrl", url);
             onOpenUrl();

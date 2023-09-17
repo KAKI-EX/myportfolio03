@@ -59,7 +59,7 @@ describe("MenuDrawer", () => {
       expect(await utils.getByText("お買物メモの作成")).toHaveStyle("display: none");
       expect(await utils.getByText("お買物メモ一覧")).toHaveStyle("display: none");
       expect(await utils.getByText("お店情報の確認と編集")).toHaveStyle("display: none");
-      expect(await utils.getByText("お買い物メモを使う")).toHaveStyle("display: none");
+      // expect(await utils.getByText("お買い物メモを使う")).toHaveStyle("display: none");
       expect(await utils.getByText("サインアウト")).toHaveStyle("display: none");
       expect(await utils.getByText("消費期限アラート")).toHaveStyle("display: none");
       expect(await utils.getByText("お買い物サーチ")).toHaveStyle("display: none");
@@ -96,7 +96,7 @@ describe("MenuDrawer", () => {
       expect(await utils.getByText("お買物メモの作成")).not.toHaveStyle("display: none");
       expect(await utils.getByText("お買物メモ一覧")).not.toHaveStyle("display: none");
       expect(await utils.getByText("お店情報の確認と編集")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("お買い物メモを使う")).not.toHaveStyle("display: none");
+      // expect(await utils.getByText("お買い物メモを使う")).not.toHaveStyle("display: none");
       expect(await utils.getByText("サインアウト")).not.toHaveStyle("display: none");
       expect(await utils.getByText("消費期限アラート")).not.toHaveStyle("display: none");
       expect(await utils.getByText("お買い物サーチ")).not.toHaveStyle("display: none");

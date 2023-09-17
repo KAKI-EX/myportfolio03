@@ -17,7 +17,7 @@ export const Header: VFC = memo(() => {
   const onClickMakeMemo = useCallback(() => history.push("/okaimono/okaimono_memo"), [history]);
   const onClickMemoIndex = useCallback(() => history.push("/okaimono"), [history]);
   const onClickShopShow = useCallback(() => history.push("/okaimono/okaimono_shop_index"), [history]);
-  const onClickMemoUse = useCallback(() => history.push("/okaimono/okaimono_memo_use"), [history]);
+  // const onClickMemoUse = useCallback(() => history.push("/okaimono/okaimono_memo_use"), [history]);
   const onClickAlert = useCallback(() => history.push("/okaimono/okaimono_alert"), [history]);
   const onClickSearch = useCallback(() => history.push("/okaimono/okaimono_search"), [history]);
 
@@ -59,9 +59,9 @@ export const Header: VFC = memo(() => {
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickShopShow}>お店情報の確認と編集</Link>
           </Box>
-          <Box pr={4} display={isSignedIn ? "block" : "none"}>
+          {/* <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickMemoUse}>お買い物メモを使う</Link>
-          </Box>
+          </Box> */}
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickAlert}>消費期限アラート</Link>
           </Box>
@@ -81,7 +81,7 @@ export const Header: VFC = memo(() => {
         onClickSignOut={onClickSignOut}
         onClickMemoIndex={onClickMemoIndex}
         onClickShopShow={onClickShopShow}
-        onClickMemoUse={onClickMemoUse}
+        // onClickMemoUse={onClickMemoUse}
         onClickAlert={onClickAlert}
         onClickSearch={onClickSearch}
       />

@@ -1,13 +1,4 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Spinner,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Spinner, TabPanel, TabPanels, Tabs, useDisclosure } from "@chakra-ui/react";
 import React, { memo, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { OkaimonoMemoData } from "interfaces";
@@ -103,14 +94,6 @@ export const OkaimonoIndex: VFC = memo(() => {
             />
             <TabPanels>
               <TabPanel p={1}>
-                <OkaimonoIndexTabPanelTemporary
-                  onClickShowMemo={onClickShowMemo}
-                  inCompleteMemo={inCompleteMemo}
-                  setDeletePost={setDeletePost}
-                  onAlertOpen={onAlertOpen}
-                />
-              </TabPanel>
-              <TabPanel p={1}>
                 <OkaimonoIndexTapPanelConfimed
                   onClickShowMemo={onClickShowMemo}
                   setDeletePost={setDeletePost}
@@ -118,6 +101,14 @@ export const OkaimonoIndex: VFC = memo(() => {
                   readyShoppingMemo={readyShoppingMemo}
                   onClickMemoUse={onClickMemoUse}
                   onClickShowOpenUrl={onClickShowOpenUrl}
+                />
+              </TabPanel>
+              <TabPanel p={1}>
+                <OkaimonoIndexTabPanelTemporary
+                  onClickShowMemo={onClickShowMemo}
+                  inCompleteMemo={inCompleteMemo}
+                  setDeletePost={setDeletePost}
+                  onAlertOpen={onAlertOpen}
                 />
               </TabPanel>
               <TabPanel p={1}>

@@ -1,4 +1,15 @@
-import { Button, Drawer, DrawerBody, DrawerContent, DrawerOverlay } from "@chakra-ui/react";
+import { ChevronRightIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  HStack,
+} from "@chakra-ui/react";
 import { AuthContext } from "App";
 import { memo, useContext, VFC } from "react";
 
@@ -12,7 +23,7 @@ type Props = {
   onClickSignOut: () => void;
   onClickMemoIndex: () => void;
   onClickShopShow: () => void;
-  onClickMemoUse: () => void;
+  // onClickMemoUse: () => void;
   onClickAlert: () => void;
   onClickSearch: () => void;
 };
@@ -28,96 +39,121 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
     onClickSignOut,
     onClickMemoIndex,
     onClickShopShow,
-    onClickMemoUse,
+    // onClickMemoUse,
     onClickAlert,
     onClickSearch,
   } = props;
   const { isSignedIn } = useContext(AuthContext);
+
   return (
     <Drawer placement="left" size="xs" onClose={onClose} isOpen={isOpen}>
-      <DrawerOverlay>
-        <DrawerContent>
-          <DrawerBody p={0} bg="gray.100">
-            {/* --------------------------------------未ログイン時表示------------------------------------------- */}
-            <Button onClick={onClickHome} w="100%" _focus={{ outline: "none" }}>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton _focus={{ outline: "none" }} />
+        <DrawerHeader bg="gray.100" textAlign="center" borderBottom="1px" borderColor="gray.400" borderRadius={0}>
+          お買い物メニュー
+        </DrawerHeader>
+        <DrawerBody p={0} bg="gray.100">
+          {/* --------------------------------------未ログイン時表示------------------------------------------- */}
+          <HStack>
+            <Button justifyContent="flex-start" onClick={onClickHome} w="100%" _focus={{ outline: "none" }}>
               TOP
             </Button>
-            <Button
-              onClick={onClickSignIn}
-              w="100%"
-              display={!isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              サインイン
-            </Button>
-            <Button
-              onClick={onClickSignUp}
-              w="100%"
-              display={!isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              アカウントの作成
-            </Button>
-            {/* --------------------------------------ログイン時表示------------------------------------------- */}
-            <Button
-              onClick={onClickMakeMemo}
-              w="100%"
-              display={isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              お買物メモの作成
-            </Button>
-            <Button
-              onClick={onClickMemoIndex}
-              w="100%"
-              display={isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              お買物メモ一覧
-            </Button>
-            <Button
-              onClick={onClickShopShow}
-              w="100%"
-              display={isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              お店情報の確認と編集
-            </Button>
-            <Button
+            <Box pr={5}>
+              <ChevronRightIcon />
+            </Box>
+          </HStack>
+          {!isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickSignIn} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                サインイン
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {!isSignedIn && (
+            <HStack borderTop="1px" borderBottom="1px" borderColor="gray.300">
+              <Button onClick={onClickSignUp} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                アカウントの作成
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {/* --------------------------------------ログイン時表示------------------------------------------- */}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickMakeMemo} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                お買物メモの作成
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickMemoIndex} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                お買物メモ一覧
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {/* <Button
               onClick={onClickMemoUse}
               w="100%"
               display={isSignedIn ? "block" : "none"}
               _focus={{ outline: "none" }}
             >
               お買い物メモを使う
-            </Button>
-            <Button
-              onClick={onClickSignOut}
-              w="100%"
-              display={isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              サインアウト
-            </Button>
-            <Button
-              onClick={onClickAlert}
-              w="100%"
-              display={isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              消費期限アラート
-            </Button>
-            <Button
-              onClick={onClickSearch}
-              w="100%"
-              display={isSignedIn ? "block" : "none"}
-              _focus={{ outline: "none" }}
-            >
-              お買い物サーチ
-            </Button>
-          </DrawerBody>
-        </DrawerContent>
-      </DrawerOverlay>
+            </Button> */}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickAlert} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                消費期限アラート
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickSearch} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                お買い物サーチ
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickShopShow} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                お店情報の確認と編集
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderBottom="1px" borderColor="gray.300">
+              <Button onClick={onClickSignOut} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                サインアウト
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+        </DrawerBody>
+      </DrawerContent>
     </Drawer>
   );
 });
