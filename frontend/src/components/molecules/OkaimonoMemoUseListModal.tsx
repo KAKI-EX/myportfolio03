@@ -181,40 +181,28 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                     {listErrors.modifyMemo?.types?.maxLength}
                   </Box>
                 )}
+                <VStack w="100%" p={3}>
+                  <Box w="80%">
+                    <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
+                      消費期限
+                    </FormLabel>
+                    <Input
+                      isReadOnly={readOnly}
+                      bg={readOnly ? "blackAlpha.200" : "white"}
+                      type="date"
+                      placeholder="終了日"
+                      {...listRegister(`modifyExpiryDateEnd`, {
+                        validate: (value) =>
+                          !startDate ||
+                          !value ||
+                          new Date(value) >= new Date(startDate) ||
+                          "終了日は開始日以降の日付を選択してください。",
+                      })}
+                    />
+                  </Box>
+                </VStack>
               </VStack>
             </Box>
-            <HStack w="100%" bg="white" p={3} rounded="md">
-              <Box w="50%">
-                <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-                  消費期限 開始日
-                </FormLabel>
-                <Input
-                  isReadOnly={readOnly}
-                  bg={readOnly ? "blackAlpha.200" : "white"}
-                  type="date"
-                  placeholder="消費期限 開始"
-                  {...listRegister(`modifyExpiryDateStart`)}
-                />
-              </Box>
-              <Box w="50%">
-                <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-                  終了日
-                </FormLabel>
-                <Input
-                  isReadOnly={readOnly}
-                  bg={readOnly ? "blackAlpha.200" : "white"}
-                  type="date"
-                  placeholder="終了日"
-                  {...listRegister(`modifyExpiryDateEnd`, {
-                    validate: (value) =>
-                      !startDate ||
-                      !value ||
-                      new Date(value) >= new Date(startDate) ||
-                      "終了日は開始日以降の日付を選択してください。",
-                  })}
-                />
-              </Box>
-            </HStack>
             {listErrors.modifyExpiryDateEnd && (
               <Box color="red" fontSize="sm">
                 {listErrors.modifyExpiryDateEnd?.message}

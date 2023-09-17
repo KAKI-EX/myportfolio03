@@ -92,7 +92,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
           setPurchaseNameSuggestions,
         };
         const { ref, onChange: customOnChange, ...rest } = separeteFunction(customhookProps);
-        const startDate = watch(`listForm.${index}.expiryDateStart`);
+        // const startDate = watch(`listForm.${index}.expiryDateStart`);
         return (
           <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
             <VStack spacing={1} w="5%">
@@ -173,27 +173,27 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
               {expiryDate && (
                 <>
                   <Divider my={4} />
-                  <HStack w="100%" py={2}>
-                    <Box w="50%">
+                  <HStack w="70%" py={2}>
+                    {/* <Box w="50%">
                       <InputExpiryDateStart
                         readOnly={readOnly}
                         register={register}
                         index={index}
                         expiryDate={expiryDate}
                       />
-                    </Box>
-                    <Box w="50%">
+                    </Box> */}
+                    <Box w="100%">
                       <InputExpiryDateEnd
                         readOnly={readOnly}
                         register={register}
                         index={index}
-                        startDate={startDate}
+                        // startDate={startDate}
                       />
-                      {errors.listForm && errors.listForm[index]?.expiryDateEnd && (
+                      {/* {errors.listForm && errors.listForm[index]?.expiryDateEnd && (
                         <Box color="red" fontSize="sm">
                           {errors.listForm[index]?.expiryDateEnd?.message}
                         </Box>
-                      )}
+                      )} */}
                     </Box>
                     <Input type="hidden" {...register(`listForm.${index}.id`)} />
                     <Input type="hidden" {...register(`listForm.${index}.asc`)} />

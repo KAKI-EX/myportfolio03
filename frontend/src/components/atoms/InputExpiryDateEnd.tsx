@@ -8,16 +8,16 @@ type Props = {
   register: UseFormRegister<MergeParams>;
   index: number;
   expiryDate?: boolean;
-  startDate?: string;
+  // startDate?: string;
 };
 
 export const InputExpiryDateEnd: VFC<Props> = memo((props) => {
-  const { readOnly, register, index, startDate } = props;
+  const { readOnly, register, index } = props;
 
   return (
     <>
       <FormLabel mb="3px" fontSize={{ base: "sm", md: "md" }}>
-        終了日
+        消費期限
       </FormLabel>
       <Input
         isReadOnly={readOnly}
@@ -25,13 +25,7 @@ export const InputExpiryDateEnd: VFC<Props> = memo((props) => {
         bg={readOnly ? "blackAlpha.200" : "white"}
         fontSize={{ base: "sm", md: "md" }}
         size="md"
-        {...register(`listForm.${index}.expiryDateEnd`, {
-          validate: (value) =>
-            !startDate ||
-            !value ||
-            new Date(value) >= new Date(startDate) ||
-            "終了日は開始日以降の日付を選択してください。",
-        })}
+        {...register(`listForm.${index}.expiryDateEnd`)}
       />
     </>
   );

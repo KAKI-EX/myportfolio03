@@ -101,10 +101,12 @@ class Api::V1::Okaimono::MemosController < ApplicationController
   end
 
   def update
+    #if (params[:expiry_date_start] && params[:expiry_date_end]).present?
+    #:expiry_date_startは必要ないため削除。カラムだけ残しておく。
     Memo.transaction do
       update_memos = memos_params.each do |params|
         shopping_data = current_api_v1_user.shopping_data.find(params[:shopping_datum_id])
-        if (params[:expiry_date_start] && params[:expiry_date_end]).present?
+        if (params[:expiry_date_end]).present?
           end_date = Date.parse(params[:expiry_date_end])
           existing_memo = shopping_data.memos.find(params[:list_id])
           existing_memo.assign_attributes(is_expiry_date: true, is_display: true)
