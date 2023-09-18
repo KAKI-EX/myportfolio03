@@ -12,11 +12,12 @@ type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
   append: UseFieldArrayAppend<MergeParams, "listForm">;
   setExpiryDate: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsFinished: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 };
 
 export const useSetOkaimonoShowIndex = (props: Props) => {
   const { showMessage } = useMessage();
-  const { setLoading, id, setValue, fields, append, setExpiryDate } = props;
+  const { setLoading, id, setValue, fields, append, setExpiryDate, setIsFinished } = props;
 
   const showMemo = async () => {
     setLoading(true);
@@ -30,6 +31,7 @@ export const useSetOkaimonoShowIndex = (props: Props) => {
           setValue("shoppingMemo", getShopping.data.shoppingMemo);
           setValue("shoppingDatumId", getShopping.data.id);
           setValue("isOpen", getShopping.data.isOpen);
+          setIsFinished(getShopping.data.isFinish);
           const shopProps: shopPropsType = {
             shopId: getShopping.data.shopId,
           };

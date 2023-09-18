@@ -71,8 +71,13 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     else
       add_diffday = memos.map do |memo|
         end_date = memo.expiry_date_end
+        puts "End date: #{end_date.class}" # デバッグのための出力
         today = Date.today
-        different_day = (today - end_date).to_i
+        if end_date.nil?
+          different_day = nil
+        else
+          different_day = (today - end_date).to_i
+        end
         memo_attrs = memo.attributes
         memo_attrs["different_day"] = different_day
         memo_attrs
@@ -113,6 +118,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
           existing_memo.update!(params.except(:list_id, :user_id))
         else
           existing_memo = shopping_data.memos.find(params[:list_id])
+          existing_memo.assign_attributes(is_expiry_date: false, is_display: true)
           existing_memo.update!(params.except(:list_id, :user_id))
         end
       end

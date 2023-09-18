@@ -24,6 +24,7 @@ import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMe
 import { OkaimonoMemoUseListModal } from "components/molecules/OkaimonoMemoUseListModal";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 import { useSuggestListCreate } from "hooks/useSuggestListCreate";
+import { useMessage } from "hooks/useToast";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -33,6 +34,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
+  const { showMessage } = useMessage();
   const updateShoppingData = useUpdateUseMemoData();
   const updateListData = useUpdateUseSingleListData();
   const getShoppingMemoList = useGetUseMemoListData();
@@ -160,7 +162,6 @@ export const OkaimonoMemoUse: VFC = memo(() => {
       amount: "",
       id: "",
       asc: "",
-      expiryDateStart: formattedDefaultShoppingDate,
       expiryDateEnd: "",
     });
   };
@@ -234,18 +235,23 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const updateMemoListData = useUpdateUseMemoListData(memoListHooksProps);
 
   const onAllSubmit = (originFormData: MergeParams) => {
-    const formData = { ...originFormData, totalBudget };
-    const memoListProps = {
-      formData,
-      deleteIds,
-      setLoading,
-      setDeleteIds,
-      totalBudget,
-      fields,
-      append,
-      setValue,
-    };
-    updateMemoListData(memoListProps);
+    console.log(originFormData);
+    if (calculateCheckbox === 0) {
+      const formData = { ...originFormData, totalBudget };
+      const memoListProps = {
+        formData,
+        deleteIds,
+        setLoading,
+        setDeleteIds,
+        totalBudget,
+        fields,
+        append,
+        setValue,
+      };
+      updateMemoListData(memoListProps);
+    } else {
+      showMessage({ title: "買い忘れ商品があります。チェックボックスにチェックを入れてください。", status: "warning" });
+    }
   };
   // ----------------------------------------------------------------------------------------------------------
   // 店名入力欄のsuggest機能

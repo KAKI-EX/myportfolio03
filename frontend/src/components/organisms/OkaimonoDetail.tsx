@@ -29,7 +29,6 @@ import { PurchaseNameSuggestion } from "components/atoms/PurchaseNameSuggestion"
 import { InputAmount } from "components/atoms/InputAmount";
 import { InputShoppingDetailMemo } from "components/atoms/InputShoppingDetailMemo";
 import { InputPrice } from "components/atoms/InputPrice";
-import { InputExpiryDateStart } from "components/atoms/InputExpiryDateStart";
 import { InputExpiryDateEnd } from "components/atoms/InputExpiryDateEnd";
 import { TitleHeading } from "components/atoms/TitleHeading";
 
@@ -67,7 +66,6 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     readOnly = false,
     getValues,
     setDeleteIds,
-    watch,
     expiryDate,
     onListChange,
     purchaseNameSuggestions,

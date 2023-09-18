@@ -40,6 +40,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const { showMessage } = useMessage();
 
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
+  const [isFinished, setIsFinished] = useState<boolean>();
   const defaultShoppingDate = new Date();
   const [loading, setLoading] = useState<boolean>(false);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
@@ -84,9 +85,10 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // メモのindexを取得
-  const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append, setExpiryDate });
+  const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append, setExpiryDate, setIsFinished });
   useEffect(() => {
     showMemo();
+    console.log(isFinished);
   }, [expiryDate]);
 
   useEffect(() => {
@@ -153,6 +155,7 @@ export const OkaimonoShow: VFC = memo(() => {
       fields,
       setValue,
       setPushTemporarilyButton,
+      isFinished,
     };
     updateList(updateProps);
   };
@@ -216,7 +219,12 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ---------------------------------------------------------------------------
 
-  useEffect(() => onOpen(), []);
+  useEffect(() => {
+    if (isFinished !== undefined && !isFinished && !readOnly) {
+      console.log("isFinished", isFinished);
+      onOpen();
+    }
+  }, [isFinished]);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -290,9 +298,13 @@ export const OkaimonoShow: VFC = memo(() => {
               <PrimaryButtonForReactHookForm disabled={!isValid}>
                 {readOnly ? "編集する" : "確定する"}
               </PrimaryButtonForReactHookForm>
-              <OptionallyButton onClick={onClickTemporarilySaved} disabled={readOnly}>
-                一時保存
-              </OptionallyButton>
+              {!isFinished && (
+                <>
+                  <OptionallyButton onClick={onClickTemporarilySaved} disabled={readOnly}>
+                    一時保存
+                  </OptionallyButton>
+                </>
+              )}
               <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
             </Stack>
           </VStack>
