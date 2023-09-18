@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { ListFormParams, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, VFC } from "react";
-import { TbArrowBarRight, TbArrowBarToRight } from "react-icons/tb";
+import { TbArrowBarToRight } from "react-icons/tb";
 import { useDateConversion } from "hooks/useDateConversion";
 import { BsCartCheck, BsShopWindow } from "react-icons/bs";
 import { AiOutlineMoneyCollect } from "react-icons/ai";
@@ -62,15 +62,8 @@ export const OkaimonoAlertModal: VFC<Props> = memo((props) => {
                   </Tr>
                   <Tr>
                     <Td fontSize={{ base: "sm", md: "md" }}>
-                      <Icon as={TbArrowBarRight} w={5} h={5} mb={-1} mr={1} />
-                      消費期限 開始
-                    </Td>
-                    <Td fontSize={{ base: "sm", md: "md" }}>{dateConversion(alertListDetail?.expiryDateStart)}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontSize={{ base: "sm", md: "md" }}>
                       <Icon as={TbArrowBarToRight} w={5} h={5} mb={-1} mr={1} />
-                      消費期限 終了
+                      消費期限
                     </Td>
                     <Td fontSize={{ base: "sm", md: "md" }}>{dateConversion(alertListDetail?.expiryDateEnd)}</Td>
                   </Tr>

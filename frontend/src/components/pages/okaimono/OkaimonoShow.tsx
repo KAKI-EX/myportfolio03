@@ -88,7 +88,6 @@ export const OkaimonoShow: VFC = memo(() => {
   const showMemo = useSetOkaimonoShowIndex({ setLoading, id, setValue, fields, append, setExpiryDate, setIsFinished });
   useEffect(() => {
     showMemo();
-    console.log(isFinished);
   }, [expiryDate]);
 
   useEffect(() => {
@@ -221,7 +220,6 @@ export const OkaimonoShow: VFC = memo(() => {
 
   useEffect(() => {
     if (isFinished !== undefined && !isFinished && !readOnly) {
-      console.log("isFinished", isFinished);
       onOpen();
     }
   }, [isFinished]);

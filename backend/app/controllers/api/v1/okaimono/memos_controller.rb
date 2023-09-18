@@ -71,7 +71,6 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     else
       add_diffday = memos.map do |memo|
         end_date = memo.expiry_date_end
-        puts "End date: #{end_date.class}" # デバッグのための出力
         today = Date.today
         if end_date.nil?
           different_day = nil
