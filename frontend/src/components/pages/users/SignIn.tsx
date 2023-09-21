@@ -52,7 +52,7 @@ export const SignIn: VFC = memo(() => {
         Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
         setIsSignedIn(true);
         setCurrentUser(res?.data.data);
-        history.push("/");
+        history.push("/okaimono");
         showMessage({ title: res.data.message, status: "success" });
       }
       // エラーハンドリング

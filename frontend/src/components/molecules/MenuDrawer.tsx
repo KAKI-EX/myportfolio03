@@ -16,7 +16,7 @@ import { memo, useContext, VFC } from "react";
 type Props = {
   onClose: () => void;
   isOpen: boolean;
-  onClickHome: () => void;
+  // onClickHome: () => void;
   onClickSignIn: () => void;
   onClickSignUp: () => void;
   onClickMakeMemo: () => void;
@@ -32,7 +32,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
   const {
     onClose,
     isOpen,
-    onClickHome,
+    // onClickHome,
     onClickSignIn,
     onClickSignUp,
     onClickMakeMemo,
@@ -55,14 +55,14 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
         </DrawerHeader>
         <DrawerBody p={0} bg="gray.100">
           {/* --------------------------------------未ログイン時表示------------------------------------------- */}
-          <HStack>
+          {/* <HStack>
             <Button justifyContent="flex-start" onClick={onClickHome} w="100%" _focus={{ outline: "none" }}>
               TOP
             </Button>
             <Box pr={5}>
               <ChevronRightIcon />
             </Box>
-          </HStack>
+          </HStack> */}
           {!isSignedIn && (
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickSignIn} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
@@ -87,7 +87,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
           {isSignedIn && (
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickMakeMemo} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
-                お買物メモの作成
+                メモの作成
               </Button>
               <Box pr={5}>
                 <ChevronRightIcon />
@@ -97,7 +97,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
           {isSignedIn && (
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickMemoIndex} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
-                お買物メモ一覧
+                メモ一覧
               </Button>
               <Box pr={5}>
                 <ChevronRightIcon />
@@ -115,7 +115,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
           {isSignedIn && (
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickAlert} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
-                消費期限アラート
+                アラート
               </Button>
               <Box pr={5}>
                 <ChevronRightIcon />
@@ -125,7 +125,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
           {isSignedIn && (
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickSearch} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
-                お買い物サーチ
+                サーチ
               </Button>
               <Box pr={5}>
                 <ChevronRightIcon />

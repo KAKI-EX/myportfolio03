@@ -7,6 +7,7 @@ type Props = {
   loading?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   w?: string;
+  fontSize?: string | number | (string | number)[];
 };
 
 export const PrimaryButton: VFC<Props> = memo((props) => {
@@ -16,6 +17,7 @@ export const PrimaryButton: VFC<Props> = memo((props) => {
     loading = false,
     onClick,
     w,
+    fontSize
   } = props;
   return (
     <Button
@@ -26,6 +28,7 @@ export const PrimaryButton: VFC<Props> = memo((props) => {
       isLoading={loading}
       onClick={onClick}
       w={w}
+      fontSize={fontSize}
     >
       {children}
     </Button>

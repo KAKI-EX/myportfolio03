@@ -74,7 +74,7 @@ export const Header: VFC = memo(() => {
       <MenuDrawer
         onClose={onClose}
         isOpen={isOpen}
-        onClickHome={onClickHome}
+        // onClickHome={onClickHome}
         onClickSignIn={onClickSignIn}
         onClickSignUp={onClickSignUp}
         onClickMakeMemo={onClickMakeMemo}
