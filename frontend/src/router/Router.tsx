@@ -4,7 +4,7 @@ import { Home } from "components/pages/Home";
 import { OkaimonoOpenTrue } from "components/pages/okaimono/OkaimonoOpenTrue";
 import { HeaderLayout } from "components/templates/HeaderLayout";
 import { memo, useContext, VFC } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { OkaimonoRoutes } from "./OkaimonoRoutes";
 import { UserRoutes } from "./UserRoutes";
 
@@ -13,9 +13,7 @@ export const Router: VFC = memo(() => {
   return (
     <Switch>
       <Route exact path="/">
-        <HeaderLayout>
-          <Home />
-        </HeaderLayout>
+        <HeaderLayout>{isSignedIn ? <Redirect to="/okaimono" /> : <Home />}</HeaderLayout>
       </Route>
       <Route
         path="/user"

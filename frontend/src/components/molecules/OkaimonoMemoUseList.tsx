@@ -32,7 +32,7 @@ type Props = {
   getValues: UseFormGetValues<MergeParams>;
   validationNumber: RegExp;
   // eslint-disable-next-line no-unused-vars
-  onClickListModify: (index: number, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClickListModify: (index: number, event: React.MouseEvent) => void;
   setDeleteIds: React.Dispatch<React.SetStateAction<string[]>>;
   remove: UseFieldArrayRemove;
   // eslint-disable-next-line no-unused-vars
@@ -121,6 +121,11 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                     ml={0}
                     ref={ref}
                     {...rest}
+                    onClick={(event) => {
+                      if (getValues(`listForm.${index}.id`)) {
+                        onClickListModify(index, event);
+                      }
+                    }}
                   />
                   {purchaseNameIndex === index && purchaseNameSuggestions && purchaseNameSuggestions?.length > 0 && (
                     <Box w="100%" position="relative" zIndex="dropdown">
@@ -159,6 +164,11 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                       max: { value: 99, message: "上限は99までです。" },
                       pattern: { value: validationNumber, message: "半角整数で入力してください。" },
                     })}
+                    onClick={(event) => {
+                      if (getValues(`listForm.${index}.id`)) {
+                        onClickListModify(index, event);
+                      }
+                    }}
                   />
                   <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
                     個
