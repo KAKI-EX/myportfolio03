@@ -34,7 +34,7 @@ export const Router: VFC = memo(() => {
             {OkaimonoRoutes.map((route) => (
               <Route key={route.path} exact={route.exact} path={`${url}${route.path}`}>
                 <HeaderLayout>
-                  <Private loading={loading} isSignedIn={isSignedIn}>
+                  <Private>
                     {route.children}
                   </Private>
                 </HeaderLayout>

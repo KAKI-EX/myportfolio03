@@ -3,7 +3,7 @@ import { Router } from "router/Router";
 import theme from "components/theme/theme";
 import { BrowserRouter, Redirect } from "react-router-dom";
 import { User } from "interfaces";
-import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useGetCurrentUser } from "hooks/useGetCurrentUser";
 import { useMessage } from "hooks/useToast";
 
@@ -23,16 +23,9 @@ export const AuthContext = createContext(
 
 // ユーザーが認証済みかどうかでルーティングを決定
 // 未認証だった場合は「/signin」ページに促す
-export function Private({
-  children,
-  loading,
-  isSignedIn,
-}: {
-  children: React.ReactElement;
-  loading: boolean;
-  isSignedIn: boolean;
-}) {
+export function Private({ children }: { children: React.ReactElement }) {
   const { showMessage } = useMessage();
+  const { loading, isSignedIn } = useContext(AuthContext);
   const toastCount = useRef(0);
 
   if (!loading) {

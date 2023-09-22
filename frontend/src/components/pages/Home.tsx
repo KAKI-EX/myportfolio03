@@ -11,9 +11,6 @@ import "swiper/components/navigation/navigation.min.css";
 import "swiper/components/pagination/pagination.min.css";
 import "swiper/components/scrollbar/scrollbar.min.css";
 import { PrimaryButton } from "components/atoms/PrimaryButton";
-import { BsCartCheck } from "react-icons/bs";
-import { TbNumber1, TbSquareNumber1, TbSquareNumber2, TbSquareNumber3 } from "react-icons/tb";
-import { getCurrentUser } from "lib/api/auth";
 
 // Install Swiper modules
 SwiperCore.use([Autoplay, Navigation, Pagination]);

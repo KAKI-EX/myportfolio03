@@ -3,12 +3,18 @@ import { SignIn } from "components/pages/users/SignIn";
 import { SignUp } from "components/pages/users/SignUp";
 import { AccountUpdate } from "components/pages/users/AccountUpdate";
 import { UserManagement } from "components/pages/users/UserManagement";
+import { Private } from "App";
+import { useContext } from "react";
 
 export const UserRoutes = [
   {
     path: "/",
     exact: true,
-    children: <UserManagement />,
+    children: (
+      <Private>
+        <UserManagement />
+      </Private>
+    ),
   },
   {
     path: "/sign_in",
@@ -23,7 +29,11 @@ export const UserRoutes = [
   {
     path: "/account_update",
     exact: false,
-    children: <AccountUpdate />,
+    children: (
+      <Private>
+        <AccountUpdate />
+      </Private>
+    ),
   },
   {
     path: "*",
