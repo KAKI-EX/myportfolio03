@@ -1,7 +1,6 @@
 import { render, RenderResult } from "@testing-library/react";
 import { InputAmount } from "components/atoms/InputAmount";
 import { ChakraProvider } from "@chakra-ui/react";
-import userEvent from "@testing-library/user-event";
 
 describe("InputAmount", () => {
 
@@ -60,7 +59,7 @@ describe("InputAmount", () => {
 
     test("backgroundcolorが灰色であること", async () => {
       const input = await utils.getByTestId("inputAmount");
-      expect(input).not.toHaveStyleRule('background-color', 'white');
+      expect(input).toHaveStyle({backgroundColor: "blackAlpha.200"});
     });
   });
 });

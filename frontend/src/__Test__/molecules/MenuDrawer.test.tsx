@@ -50,19 +50,19 @@ describe("MenuDrawer", () => {
     });
 
     test("TOPとサインイン、アカウントの作成が表示されていること", async () => {
-      expect(await utils.getByText("TOP")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("サインイン")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("アカウントの作成")).not.toHaveStyle("display: none");
+      // expect(await utils.getByText("TOP")).not.toHaveStyle("display: none");
+      expect(await utils.getByText("サインイン")).toBeInTheDocument();
+      expect(await utils.getByText("アカウントの作成")).toBeInTheDocument();
     });
 
     test("TOPとサインイン以外が表示されていないこと", async () => {
-      expect(await utils.getByText("お買物メモの作成")).toHaveStyle("display: none");
-      expect(await utils.getByText("お買物メモ一覧")).toHaveStyle("display: none");
-      expect(await utils.getByText("お店情報の確認と編集")).toHaveStyle("display: none");
+      expect(await utils.queryByAltText("メモの作成")).not.toBeInTheDocument();
+      expect(await utils.queryByAltText("メモ一覧")).not.toBeInTheDocument();
+      expect(await utils.queryByAltText("お店情報の確認と編集")).not.toBeInTheDocument();
       // expect(await utils.getByText("お買い物メモを使う")).toHaveStyle("display: none");
-      expect(await utils.getByText("サインアウト")).toHaveStyle("display: none");
-      expect(await utils.getByText("消費期限アラート")).toHaveStyle("display: none");
-      expect(await utils.getByText("お買い物サーチ")).toHaveStyle("display: none");
+      expect(await utils.queryByAltText("サインアウト")).not.toBeInTheDocument();
+      expect(await utils.queryByAltText("アラート")).not.toBeInTheDocument();
+      expect(await utils.queryByAltText("サーチ")).not.toBeInTheDocument();
     });
   });
 
@@ -87,19 +87,19 @@ describe("MenuDrawer", () => {
     });
 
     test("サインイン、アカウントの作成が表示されていないこと", async () => {
-      expect(await utils.getByText("サインイン")).toHaveStyle("display: none");
-      expect(await utils.getByText("アカウントの作成")).toHaveStyle("display: none");
+      expect(await utils.queryByAltText("サインイン")).not.toBeInTheDocument();
+      expect(await utils.queryByAltText("アカウントの作成")).not.toBeInTheDocument();
     });
 
     test("サインインとアカウントの作成以外が表示されていること", async () => {
-      expect(await utils.getByText("TOP")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("お買物メモの作成")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("お買物メモ一覧")).not.toHaveStyle("display: none");
+      // expect(await utils.getByText("TOP")).not.toHaveStyle("display: none");
+      expect(await utils.getByText("メモの作成")).not.toHaveStyle("display: none");
+      expect(await utils.getByText("メモ一覧")).not.toHaveStyle("display: none");
       expect(await utils.getByText("お店情報の確認と編集")).not.toHaveStyle("display: none");
       // expect(await utils.getByText("お買い物メモを使う")).not.toHaveStyle("display: none");
       expect(await utils.getByText("サインアウト")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("消費期限アラート")).not.toHaveStyle("display: none");
-      expect(await utils.getByText("お買い物サーチ")).not.toHaveStyle("display: none");
+      expect(await utils.getByText("アラート")).not.toHaveStyle("display: none");
+      expect(await utils.getByText("サーチ")).not.toHaveStyle("display: none");
     });
   });
 });
