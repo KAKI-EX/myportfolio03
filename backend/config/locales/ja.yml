@@ -10,6 +10,8 @@ ja:
             email:
               blank: "が入力されていません。"
               taken: "「%{value}」は既に使用されています。"
+            password_confirmation:
+              confirmation: "が入力されていません。"
         memo:
           attributes:
             shopping_datum:

@@ -20,6 +20,7 @@ export const Header: VFC = memo(() => {
   // const onClickMemoUse = useCallback(() => history.push("/okaimono/okaimono_memo_use"), [history]);
   const onClickAlert = useCallback(() => history.push("/okaimono/okaimono_alert"), [history]);
   const onClickSearch = useCallback(() => history.push("/okaimono/okaimono_search"), [history]);
+  const onClickMyPage = useCallback(() => history.push("/user/"), [history]);
 
   const { setLoading, isSignedIn } = useContext(AuthContext);
 
@@ -84,6 +85,7 @@ export const Header: VFC = memo(() => {
         // onClickMemoUse={onClickMemoUse}
         onClickAlert={onClickAlert}
         onClickSearch={onClickSearch}
+        onClickMyPage={onClickMyPage}
       />
     </>
   );

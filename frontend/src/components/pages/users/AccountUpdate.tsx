@@ -1,116 +1,133 @@
-import { Box, Divider, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
-import { PrimaryButton } from "components/atoms/PrimaryButton";
+import { Box, Divider, Flex, Heading, Input, Spinner, Stack, Text } from "@chakra-ui/react";
 import { appInfo } from "consts/appconst";
 import { SignUpParams } from "interfaces";
-import Cookies from "js-cookie";
-import { signUp } from "lib/api/auth";
-import React, { ChangeEvent, memo, useContext, useState, VFC } from "react";
-import { AuthContext } from "App";
-import { useHistory } from "react-router-dom";
-import { useMessage } from "hooks/useToast";
+import React, { memo, useEffect, useState, VFC } from "react";
+import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useAccountUpdate } from "hooks/useAccountUpdate";
+import { useAccountConfirmation } from "hooks/useAccountConfirmation";
 
 export const AccountUpdate: VFC = memo(() => {
-  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
-
-  const [userName, setUserName] = useState("");
-  const onChangeName = (e: ChangeEvent<HTMLInputElement>) => setUserName(e.target.value);
-
-  const [userEmail, setUserEmail] = useState("");
-  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => setUserEmail(e.target.value);
-
-  const [userPassword, setUserPassword] = useState("");
-  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setUserPassword(e.target.value);
-
-  const [userPasswordConfirmation, setUserPasswordConfirmation] = useState("");
-  const onClickPasswordConfirmation = (e: ChangeEvent<HTMLInputElement>) => setUserPasswordConfirmation(e.target.value);
-
-  const history = useHistory();
+  const textFontSize = ["sm", "md", "md", "xl"];
   const [loading, setLoading] = useState(false);
-  const { showMessage } = useMessage();
-  // -------------------------------------------------------------------------------------------
+  const updateAccount = useAccountUpdate(setLoading);
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<SignUpParams>({ criteriaMode: "all", reValidateMode: "onSubmit" });
 
-    const params: SignUpParams = {
-      name: userName,
-      email: userEmail,
-      password: userPassword,
-      passwordConfirmation: userPasswordConfirmation,
-    };
+  const acsProps = {
+    setValue,
+    setLoading,
+  };
+  const accountConfirmationSetting = useAccountConfirmation(acsProps);
+  useEffect(() => {
+    accountConfirmationSetting();
+  }, []);
 
-    try {
-      setLoading(true);
-      const res = await signUp(params);
-      const cookieData = {
-        _access_token: res.headers["access-token"],
-        _client: res.headers.client,
-        _uid: res.headers.uid,
-      };
-      Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
-
-      setIsSignedIn(true);
-      setCurrentUser(res?.data.data);
-      history.push("/");
-      const signUpMessage = `${res.data.message} ,ログインしました。`;
-      showMessage({ title: signUpMessage, status: "success" });
-    } catch (err: any) {
-      if (err.response && err.response.data && err.response.data.errors) {
-        showMessage({
-          title: `${err.response.data.errors.fullMessages}`,
-          status: "error",
-        });
-      } else {
-        showMessage({ title: "アカウントが作成できませんでした。", status: "error" });
-      }
-    }
-    setLoading(false);
+  const onSubmit: SubmitHandler<SignUpParams> = async (data: SignUpParams) => {
+    updateAccount(data);
   };
 
   // -------------------------------------------------------------------------------------------
 
-  return (
+  return loading ? (
+    <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
+      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+    </Box>
+  ) : (
     <Flex align="center" justify="center" height="90vh" px={3}>
       <Box bg="white" w="md" p={4} borderRadius="md" shadow="md">
         <Heading as="h1" size="lg" textAlign="center">
           {appInfo.Info.appName}
         </Heading>
         <Divider my={4} />
-        <Text fontSize="xl" textAlign="center">
-          アカウント情報更新
-        </Text>
-        <Stack spacing={3} py={4} px={10}>
-          <Input placeholder="名前" value={userName} onChange={onChangeName} aria-label="名前" />
-          <Input
-            placeholder="Eメールアドレス"
-            value={userEmail}
-            onChange={onChangeEmail}
-            aria-label="Eメールアドレス"
-          />
-          <Input
-            placeholder="パスワード"
-            value={userPassword}
-            type="password"
-            onChange={onChangePassword}
-            aria-label="パスワード"
-          />
-          <Input
-            placeholder="パスワード再入力"
-            value={userPasswordConfirmation}
-            type="password"
-            onChange={onClickPasswordConfirmation}
-            aria-label="パスワード再入力"
-          />
-
-          <Box />
-          <PrimaryButton
-            disabled={userEmail === "" || userPassword === "" || userPasswordConfirmation === ""}
-            onClick={handleSubmit}
-            loading={loading}
-          >
-            更新
-          </PrimaryButton>
-        </Stack>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Text fontSize="xl" textAlign="center">
+            アカウント情報の更新
+          </Text>
+          <Stack spacing={3} py={4} px={10}>
+            <Input placeholder="変更する名前" aria-label="名前" {...register("name")} />
+            <Input
+              placeholder="変更するEメールアドレス"
+              aria-label="Eメールアドレス"
+              {...register("email", {
+                required: { value: true, message: "入力が必須の項目です。" },
+                pattern: {
+                  value: /[\w\-._]+@[\w\-._]+\.[A-Za-z]+/,
+                  message: "有効なメールアドレスを入力してください。",
+                },
+                maxLength: {
+                  value: 100,
+                  message: "メールアドレスは100文字以内で入力してください。",
+                },
+              })}
+            />
+            {errors.email && (
+              <>
+                {errors.email.types?.pattern && <Box color="red">{errors.email.types.pattern}</Box>}
+                {errors.email.types?.required && <Box color="red">{errors.email.types.required}</Box>}
+              </>
+            )}
+            <Input
+              placeholder="変更するパスワード"
+              aria-label="パスワード"
+              type="password"
+              {...register("password", {
+                required: {
+                  value: true,
+                  message: "入力が必須の項目です。",
+                },
+                maxLength: {
+                  value: 32,
+                  message: "32文字以上のパスワードは設定できません。",
+                },
+                minLength: {
+                  value: 8,
+                  message: "8文字以上入力してください。",
+                },
+              })}
+            />
+            {errors.password && (
+              <>
+                {errors.password.types?.maxLength && <Box color="red">{errors.password.types.maxLength}</Box>}
+                {errors.password.types?.required && <Box color="red">{errors.password.types.required}</Box>}
+                {errors.password.types?.minLength && <Box color="red">{errors.password.types.minLength}</Box>}
+              </>
+            )}
+            <Input
+              placeholder="パスワード再入力"
+              aria-label="パスワード再入力"
+              type="password"
+              {...register("passwordConfirmation", {
+                required: {
+                  value: true,
+                  message: "入力が必須の項目です。",
+                },
+                validate: (value) => {
+                  return value === getValues("password") || "メールアドレスが一致しません";
+                },
+              })}
+            />
+            {errors.passwordConfirmation && (
+              <>
+                {errors.passwordConfirmation.types?.validate && (
+                  <Box color="red">{errors.passwordConfirmation.types.validate}</Box>
+                )}
+                {errors.passwordConfirmation.types?.required && (
+                  <Box color="red">{errors.passwordConfirmation.types.required}</Box>
+                )}
+              </>
+            )}
+            <Box />
+            <PrimaryButtonForReactHookForm loading={loading}>アカウント更新</PrimaryButtonForReactHookForm>
+            <Text fontSize={textFontSize}>変更が無い場合もEメールアドレスとパスワードは必ず入力してください。</Text>
+          </Stack>
+        </form>
       </Box>
     </Flex>
   );

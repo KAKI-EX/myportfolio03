@@ -9,7 +9,7 @@ import { OkaimonoRoutes } from "./OkaimonoRoutes";
 import { UserRoutes } from "./UserRoutes";
 
 export const Router: VFC = memo(() => {
-  const { loading, isSignedIn } = useContext(AuthContext);
+  const { isSignedIn } = useContext(AuthContext);
   return (
     <Switch>
       <Route exact path="/">

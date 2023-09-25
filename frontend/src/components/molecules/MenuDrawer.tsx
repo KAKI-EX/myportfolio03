@@ -26,6 +26,7 @@ type Props = {
   // onClickMemoUse: () => void;
   onClickAlert: () => void;
   onClickSearch: () => void;
+  onClickMyPage: () => void;
 };
 
 export const MenuDrawer: VFC<Props> = memo((props) => {
@@ -42,6 +43,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
     // onClickMemoUse,
     onClickAlert,
     onClickSearch,
+    onClickMyPage
   } = props;
   const { isSignedIn } = useContext(AuthContext);
 
@@ -136,6 +138,16 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickShopShow} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
                 お店情報の確認と編集
+              </Button>
+              <Box pr={5}>
+                <ChevronRightIcon />
+              </Box>
+            </HStack>
+          )}
+          {isSignedIn && (
+            <HStack borderTop="1px" borderColor="gray.300">
+              <Button onClick={onClickMyPage} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
+                マイページ
               </Button>
               <Box pr={5}>
                 <ChevronRightIcon />

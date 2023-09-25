@@ -4,7 +4,7 @@ import { SignUp } from "components/pages/users/SignUp";
 import { AccountUpdate } from "components/pages/users/AccountUpdate";
 import { UserManagement } from "components/pages/users/UserManagement";
 import { Private } from "App";
-import { useContext } from "react";
+import { TermsOfService } from "components/pages/TermsOfService";
 
 export const UserRoutes = [
   {
@@ -26,6 +26,11 @@ export const UserRoutes = [
     exact: false,
     children: <SignUp />,
   },
+  {
+  path: "/term_of_service",
+  exact: false,
+  children: <TermsOfService />,
+},
   {
     path: "/account_update",
     exact: false,

@@ -182,7 +182,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverHeader>おつかい機能？</PopoverHeader>
-              <PopoverBody>オンにすると、URLを送ることでお買い物メモを共有できます！</PopoverBody>
+              <PopoverBody>確定後に発行される指定のURLを送ることでお買い物メモを共有できます！</PopoverBody>
             </PopoverContent>
           </Popover>
         </HStack>

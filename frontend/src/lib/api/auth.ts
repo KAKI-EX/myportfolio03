@@ -17,6 +17,37 @@ export const signIn = (params: SignInParams) => {
   });
 };
 
+// アカウントアップデート
+export const accountUpdate = (params: SignUpParams) => {
+  return client.put(
+    "auth",
+    { registration: params },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+        "access-token": Cookies.get("_access_token"),
+        client: Cookies.get("_client"),
+        uid: Cookies.get("_uid"),
+      },
+    }
+  );
+};
+
+// アカウント情報の確認
+export const accountConfirmation = () => {
+  return client.get(
+    "auth/validate_token",
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+        "access-token": Cookies.get("_access_token"),
+        client: Cookies.get("_client"),
+        uid: Cookies.get("_uid"),
+      },
+    }
+  );
+};
+
 // サインアウト（ログアウト）
 export const signOut = () => {
   return client.delete("auth/sign_out", {
