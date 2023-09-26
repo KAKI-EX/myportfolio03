@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Link, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Heading, Image, Link, useDisclosure } from "@chakra-ui/react";
 import { MenuIconButton } from "components/atoms/MenuIconButton";
 import { MenuDrawer } from "components/molecules/MenuDrawer";
 import { appInfo } from "consts/appconst";
@@ -35,9 +35,9 @@ export const Header: VFC = memo(() => {
     <>
       <Flex as="nav" bg="teal.500" color="gray.50" align="center" justify="space-between" padding={{ base: 3, md: 5 }}>
         <Flex align="center" as="a" mr={8} _hover={{ cursor: "pointer" }} onClick={onClickHome}>
-          <Heading as="h1" fontSize={{ base: "md", md: "lg" }}>
-            {appInfo.Info.appName}
-          </Heading>
+          <Box boxSize="60%">
+            <Image boxSize="100%" src="https://okaimono-portfolio.s3.ap-northeast-1.amazonaws.com/material/logo_full.png" alt="logo" />
+          </Box>
         </Flex>
         <Flex align="center" fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }}>
           <Box pr={4}>
