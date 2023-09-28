@@ -12,6 +12,13 @@ export interface SignInParams {
   password: string;
 }
 
+export interface UserInputParams {
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
 // ユーザー
 export interface User {
   id: number;

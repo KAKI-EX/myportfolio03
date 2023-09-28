@@ -11,6 +11,7 @@ import { HomePcSlide } from "components/molecules/HomePcSlide";
 import { HomeSpSlide } from "components/molecules/HomeSpSlide";
 import { HomeSpGuidance } from "components/molecules/HomeSpGuidance";
 import { HomePcGuidance } from "components/molecules/HomePcGuidance";
+import { appInfo } from "consts/appconst";
 
 // Install Swiper modules
 SwiperCore.use([Autoplay, Navigation, Pagination]);
@@ -41,7 +42,7 @@ export const Home: VFC = memo(() => {
                     お買い物サポートアプリ
                   </Text>
                   <Heading as="h1" size={headingFontSize}>
-                    OkaimonoMemo
+                    {appInfo.Info.appName}
                   </Heading>
                   <Text color="gray.600" fontSize={textFontSize} pt={[1, 3, 4, 5]} pl={[0, 3, 4, 5]}>
                     消費期限管理、お買い物メモを一括管理！
@@ -66,7 +67,7 @@ export const Home: VFC = memo(() => {
         {!isLargerThan767 ? <HomeSpSlide /> : ""}
         <Box shadow="md" borderWidth="1px" bg="green.50" w="95%" mt={2} p={5}>
           <Heading as="h2" size="md" borderBottom="1px" borderColor="gray.300" pt={3}>
-            OkaimonoMemoでできること
+            {appInfo.Info.appName}でできること
           </Heading>
           {!isLargerThan767 ? <HomeSpGuidance textFontSize={textFontSize} /> : null}
           {isLargerThan767 ? <HomePcGuidance textFontSize={textFontSize} /> : null}

@@ -56,6 +56,8 @@ export const Header: VFC = memo(() => {
     executionSignOut();
   };
 
+  const textFontSize = ["sm", "md", "md", "xl"];
+
   return (
     <>
       <Flex as="nav" bg="teal.500" color="gray.50" align="center" justify="space-between" padding={{ base: 3, md: 5 }}>
@@ -70,34 +72,53 @@ export const Header: VFC = memo(() => {
         </Flex>
         <Flex align="center" fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }}>
           <Box pr={4}>
-            <Link onClick={onClickSignIn} display={!isSignedIn ? "block" : "none"}>
+            <Link fontSize={textFontSize} onClick={onClickSignIn} display={!isSignedIn ? "block" : "none"}>
               ログイン
             </Link>
           </Box>
           <Box pr={4} display={!isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickSignUp}>アカウントの作成</Link>
+            <Link fontSize={textFontSize} onClick={onClickSignUp}>
+              アカウントの作成
+            </Link>
           </Box>
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickSignOut}>サインアウト</Link>
+            <Link fontSize={textFontSize} onClick={onClickMakeMemo}>
+              メモの作成
+            </Link>
           </Box>
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickMakeMemo}>お買い物メモの作成</Link>
+            <Link fontSize={textFontSize} onClick={onClickMemoIndex}>
+              メモ一覧
+            </Link>
           </Box>
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickMemoIndex}>お買物メモ一覧</Link>
+            <Link fontSize={textFontSize} onClick={onClickAlert}>
+              アラート
+            </Link>
           </Box>
           <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickShopShow}>お店情報の確認と編集</Link>
+            <Link fontSize={textFontSize} onClick={onClickSearch}>
+              サーチ
+            </Link>
+          </Box>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
+            <Link fontSize={textFontSize} onClick={onClickShopShow}>
+              お店情報の確認と編集
+            </Link>
+          </Box>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
+            <Link fontSize={textFontSize} onClick={onClickMyPage}>
+              マイページ
+            </Link>
+          </Box>
+          <Box pr={4} display={isSignedIn ? "block" : "none"}>
+            <Link fontSize={textFontSize} onClick={onClickSignOut}>
+              サインアウト
+            </Link>
           </Box>
           {/* <Box pr={4} display={isSignedIn ? "block" : "none"}>
             <Link onClick={onClickMemoUse}>お買い物メモを使う</Link>
           </Box> */}
-          <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickAlert}>消費期限アラート</Link>
-          </Box>
-          <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickSearch}>お買い物サーチ</Link>
-          </Box>
         </Flex>
         <MenuIconButton onOpen={onOpen} />
       </Flex>

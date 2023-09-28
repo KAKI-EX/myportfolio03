@@ -1,11 +1,17 @@
 import { Box, Divider, Flex, Heading, Input, Spinner, Stack, Text } from "@chakra-ui/react";
 import { appInfo } from "consts/appconst";
-import { SignUpParams } from "interfaces";
+import { UserInputParams } from "interfaces";
 import React, { memo, useEffect, useState, VFC } from "react";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAccountUpdate } from "hooks/useAccountUpdate";
 import { useAccountConfirmation } from "hooks/useAccountConfirmation";
+import { InputEmailAddress } from "components/atoms/InputEmailAddress";
+import { InputEmailAddressErrors } from "components/atoms/InputEmailAddressErrors";
+import { InputPasswordWithoutButton } from "components/atoms/InputPasswordWithoutButton";
+import { InputPasswordWithButtonErrors } from "components/atoms/InputPasswordWithButtonErrors";
+import { InputPasswordConfirmationWithoutButton } from "components/atoms/InputPasswordConfirmationWithoutButton";
+import { InputPasswordConfirmationWithoutButtonErrors } from "components/atoms/InputPasswordConfirmationWithoutButtonErrors";
 
 export const AccountUpdate: VFC = memo(() => {
   const textFontSize = ["sm", "md", "md", "xl"];
@@ -18,7 +24,7 @@ export const AccountUpdate: VFC = memo(() => {
     getValues,
     setValue,
     formState: { errors },
-  } = useForm<SignUpParams>({ criteriaMode: "all", reValidateMode: "onSubmit" });
+  } = useForm<UserInputParams>({ criteriaMode: "all", reValidateMode: "onSubmit" });
 
   const acsProps = {
     setValue,
@@ -29,7 +35,7 @@ export const AccountUpdate: VFC = memo(() => {
     accountConfirmationSetting();
   }, []);
 
-  const onSubmit: SubmitHandler<SignUpParams> = async (data: SignUpParams) => {
+  const onSubmit: SubmitHandler<UserInputParams> = async (data: UserInputParams) => {
     updateAccount(data);
   };
 
@@ -52,77 +58,12 @@ export const AccountUpdate: VFC = memo(() => {
           </Text>
           <Stack spacing={3} py={4} px={10}>
             <Input placeholder="変更する名前" aria-label="名前" {...register("name")} />
-            <Input
-              placeholder="変更するEメールアドレス"
-              aria-label="Eメールアドレス"
-              {...register("email", {
-                required: { value: true, message: "入力が必須の項目です。" },
-                pattern: {
-                  value: /[\w\-._]+@[\w\-._]+\.[A-Za-z]+/,
-                  message: "有効なメールアドレスを入力してください。",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "メールアドレスは100文字以内で入力してください。",
-                },
-              })}
-            />
-            {errors.email && (
-              <>
-                {errors.email.types?.pattern && <Box color="red">{errors.email.types.pattern}</Box>}
-                {errors.email.types?.required && <Box color="red">{errors.email.types.required}</Box>}
-              </>
-            )}
-            <Input
-              placeholder="変更するパスワード"
-              aria-label="パスワード"
-              type="password"
-              {...register("password", {
-                required: {
-                  value: true,
-                  message: "入力が必須の項目です。",
-                },
-                maxLength: {
-                  value: 32,
-                  message: "32文字以上のパスワードは設定できません。",
-                },
-                minLength: {
-                  value: 8,
-                  message: "8文字以上入力してください。",
-                },
-              })}
-            />
-            {errors.password && (
-              <>
-                {errors.password.types?.maxLength && <Box color="red">{errors.password.types.maxLength}</Box>}
-                {errors.password.types?.required && <Box color="red">{errors.password.types.required}</Box>}
-                {errors.password.types?.minLength && <Box color="red">{errors.password.types.minLength}</Box>}
-              </>
-            )}
-            <Input
-              placeholder="パスワード再入力"
-              aria-label="パスワード再入力"
-              type="password"
-              {...register("passwordConfirmation", {
-                required: {
-                  value: true,
-                  message: "入力が必須の項目です。",
-                },
-                validate: (value) => {
-                  return value === getValues("password") || "メールアドレスが一致しません";
-                },
-              })}
-            />
-            {errors.passwordConfirmation && (
-              <>
-                {errors.passwordConfirmation.types?.validate && (
-                  <Box color="red">{errors.passwordConfirmation.types.validate}</Box>
-                )}
-                {errors.passwordConfirmation.types?.required && (
-                  <Box color="red">{errors.passwordConfirmation.types.required}</Box>
-                )}
-              </>
-            )}
+            <InputEmailAddress register={register} placeholder="変更するEメールアドレス" />
+            <InputEmailAddressErrors errors={errors} />
+            <InputPasswordWithoutButton register={register} placeholder="変更するパスワード" />
+            <InputPasswordWithButtonErrors errors={errors} />
+            <InputPasswordConfirmationWithoutButton register={register} getValues={getValues} />
+            <InputPasswordConfirmationWithoutButtonErrors errors={errors} />
             <Box />
             <PrimaryButtonForReactHookForm loading={loading}>アカウント更新</PrimaryButtonForReactHookForm>
             <Text fontSize={textFontSize}>変更が無い場合もEメールアドレスとパスワードは必ず入力してください。</Text>

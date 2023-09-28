@@ -1,5 +1,5 @@
 export const appInfo = {
   Info: {
-    appName: "お出かけメモリアル",
+    appName: "OkaimonoMemo",
   },
 } as const;
