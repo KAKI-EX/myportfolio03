@@ -9,6 +9,17 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
     }
   end
 
+  def guest_sign_in
+    @resource = User.guest
+    sign_in(@resource)
+    # トークンの生成とヘッダーへのセット
+    @client_id = SecureRandom.urlsafe_base64(nil, false)
+    @token = @resource.create_token
+    @resource.save
+    update_auth_header
+    render_create_success
+  end
+
   private
 
   def authenticate_api_key

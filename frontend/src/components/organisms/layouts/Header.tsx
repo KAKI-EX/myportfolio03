@@ -1,8 +1,7 @@
-import { Box, Flex, Heading, Image, Link, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Image, Link, useDisclosure } from "@chakra-ui/react";
 import { MenuIconButton } from "components/atoms/MenuIconButton";
 import { MenuDrawer } from "components/molecules/MenuDrawer";
-import { appInfo } from "consts/appconst";
-import { memo, useCallback, useContext, VFC } from "react";
+import { memo, useContext, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "App";
 import { useSignOut } from "hooks/useSignOut";
@@ -11,16 +10,42 @@ export const Header: VFC = memo(() => {
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const onClickHome = useCallback(() => history.push("/"), [history]);
-  const onClickSignIn = useCallback(() => history.push("/user/sign_in"), [history]);
-  const onClickSignUp = useCallback(() => history.push("/user/sign_up"), [history]);
-  const onClickMakeMemo = useCallback(() => history.push("/okaimono/okaimono_memo"), [history]);
-  const onClickMemoIndex = useCallback(() => history.push("/okaimono"), [history]);
-  const onClickShopShow = useCallback(() => history.push("/okaimono/okaimono_shop_index"), [history]);
-  // const onClickMemoUse = useCallback(() => history.push("/okaimono/okaimono_memo_use"), [history]);
-  const onClickAlert = useCallback(() => history.push("/okaimono/okaimono_alert"), [history]);
-  const onClickSearch = useCallback(() => history.push("/okaimono/okaimono_search"), [history]);
-  const onClickMyPage = useCallback(() => history.push("/user/"), [history]);
+  const onClickHome = () => {
+    history.push("/");
+    onClose();
+  };
+  const onClickSignIn = () => {
+    history.push("/user/sign_in");
+    onClose();
+  };
+  const onClickSignUp = () => {
+    history.push("/user/sign_up");
+    onClose();
+  };
+  const onClickMakeMemo = () => {
+    history.push("/okaimono/okaimono_memo");
+    onClose();
+  };
+  const onClickMemoIndex = () => {
+    history.push("/okaimono");
+    onClose();
+  };
+  const onClickShopShow = () => {
+    history.push("/okaimono/okaimono_shop_index");
+    onClose();
+  };
+  const onClickAlert = () => {
+    history.push("/okaimono/okaimono_alert");
+    onClose();
+  };
+  const onClickSearch = () => {
+    history.push("/okaimono/okaimono_search");
+    onClose();
+  };
+  const onClickMyPage = () => {
+    history.push("/user/");
+    onClose();
+  };
 
   const { setLoading, isSignedIn } = useContext(AuthContext);
 
@@ -36,7 +61,11 @@ export const Header: VFC = memo(() => {
       <Flex as="nav" bg="teal.500" color="gray.50" align="center" justify="space-between" padding={{ base: 3, md: 5 }}>
         <Flex align="center" as="a" mr={8} _hover={{ cursor: "pointer" }} onClick={onClickHome}>
           <Box boxSize="60%">
-            <Image boxSize="100%" src="https://okaimono-portfolio.s3.ap-northeast-1.amazonaws.com/material/logo_full.png" alt="logo" />
+            <Image
+              boxSize="100%"
+              src="https://okaimono-portfolio.s3.ap-northeast-1.amazonaws.com/material/logo_full.png"
+              alt="logo"
+            />
           </Box>
         </Flex>
         <Flex align="center" fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }}>

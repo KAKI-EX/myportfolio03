@@ -42,16 +42,17 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :test, only: %i[index]
+      namespace :auth do
+        devise_scope :api_v1_user do
+          post 'sessions/guest_sign_in', to: 'sessions#guest_sign_in'
+        end
+        resources :sessions_check, only: %i[index]
+      end
 
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
         registrations: 'api/v1/auth/registrations',
         sessions: 'api/v1/auth/sessions'
       }
-
-      namespace :auth do
-        resources :sessions_check, only: %i[index]
-      end
     end
   end
 end

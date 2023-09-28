@@ -17,6 +17,19 @@ export const signIn = (params: SignInParams) => {
   });
 };
 
+// ゲストログイン
+export const guestSignIn = () => {
+  return client.post(
+    "auth/sessions/guest_sign_in",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+      },
+    }
+  );
+};
+
 // アカウントアップデート
 export const accountUpdate = (params: SignUpParams) => {
   return client.put(
@@ -33,19 +46,28 @@ export const accountUpdate = (params: SignUpParams) => {
   );
 };
 
+// アカウント削除
+export const accountDestroy = () => {
+  return client.delete("auth", {
+    headers: {
+      Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+      "access-token": Cookies.get("_access_token"),
+      client: Cookies.get("_client"),
+      uid: Cookies.get("_uid"),
+    },
+  });
+};
+
 // アカウント情報の確認
 export const accountConfirmation = () => {
-  return client.get(
-    "auth/validate_token",
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
-        "access-token": Cookies.get("_access_token"),
-        client: Cookies.get("_client"),
-        uid: Cookies.get("_uid"),
-      },
-    }
-  );
+  return client.get("auth/validate_token", {
+    headers: {
+      Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+      "access-token": Cookies.get("_access_token"),
+      client: Cookies.get("_client"),
+      uid: Cookies.get("_uid"),
+    },
+  });
 };
 
 // サインアウト（ログアウト）

@@ -1,21 +1,38 @@
-import { Box, Divider, Flex, Heading, Input, Spinner, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  Flex,
+  Heading,
+  HStack,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { appInfo } from "consts/appconst";
 import { SignUpParams } from "interfaces";
-import Cookies from "js-cookie";
-import { signUp } from "lib/api/auth";
-import React, { memo, useContext, useState, VFC } from "react";
-import { AuthContext } from "App";
-import { useHistory } from "react-router-dom";
-import { useMessage } from "hooks/useToast";
+import React, { memo, useState, VFC } from "react";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { useForm } from "react-hook-form";
+import { useAccountSignUp } from "hooks/useAccountSignUp";
+import { TermsOfService } from "../TermsOfService";
 
 export const SignUp: VFC = memo(() => {
-  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const { showMessage } = useMessage();
+  const [check, setCheck] = useState(false);
+  const signUpAccount = useAccountSignUp(setLoading);
 
   const {
     register,
@@ -27,43 +44,12 @@ export const SignUp: VFC = memo(() => {
   // -------------------------------------------------------------------------------------------
 
   const onSubmit = async (formData: SignUpParams) => {
-    const { name, email, password, passwordConfirmation } = formData;
-    const params: SignUpParams = {
-      name,
-      email,
-      password,
-      passwordConfirmation,
-    };
-
-    try {
-      setLoading(true);
-      const res = await signUp(params);
-      const cookieData = {
-        _access_token: res.headers["access-token"],
-        _client: res.headers.client,
-        _uid: res.headers.uid,
-      };
-      Object.entries(cookieData).map(([key, value]) => Cookies.set(key, value));
-
-      setIsSignedIn(true);
-      setCurrentUser(res?.data.data);
-      history.push("/");
-      const signUpMessage = `${res.data.message} ,ログインしました。`;
-      showMessage({ title: signUpMessage, status: "success" });
-    } catch (err: any) {
-      if (err.response && err.response.data && err.response.data.errors) {
-        showMessage({
-          title: `${err.response.data.errors.fullMessages}`,
-          status: "error",
-        });
-        // eslint-disable-next-line no-console
-        console.error(err.response);
-      } else {
-        showMessage({ title: "アカウントが作成できませんでした。", status: "error" });
-      }
-      setLoading(false);
-    }
+    signUpAccount(formData);
   };
+
+  // const onClickTermOfService = () => history.push("/user/term_of_service");
+  const onClickTermOfService = () => onOpen();
+  const onChangeCheckBox = () => setCheck(!check);
 
   // -------------------------------------------------------------------------------------------
 
@@ -175,10 +161,37 @@ export const SignUp: VFC = memo(() => {
               </>
             )}
             <Box />
-            <PrimaryButtonForReactHookForm loading={loading}>アカウント作成</PrimaryButtonForReactHookForm>
+            <Checkbox size="md" colorScheme="green" onChange={onChangeCheckBox}>
+              <HStack>
+                <Text as="ins" onClick={onClickTermOfService}>
+                  利用規約
+                </Text>
+                <Text>に同意します。</Text>
+              </HStack>
+            </Checkbox>
+            <PrimaryButtonForReactHookForm loading={loading} disabled={!check}>
+              アカウント作成
+            </PrimaryButtonForReactHookForm>
           </Stack>
         </form>
       </Box>
+      <>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <TermsOfService />
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onClose}>
+                閉じる
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
     </Flex>
   );
 });

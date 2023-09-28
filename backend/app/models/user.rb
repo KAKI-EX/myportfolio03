@@ -12,8 +12,13 @@ class User < ActiveRecord::Base
   # validates :password, presence: true, length: { minimum: 6 }, format: { with: VALID_PASSWORD_REGIX, message: "は英字と数字の両方を含めて設定してください" }
   # validates :password, presence: true
 
-
-
+  def self.guest
+    find_or_create_by!(email: 'guest@example.com') do |user|
+      user.password = SecureRandom.urlsafe_base64
+      # user.confirmed_at = Time.now  # Confirmable を使用している場合は必要
+      # 例えば name を入力必須としているならば， user.name = "ゲスト" なども必要
+    end
+  end
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
