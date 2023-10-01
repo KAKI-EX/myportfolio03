@@ -17,6 +17,7 @@ export interface UserInputParams {
   email: string;
   password: string;
   passwordConfirmation: string;
+  nickname: string
 }
 
 // ユーザー

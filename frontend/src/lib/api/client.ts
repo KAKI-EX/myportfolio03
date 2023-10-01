@@ -8,7 +8,7 @@ const options = {
 const client = applyCaseMiddleware(
   axios.create({
     // http://192.168.0.210:3001/api/v1が変更前のbaseURL。production環境に移行するために修正。https://web.okaimonoportfolio.xyz/api/v1, https://api.okaimonoportfolio.xyz.api/v1
-    baseURL: `${process.env.REACT_APP_API_DOMEIN}/api/v1`,
+    baseURL: `${process.env.REACT_APP_API_DOMEIN}/api/v1`
   }),
   options
 );

@@ -32,6 +32,7 @@ import { InputPasswordWithButtonErrors } from "components/atoms/InputPasswordWit
 import { InputPasswordWithoutButton } from "components/atoms/InputPasswordWithoutButton";
 import { InputPasswordConfirmationWithoutButton } from "components/atoms/InputPasswordConfirmationWithoutButton";
 import { InputPasswordConfirmationWithoutButtonErrors } from "components/atoms/InputPasswordConfirmationWithoutButtonErrors";
+import { InputNickName } from "components/atoms/InputNickName";
 import { TermsOfService } from "../TermsOfService";
 
 export const SignUp: VFC = memo(() => {
@@ -77,6 +78,7 @@ export const SignUp: VFC = memo(() => {
           </Text>
           <Stack spacing={3} py={4} px={10}>
             <InputName register={register} />
+            <InputNickName register={register} />
             <InputNameErrors errors={errors} />
             <InputEmailAddress register={register} placeholder="Emailアドレス" />
             <InputEmailAddressErrors errors={errors} />

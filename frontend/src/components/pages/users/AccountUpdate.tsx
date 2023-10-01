@@ -12,6 +12,7 @@ import { InputPasswordWithoutButton } from "components/atoms/InputPasswordWithou
 import { InputPasswordWithButtonErrors } from "components/atoms/InputPasswordWithButtonErrors";
 import { InputPasswordConfirmationWithoutButton } from "components/atoms/InputPasswordConfirmationWithoutButton";
 import { InputPasswordConfirmationWithoutButtonErrors } from "components/atoms/InputPasswordConfirmationWithoutButtonErrors";
+import { InputNickName } from "components/atoms/InputNickName";
 
 export const AccountUpdate: VFC = memo(() => {
   const textFontSize = ["sm", "md", "md", "xl"];
@@ -58,6 +59,7 @@ export const AccountUpdate: VFC = memo(() => {
           </Text>
           <Stack spacing={3} py={4} px={10}>
             <Input placeholder="変更する名前" aria-label="名前" {...register("name")} />
+            <InputNickName register={register} />
             <InputEmailAddress register={register} placeholder="変更するEメールアドレス" />
             <InputEmailAddressErrors errors={errors} />
             <InputPasswordWithoutButton register={register} placeholder="変更するパスワード" />

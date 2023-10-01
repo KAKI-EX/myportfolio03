@@ -1,5 +1,6 @@
 import {
   Button,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -13,8 +14,20 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { memo, VFC } from "react";
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { useGetNickname } from "hooks/useGetNickname";
+import { UserInputParams } from "interfaces";
+import React, { memo, useEffect, useRef, useState, VFC } from "react";
+import { FieldValues, UseFormGetValues, UseFormRegister } from "react-hook-form";
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  LineIcon,
+  LineShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
 
 type Props = {
   isOpenUrl: boolean;
@@ -22,10 +35,31 @@ type Props = {
   openMessage: string | undefined;
   register: UseFormRegister<FieldValues>;
   onClickUrlCopy: () => void;
+  getValues: UseFormGetValues<FieldValues>;
 };
 
 export const OkaimonoCheckOpenUrlModal: VFC<Props> = memo((props) => {
-  const { isOpenUrl, onCloseUrl, openMessage, register, onClickUrlCopy } = props;
+  const { isOpenUrl, onCloseUrl, openMessage, register, onClickUrlCopy, getValues } = props;
+  const [nickname, setNickname] = useState<UserInputParams>();
+  const isMounted = useRef(true);
+  const fNProps = {
+    setNickname,
+    isMounted,
+  };
+  const fetchNickname = useGetNickname(fNProps);
+
+  useEffect(() => {
+    fetchNickname();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const URL = getValues("openMemoUrl");
+  const QUOTE = `${nickname}さんがおつかいをしてほしいそうです！`;
 
   return (
     <Modal isOpen={isOpenUrl} onClose={onCloseUrl}>
@@ -44,6 +78,20 @@ export const OkaimonoCheckOpenUrlModal: VFC<Props> = memo((props) => {
                 </Button>
               </InputRightElement>
             </InputGroup>
+            <HStack>
+              <FacebookShareButton url={URL} quote={QUOTE}>
+                <FacebookIcon size={24} round />
+              </FacebookShareButton>
+              <TwitterShareButton url={URL} title={QUOTE}>
+                <TwitterIcon size={24} round />
+              </TwitterShareButton>
+              <LineShareButton url={URL} title={QUOTE}>
+                <LineIcon size={24} round />
+              </LineShareButton>
+              <WhatsappShareButton url={URL} title={QUOTE}>
+                <WhatsappIcon size={24} round />
+              </WhatsappShareButton>
+            </HStack>
           </VStack>
         </ModalBody>
         <ModalFooter>

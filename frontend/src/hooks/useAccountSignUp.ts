@@ -1,4 +1,4 @@
-import { SignUpParams } from "interfaces";
+import { UserInputParams } from "interfaces";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
 import React, { useContext } from "react";
@@ -12,13 +12,14 @@ export const useAccountSignUp = (setLoading: React.Dispatch<React.SetStateAction
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
   const history = useHistory();
 
-  const signUpAccount = async (formData: SignUpParams) => {
-    const { name, email, password, passwordConfirmation } = formData;
-    const params: SignUpParams = {
+  const signUpAccount = async (formData: UserInputParams) => {
+    const { name, email, password, passwordConfirmation, nickname } = formData;
+    const params: UserInputParams = {
       name,
       email,
       password,
       passwordConfirmation,
+      nickname
     };
 
     try {

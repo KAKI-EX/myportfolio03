@@ -7,13 +7,13 @@ type Props = {
   register: UseFormRegister<UserInputParams>
 };
 
-export const InputName: VFC<Props> = memo((props) => {
+export const InputNickName: VFC<Props> = memo((props) => {
   const { register } = props;
   return (
     <Input
-      placeholder="名前"
-      aria-label="名前"
-      {...register("name", {
+      placeholder="ニックネーム"
+      aria-label="ニックネーム"
+      {...register("nickname", {
         required: {
           value: true,
           message: "入力が必須の項目です。",

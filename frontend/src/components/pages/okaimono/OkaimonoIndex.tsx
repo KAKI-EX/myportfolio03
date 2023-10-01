@@ -130,6 +130,7 @@ export const OkaimonoIndex: VFC = memo(() => {
           onClickDelete={onClickDelete}
         />
         <OkaimonoCheckOpenUrlModal
+          getValues={getValues}
           isOpenUrl={isOpenUrl}
           onCloseUrl={onCloseUrl}
           openMessage={openMessage}

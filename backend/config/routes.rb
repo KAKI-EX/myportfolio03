@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       namespace :auth do
         devise_scope :api_v1_user do
           post 'sessions/guest_sign_in', to: 'sessions#guest_sign_in'
+          get 'sessions/user_nickname', to: 'sessions#user_name_show'
         end
         resources :sessions_check, only: %i[index]
       end

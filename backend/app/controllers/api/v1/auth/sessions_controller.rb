@@ -9,6 +9,10 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
     }
   end
 
+  def user_name_show
+    render json: {nickname: current_api_v1_user.nickname}
+  end
+
   def guest_sign_in
     @resource = User.guest
     sign_in(@resource)

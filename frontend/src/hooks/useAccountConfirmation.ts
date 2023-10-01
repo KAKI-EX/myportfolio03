@@ -1,4 +1,4 @@
-import { SignUpParams } from "interfaces";
+import { UserInputParams } from "interfaces";
 import { useMessage } from "hooks/useToast";
 import { AxiosError } from "axios";
 import React from "react";
@@ -6,7 +6,7 @@ import { accountConfirmation } from "lib/api/auth";
 import { UseFormSetValue } from "react-hook-form";
 
 type Props = {
-  setValue: UseFormSetValue<SignUpParams>;
+  setValue: UseFormSetValue<UserInputParams>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -18,6 +18,7 @@ export const useAccountConfirmation = (props: Props) => {
       setLoading(true);
       const acRes = await accountConfirmation();
       setValue("name", acRes.data.data.name);
+      setValue("nickname", acRes.data.data.nickname);
       setValue("email", acRes.data.data.email);
       setLoading(false);
     } catch (err) {

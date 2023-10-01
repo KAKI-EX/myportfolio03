@@ -77,9 +77,9 @@ export const OkaimonoIndexTapPanelConfimed: VFC<Props> = memo((props) => {
                     Actions
                   </MenuButton>
                   <MenuList borderRadius="md" shadow="md">
-                    <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem>
+                    {/* <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem> */}
                     <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                    <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>公開用URLを確認する</MenuItem>
+                    <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>おつかい（シェア）</MenuItem>
                     <MenuItem
                       onClick={() => {
                         setDeletePost(i);
