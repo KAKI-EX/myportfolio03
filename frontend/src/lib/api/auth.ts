@@ -82,6 +82,18 @@ export const signOut = () => {
   });
 };
 
+// ニックネームの取得
+export const getNickname = async () => {
+  const nicknameRes = await client.get("auth/sessions/user_nickname", {
+    headers: {
+      Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+    },
+  });
+  return {
+    data: nicknameRes.data.nickname,
+  };
+};
+
 // 認証済みのユーザーを取得
 // もしcookieの中に_access_token、_client、_uidがなかったらreturnで処理を抜け
 // 存在する場合はそれぞれの値を持つ。
