@@ -53,6 +53,7 @@ export interface ListFormParams {
   isDelete?: boolean;
   memosCount?: number;
   totalBudget?: number;
+  shoppingMemo?: string;
 }
 
 export interface alertParams{

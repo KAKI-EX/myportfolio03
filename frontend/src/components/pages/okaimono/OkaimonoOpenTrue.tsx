@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -32,6 +33,8 @@ import { OkaimonoMemoUseList } from "components/molecules/OkaimonoMemoUseList";
 import { OkaimonoMemoUseCalculate } from "components/molecules/OkaimonoMemoUseCalculate";
 import { OkaimonoMemoUseListModal } from "components/molecules/OkaimonoMemoUseListModal";
 import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMemoModal";
+import { PrimaryButton } from "components/atoms/PrimaryButton";
+import { useMessage } from "hooks/useToast";
 
 export const OkaimonoOpenTrue: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
@@ -41,6 +44,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
+  const { showMessage } = useMessage();
   const updateMemoOpenData = useUpdateUseOpenMemoData();
   const updateListData = useUpdateUseSingleListOpenData();
   const getShoppingMemoList = useGetUseMemoListOpenData();
@@ -48,7 +52,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
 
   const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
-  const { isOpen: isConfirmOpen, onClose: closeConfirm } = useDisclosure();
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: closeConfirm } = useDisclosure();
 
   const defaultShoppingDate = new Date();
   const history = useHistory();
@@ -249,6 +253,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const updateMemoListData = useUpdateUseMemoListOpenData(props);
 
   const onAllSubmit = (originFormData: MergeParams) => {
+    if (calculateCheckbox === 0) {
     const formData = { ...originFormData, totalBudget };
     const updateMemoListProps = {
       formData,
@@ -261,10 +266,17 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     };
 
     updateMemoListData(updateMemoListProps);
+  } else {
+    showMessage({ title: "買い忘れ商品があります。チェックボックスにチェックを入れてください。", status: "warning" });
+  }
   };
   // ----------------------------------------------------------------------------------------------------------
 
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
+
+  const onClickEndButton = () => {
+    onConfirmOpen();
+  };
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -302,6 +314,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
               calculateCheckbox={calculateCheckbox}
               onClickBack={onClickBack}
               userId={userId}
+              onClickButton={onClickEndButton}
             />
             <Box h="15rem" />
           </VStack>
@@ -339,15 +352,15 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
         <ModalOverlay />
         <ModalContent maxW="95vw">
           <ModalHeader>お買い物を終了しますか？</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>終了を選択すると作成者以外はページ再表示はできません</ModalBody>
+          <ModalCloseButton _focus={{ outline: "none" }} />
+          <ModalBody>終了を選択すると作成者以外はページを再表示することはできません。</ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={closeConfirm}>
-              まだお買い物を続ける
-            </Button>
-            <Button variant="ghost" onClick={onClickFinish}>
-              お買い物を終了する
-            </Button>
+            <HStack>
+              <PrimaryButton onClick={closeConfirm}>買い物を続ける</PrimaryButton>
+              <Button bg="red.400" color="white" onClick={onClickFinish}>
+                買い物を終了
+              </Button>
+            </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>

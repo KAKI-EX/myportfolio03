@@ -24,6 +24,7 @@ export const InputPurchaseName: VFC<Props> = memo((props) => {
   const { readOnly, customOnChange, inputRef, rest } = props;
   return (
     <Input
+      _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
       isReadOnly={readOnly}
       bg={readOnly ? "blackAlpha.200" : "white"}
       autoFocus={false}

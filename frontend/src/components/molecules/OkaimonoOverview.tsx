@@ -82,9 +82,10 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
   };
 
   return (
-    <Box bg="white" rounded="xl">
+    <Box bg="white" rounded="xl" w={{ base: "100%", md: "70%", xl: "60%" }}>
       <Stack align="center" justify="center" py={6} spacing="3">
         <Input
+          _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
           isReadOnly={readOnly}
           bg={readOnly ? "blackAlpha.200" : "white"}
           size="md"
@@ -95,6 +96,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
         />
         <Box w="90%">
           <Input
+            _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
             onChange={customOnChange}
             isReadOnly={readOnly}
             bg={readOnly ? "blackAlpha.200" : "white"}
@@ -131,8 +133,9 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
         {errors.shopName && errors.shopName.types?.maxLength && (
           <Box color="red">{errors.shopName.types.maxLength}</Box>
         )}
-        <InputGroup w="90%">
+        <InputGroup w="90%" _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}>
           <Input
+            _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
             isReadOnly={readOnly}
             bg={readOnly ? "blackAlpha.200" : "white"}
             size="md"
@@ -154,6 +157,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           <Box color="red">{errors.estimatedBudget.types.pattern}</Box>
         )}
         <Input
+          _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
           isReadOnly={readOnly}
           bg={readOnly ? "blackAlpha.200" : "white"}
           placeholder={!readOnly ? "一言メモ" : ""}

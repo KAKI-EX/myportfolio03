@@ -77,7 +77,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
   const separeteFunction = useSeparateFunctionPurchaseName();
 
   return (
-    <Box>
+    <Box w={{ base: "100%", md: "70%", xl: "60%" }}>
       <TitleHeading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
         お買物リスト
       </TitleHeading>
@@ -94,10 +94,13 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
         return (
           <HStack key={field.key} px={2} py={3} w="100%" bg="white" rounded="xl" mb="2">
             <VStack spacing={1} w="5%">
-              <Box display={fields.length < 20 || readOnly ? "block" : "none"}>
+              <Box
+                display={fields.length < 20 || readOnly ? "block" : "none"}
+                _hover={readOnly ? undefined : { cursor: "pointer" }}
+              >
                 <AddIconButton readOnly={readOnly} insertInputForm={insertInputForm} index={index} />
               </Box>
-              <Box display={fields.length > 1 ? "block" : "none"}>
+              <Box display={fields.length > 1 ? "block" : "none"} _hover={readOnly ? undefined : { cursor: "pointer" }}>
                 <CloseIconButton
                   readOnly={readOnly}
                   getValues={getValues}
@@ -107,7 +110,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                 />
               </Box>
             </VStack>
-            <VStack>
+            <VStack w="100%" pt={2} pr={3}>
               <HStack w="100%">
                 <Box w="70%">
                   <InputPurchaseName readOnly={readOnly} customOnChange={customOnChange} inputRef={ref} rest={rest} />
@@ -145,7 +148,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   <InputShoppingDetailMemo readOnly={readOnly} register={register} index={index} />
                 </Box>
                 <Box w="30%">
-                  <InputGroup>
+                  <InputGroup _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}>
                     <InputPrice
                       readOnly={readOnly}
                       register={register}

@@ -26,7 +26,7 @@ export const OkaimonoIndexTapPanelConfimed: VFC<Props> = memo((props) => {
       <TableThread />
       {readyShoppingMemo?.map((i: OkaimonoMemoData) => {
         return (
-          <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
+          <Tbody key={i.id} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
             <Tr>
               <Td
                 borderTop="1px"
@@ -73,7 +73,9 @@ export const OkaimonoIndexTapPanelConfimed: VFC<Props> = memo((props) => {
               </Td>
               <Td px="0" borderTop="1px" borderColor="gray.300" textAlign="center" display={{ base: "table-cell" }}>
                 <Menu>
-                  <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
+                  <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }}>
+                    Actions
+                  </MenuButton>
                   <MenuList borderRadius="md" shadow="md">
                     <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem>
                     <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>

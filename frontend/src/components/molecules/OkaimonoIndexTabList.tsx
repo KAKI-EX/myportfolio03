@@ -17,13 +17,24 @@ export const OkaimonoIndexTabList: VFC<Props> = memo((props) => {
         _focus={{ outline: "none" }}
         fontSize={{ base: "sm", md: "md" }}
         isDisabled={readyShoppingMemo?.length === 0}
+        _hover={{ fontWeight: "bold" }}
       >
         買い物予定
       </Tab>
-      <Tab _focus={{ outline: "none" }} fontSize={{ base: "sm", md: "md" }} isDisabled={inCompleteMemo?.length === 0}>
+      <Tab
+        _focus={{ outline: "none" }}
+        fontSize={{ base: "sm", md: "md" }}
+        isDisabled={inCompleteMemo?.length === 0}
+        _hover={{ fontWeight: "bold" }}
+      >
         一時保存中
       </Tab>
-      <Tab _focus={{ outline: "none" }} fontSize={{ base: "sm", md: "md" }} isDisabled={finishedMemo?.length === 0}>
+      <Tab
+        _focus={{ outline: "none" }}
+        fontSize={{ base: "sm", md: "md" }}
+        isDisabled={finishedMemo?.length === 0}
+        _hover={{ fontWeight: "bold" }}
+      >
         完了
       </Tab>
     </TabList>

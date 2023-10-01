@@ -71,9 +71,9 @@ export const OkaimonoMemoUseMemo: VFC<Props> = memo((props) => {
         </Stack>
         <Box w="5%">
           <Menu>
-            <MenuButton as={ChevronDownIcon} />
+            <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }} />
             <MenuList borderRadius="md" shadow="md">
-              <MenuItem onClick={(event) => onClickShoppingDatumModify(event)}>確認&編集</MenuItem>
+              <MenuItem onClick={(event) => onClickShoppingDatumModify(event)}>編集する</MenuItem>
             </MenuList>
           </Menu>
         </Box>

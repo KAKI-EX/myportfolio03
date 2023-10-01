@@ -30,7 +30,7 @@ export const OkaimonoCheckOpenUrlModal: VFC<Props> = memo((props) => {
   return (
     <Modal isOpen={isOpenUrl} onClose={onCloseUrl}>
       <ModalOverlay />
-      <ModalContent maxW="95vw">
+      <ModalContent maxW="95vw" w={{ base: "100%", md: "60%", xl: "50%" }}>
         <ModalHeader>公開用URL</ModalHeader>
         <ModalCloseButton data-testid="modalCloseButton" />
         <ModalBody>

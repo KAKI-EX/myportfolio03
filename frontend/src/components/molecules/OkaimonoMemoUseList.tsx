@@ -111,6 +111,7 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                 <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isBought`)} />
                 <Box w="50%">
                   <Input
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
                     onChange={(event) => customOnChange(event)}
                     border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
                     placeholder="商品名"
@@ -151,8 +152,9 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                     </Box>
                   )}
                 </Box>
-                <InputGroup w="20%">
+                <InputGroup w="20%" _hover={{ fontWeight: "bold", cursor: "pointer" }}>
                   <Input
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
                     textAlign="center"
                     px={1}
                     border={getValues(`listForm.${index}.id`) ? "none" : "1px solid black"}
@@ -174,8 +176,9 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                     個
                   </InputRightElement>
                 </InputGroup>
-                <InputGroup w="30%">
+                <InputGroup w="30%" _hover={{ fontWeight: "bold", cursor: "pointer" }}>
                   <Input
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
                     type="number"
                     fontSize={{ base: "sm", md: "md" }}
                     {...register(`listForm.${index}.price`, {
@@ -194,7 +197,7 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                 <Input type="hidden" {...register(`listForm.${index}.id`)} />
                 <Input type="hidden" {...register(`listForm.${index}.asc`)} />
                 <Menu>
-                  <MenuButton as={ChevronDownIcon} />
+                  <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }} />
                   <MenuList borderRadius="md" shadow="md" zIndex="dropdown">
                     {getValues(`listForm.${index}.id`) ? (
                       <MenuItem onClick={(event) => onClickListModify(index, event)}>編集する</MenuItem>

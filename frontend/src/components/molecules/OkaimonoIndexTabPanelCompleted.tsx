@@ -22,7 +22,7 @@ export const OkaimonoIndexTabPanelCompleted: VFC<Props> = memo((props) => {
       <TableThread />
       {finishedMemo?.map((i: OkaimonoMemoData) => {
         return (
-          <Tbody key={i.id} _hover={{ fontWeight: "bold" }}>
+          <Tbody key={i.id} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
             <Tr>
               <Td
                 borderTop="1px"

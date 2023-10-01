@@ -21,7 +21,21 @@ export const OkaimonoAlertList: VFC<Props> = memo((props) => {
   return (
     <>
       {alertLists?.map((alert, index) => (
-        <HStack w="100%" bg="white" py={4} px={2} rounded={10} boxShadow="md" key={alert.id}>
+        <HStack
+          w="100%"
+          bg="white"
+          py={4}
+          px={2}
+          rounded={10}
+          boxShadow="md"
+          key={alert.id}
+          border="2px"
+          borderColor={
+            (alert.differentDay !== undefined && alert.differentDay > 0 && "red.500") ||
+            (alert.differentDay !== undefined && alert.differentDay > -3 && "yellow.500") ||
+            "green.500"
+          }
+        >
           {clickAlertDelete ? (
             <Checkbox size="lg" colorScheme="green" ml={1} {...register(`listForm.${index}.isDelete`)} />
           ) : null}
@@ -56,6 +70,11 @@ export const OkaimonoAlertList: VFC<Props> = memo((props) => {
             textOverflow="ellipsis"
             whiteSpace="nowrap"
             onClick={(event) => onClickAlertListBody(alert.id, event)}
+            color={
+              (alert.differentDay !== undefined && alert.differentDay > 0 && "red.500") ||
+              (alert.differentDay !== undefined && alert.differentDay > -3 && "yellow.500") ||
+              "green.500"
+            }
           >
             {alert.purchaseName}
           </Text>
@@ -66,6 +85,11 @@ export const OkaimonoAlertList: VFC<Props> = memo((props) => {
             textOverflow="ellipsis"
             whiteSpace="nowrap"
             onClick={(event) => onClickAlertListBody(alert.id, event)}
+            color={
+              (alert.differentDay !== undefined && alert.differentDay > 0 && "red.500") ||
+              (alert.differentDay !== undefined && alert.differentDay > -3 && "yellow.500") ||
+              "green.500"
+            }
           >
             <Icon as={BsCartCheck} w={5} h={5} mb={-1} mr={1} />
             {dateConversion(alert.shoppingDate)}

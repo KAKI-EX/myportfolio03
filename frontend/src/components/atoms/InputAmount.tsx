@@ -14,6 +14,7 @@ export const InputAmount: VFC<Props> = memo((props) => {
   const { readOnly, register, index, validationNumber } = props;
   return (
     <Input
+      _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
       data-testid="inputAmount"
       isReadOnly={readOnly}
       placeholder={readOnly ? "" : "個数"}

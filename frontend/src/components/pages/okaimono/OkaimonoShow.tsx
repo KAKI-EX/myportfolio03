@@ -3,24 +3,13 @@ import {
   Box,
   Divider,
   Flex,
-  Stack,
   VStack,
   Spinner,
   Heading,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Button,
   useDisclosure,
 } from "@chakra-ui/react";
-import { DeleteButton } from "components/atoms/DeleteButton";
-import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
-import React, { memo, useCallback, useEffect, useState, VFC, useRef } from "react";
+import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -29,10 +18,11 @@ import { OkaimonoOverview } from "components/molecules/OkaimonoOverview";
 import { OkaimonoDetail } from "components/organisms/OkaimonoDetail";
 import { useHistory, useParams } from "react-router-dom";
 import { useSetOkaimonoShowIndex } from "hooks/useSetOkaimonoShowIndex";
-import { OptionallyButton } from "components/atoms/OptionallyButton";
 import { useShowUpdateList } from "hooks/useShowUpdateList";
 import { useSuggestListCreate } from "hooks/useSuggestListCreate";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
+import { OkaimonoButtonAndCalculater } from "components/molecules/OkaimonoButtonAndCalculater";
+import { OkaimonoConfirmExpiryDateModal } from "components/molecules/OkaimonoConfirmExpiryDateModal";
 
 export const OkaimonoShow: VFC = memo(() => {
   const getSuggestionsPurchaseName = useSuggestListCreate();
@@ -46,7 +36,6 @@ export const OkaimonoShow: VFC = memo(() => {
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
   const [pushTemporarilyButton, setPushTemporarilyButton] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const initialRef = useRef(null);
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -239,91 +228,49 @@ export const OkaimonoShow: VFC = memo(() => {
           <Heading as="h3" size="sm" textAlign="center" pt={1} pb={3}>
             お買い物情報
           </Heading>
-          <Box>
-            <OkaimonoOverview
-              register={register}
-              validationNumber={validationNumber}
-              errors={errors}
-              readOnly={readOnly}
-              onShopChange={onShopChange}
-              shopNameSuggestions={shopNameSuggestions}
-              setValue={setValue}
-              setShopNameSuggestions={setShopNameSuggestions}
-            />
-            <Divider my={4} />
-            <OkaimonoDetail
-              fields={fields}
-              insertInputForm={insertInputForm}
-              SmallCloseIcon={SmallCloseIcon}
-              remove={remove}
-              register={register}
-              errors={errors}
-              validationNumber={validationNumber}
-              readOnly={readOnly}
-              getValues={getValues}
-              deleteIds={deleteIds}
-              setDeleteIds={setDeleteIds}
-              watch={watch}
-              expiryDate={expiryDate}
-              onListChange={onListChange}
-              purchaseNameSuggestions={purchaseNameSuggestions}
-              setValue={setValue}
-              setPurchaseNameSuggestions={setPurchaseNameSuggestions}
-              purchaseNameIndex={purchaseNameIndex}
-            />
-          </Box>
-          <VStack
-            position="fixed"
-            bg="rgba(49,151,149,1)"
-            align="center"
-            justify="center"
-            w="90%"
-            bottom="1.5%"
-            rounded="xl"
-            zIndex="10"
-            opacity="0.85"
-          >
-            <Box mt={4}>
-              <Box as="p" color="white">
-                現在の合計(税別): {totalBudget}円
-              </Box>
-
-              <Box as="p" color={Number(shoppingBudgetField || "") < totalBudget ? "red.500" : "white"}>
-                お買い物予算残り: {Number(shoppingBudgetField || "") - totalBudget}円
-              </Box>
-            </Box>
-            <Stack w="80%" py="3%">
-              <PrimaryButtonForReactHookForm disabled={!isValid}>
-                {readOnly ? "編集する" : "確定する"}
-              </PrimaryButtonForReactHookForm>
-              {!isFinished && (
-                <>
-                  <OptionallyButton onClick={onClickTemporarilySaved} disabled={readOnly}>
-                    一時保存
-                  </OptionallyButton>
-                </>
-              )}
-              <DeleteButton onClick={onClickBack}>一覧に戻る</DeleteButton>
-            </Stack>
-          </VStack>
+          <OkaimonoOverview
+            register={register}
+            validationNumber={validationNumber}
+            errors={errors}
+            readOnly={readOnly}
+            onShopChange={onShopChange}
+            shopNameSuggestions={shopNameSuggestions}
+            setValue={setValue}
+            setShopNameSuggestions={setShopNameSuggestions}
+          />
+          <Divider my={4} />
+          <OkaimonoDetail
+            fields={fields}
+            insertInputForm={insertInputForm}
+            SmallCloseIcon={SmallCloseIcon}
+            remove={remove}
+            register={register}
+            errors={errors}
+            validationNumber={validationNumber}
+            readOnly={readOnly}
+            getValues={getValues}
+            deleteIds={deleteIds}
+            setDeleteIds={setDeleteIds}
+            watch={watch}
+            expiryDate={expiryDate}
+            onListChange={onListChange}
+            purchaseNameSuggestions={purchaseNameSuggestions}
+            setValue={setValue}
+            setPurchaseNameSuggestions={setPurchaseNameSuggestions}
+            purchaseNameIndex={purchaseNameIndex}
+          />
+          <OkaimonoButtonAndCalculater
+            totalBudget={totalBudget}
+            shoppingBudgetField={shoppingBudgetField}
+            isValid={isValid}
+            readOnly={readOnly}
+            isFinished={isFinished}
+            onClickTemporarilySaved={onClickTemporarilySaved}
+            onClickBack={onClickBack}
+          />
           <Box h="12.5rem" />
         </VStack>
-        <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent maxW="95vw">
-            <ModalHeader>いま消費期限を入力しますか？</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>お買い物をする時にも入力できますよ！</ModalBody>
-            <ModalFooter>
-              <Button ref={initialRef} colorScheme="blue" mr={3} onClick={onClose}>
-                今はしない
-              </Button>
-              <Button variant="ghost" onClick={onClickInputNow}>
-                今入力したい
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <OkaimonoConfirmExpiryDateModal isOpen={isOpen} onClose={onClose} onClickInputNow={onClickInputNow} />
       </Flex>
     </form>
   );

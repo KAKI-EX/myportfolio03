@@ -100,11 +100,12 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
         <ModalCloseButton _focus={{ boxShadow: "none" }} />
         <ModalBody>
           <VStack w="100%">
-            <Box bg="white" p={3} rounded="md">
+            <Box bg="white" p={3} rounded="md" w={{ base: "100%", md: "60%", xl: "50%" }}>
               <VStack>
-                <HStack>
+                <HStack w="100%">
                   <Box w="70%">
                     <Input
+                      _hover={{ fontWeight: "bold", cursor: "pointer" }}
                       onChange={customOnChange}
                       isReadOnly={readOnly}
                       bg={readOnly ? "blackAlpha.200" : "white"}
@@ -138,8 +139,9 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                       </Box>
                     )}
                   </Box>
-                  <InputGroup w="30%">
+                  <InputGroup w="30%" _hover={{ fontWeight: "bold", cursor: "pointer" }}>
                     <Input
+                      _hover={{ fontWeight: "bold", cursor: "pointer" }}
                       isReadOnly={readOnly}
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       placeholder="個数"
@@ -168,6 +170,7 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                   </Box>
                 )}
                 <Input
+                  _hover={{ fontWeight: "bold", cursor: "pointer" }}
                   isReadOnly={readOnly}
                   bg={readOnly ? "blackAlpha.200" : "white"}
                   placeholder="メモ"
@@ -187,6 +190,7 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                       消費期限
                     </FormLabel>
                     <Input
+                      _hover={{ fontWeight: "bold", cursor: "pointer" }}
                       isReadOnly={readOnly}
                       bg={readOnly ? "blackAlpha.200" : "white"}
                       type="date"

@@ -20,6 +20,7 @@ export const InputExpiryDateEnd: VFC<Props> = memo((props) => {
         消費期限
       </FormLabel>
       <Input
+        _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
         isReadOnly={readOnly}
         type="date"
         bg={readOnly ? "blackAlpha.200" : "white"}

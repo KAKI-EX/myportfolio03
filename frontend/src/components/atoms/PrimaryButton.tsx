@@ -5,7 +5,7 @@ type Props = {
   children: ReactNode;
   disabled?: boolean;
   loading?: boolean;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   w?: string;
   fontSize?: string | number | (string | number)[];
 };

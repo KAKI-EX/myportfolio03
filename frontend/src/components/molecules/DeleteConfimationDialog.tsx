@@ -12,7 +12,7 @@ import React, { memo, VFC } from "react";
 import { useDateConversion } from "hooks/useDateConversion";
 
 type Props = {
-  onCloseAlert: () => void
+  onCloseAlert: () => void;
   isAlertOpen: boolean;
   cancelRef: React.MutableRefObject<null>;
   deletePost: OkaimonoMemoData | undefined;
@@ -27,7 +27,7 @@ export const DeleteConfimationDialog: VFC<Props> = memo((props) => {
   return (
     <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onCloseAlert}>
       <AlertDialogOverlay>
-        <AlertDialogContent maxW="95vw">
+        <AlertDialogContent maxW="95vw" w={{ base: "100%", md: "60%", xl: "50%" }}>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             {dateConversion(deletePost?.shoppingDate)} のメモを削除しますか？
           </AlertDialogHeader>

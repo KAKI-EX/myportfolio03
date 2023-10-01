@@ -122,7 +122,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
         </Heading>
         <Divider my={4} />
         <VStack w="100%" borderRadius="md">
-          <Table variant="simple" w="100%" bg="white" rounded={10} boxShadow="md">
+          <Table variant="simple" w={{ base: "100%", md: "60%" }} bg="white" rounded={10} boxShadow="md">
             <Thead>
               <Tr>
                 <Th
@@ -225,6 +225,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
                       display={{ base: "none", md: "table-cell" }}
                     >
                       <Icon
+                        _hover={{ cursor: "pointer" }}
                         as={DeleteIcon}
                         bg="white"
                         boxSize={4}
@@ -235,6 +236,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
                         }}
                       />
                       <Icon
+                        _hover={{ cursor: "pointer" }}
                         as={EditIcon}
                         bg="white"
                         boxSize={4}
@@ -251,7 +253,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
               <ModalOverlay />
-              <ModalContent bg="gray.100" maxW="95vw">
+              <ModalContent bg="gray.100" maxW="95vw" w={{ base: "100%", md: "60%" }}>
                 <ModalHeader>お店の情報</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
@@ -285,7 +287,7 @@ export const OkaimonoShopShow: VFC = memo(() => {
           </form>
           <AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={onDeleteDialogClose}>
             <AlertDialogOverlay>
-              <AlertDialogContent maxW="95vw">
+              <AlertDialogContent maxW="95vw" w={{ base: "100%", md: "60%" }}>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   お店の情報を削除しますか？
                 </AlertDialogHeader>

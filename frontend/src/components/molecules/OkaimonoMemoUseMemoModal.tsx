@@ -98,95 +98,101 @@ export const OkaimonoMemoUseMemoModal: VFC<Props> = memo((props) => {
         <ModalHeader>選択したお買い物メモ情報</ModalHeader>
         <ModalCloseButton _focus={{ boxShadow: "none" }} />
         <ModalBody>
-          <Box bg="white" rounded="xl">
-            <Stack align="center" justify="center" py={6} spacing="3">
-              <Input
-                isReadOnly={readOnly}
-                bg={readOnly ? "blackAlpha.200" : "white"}
-                size="md"
-                type="date"
-                w="90%"
-                fontSize={{ base: "sm", md: "md" }}
-                {...shoppingDatumRegister("modifyShoppingDate")}
-              />
-              <Box w="90%">
+          <VStack>
+            <Box bg="white" p={3} rounded="md" w={{ base: "100%", md: "60%" }}>
+              <Stack align="center" justify="center" py={6} spacing="3">
                 <Input
-                  onChange={customOnChange}
+                  _hover={{ fontWeight: "bold", cursor: "pointer" }}
                   isReadOnly={readOnly}
                   bg={readOnly ? "blackAlpha.200" : "white"}
-                  placeholder={!readOnly ? "お店の名前" : ""}
                   size="md"
-                  w="100%"
+                  type="date"
+                  w="90%"
                   fontSize={{ base: "sm", md: "md" }}
-                  ref={ref}
-                  {...rest}
+                  {...shoppingDatumRegister("modifyShoppingDate")}
                 />
-                {shopNameSuggestions && shopNameSuggestions?.length > 0 && (
-                  <Box w="100%" position="relative" zIndex="dropdown">
-                    <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
-                      {shopNameSuggestions.map((value) => (
-                        <Box key={value.id} w="100%">
-                          <Divider w="100%" />
-                          <Text
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                            fontSize={{ base: "sm", md: "md" }}
-                            w="100%"
-                            onClick={(event) => onClickSuggests(event, value.shopName)}
-                            _hover={{ fontWeight: "bold" }}
-                          >
-                            {value.shopName}
-                          </Text>
-                        </Box>
-                      ))}
-                    </VStack>
-                  </Box>
+                <Box w="90%">
+                  <Input
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
+                    onChange={customOnChange}
+                    isReadOnly={readOnly}
+                    bg={readOnly ? "blackAlpha.200" : "white"}
+                    placeholder={!readOnly ? "お店の名前" : ""}
+                    size="md"
+                    w="100%"
+                    fontSize={{ base: "sm", md: "md" }}
+                    ref={ref}
+                    {...rest}
+                  />
+                  {shopNameSuggestions && shopNameSuggestions?.length > 0 && (
+                    <Box w="100%" position="relative" zIndex="dropdown">
+                      <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
+                        {shopNameSuggestions.map((value) => (
+                          <Box key={value.id} w="100%">
+                            <Divider w="100%" />
+                            <Text
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                              whiteSpace="nowrap"
+                              fontSize={{ base: "sm", md: "md" }}
+                              w="100%"
+                              onClick={(event) => onClickSuggests(event, value.shopName)}
+                              _hover={{ fontWeight: "bold" }}
+                            >
+                              {value.shopName}
+                            </Text>
+                          </Box>
+                        ))}
+                      </VStack>
+                    </Box>
+                  )}
+                </Box>
+                {shoppingDatumErrors.modifyShopName && shoppingDatumErrors.modifyShopName.types?.maxLength && (
+                  <Box color="red">{shoppingDatumErrors.modifyShopName.types.maxLength}</Box>
                 )}
-              </Box>
-              {shoppingDatumErrors.modifyShopName && shoppingDatumErrors.modifyShopName.types?.maxLength && (
-                <Box color="red">{shoppingDatumErrors.modifyShopName.types.maxLength}</Box>
-              )}
-              <InputGroup w="90%">
+                <InputGroup w="90%">
+                  <Input
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
+                    isReadOnly={readOnly}
+                    bg={readOnly ? "blackAlpha.200" : "white"}
+                    size="md"
+                    placeholder={!readOnly ? "お買い物の予算" : ""}
+                    type="number"
+                    fontSize={{ base: "sm", md: "md" }}
+                    {...shoppingDatumRegister("modifyEstimatedBudget", {
+                      pattern: {
+                        value: validationNumber,
+                        message: "半角整数で入力してください。",
+                      },
+                    })}
+                  />
+                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
+                    円
+                  </InputRightElement>
+                </InputGroup>
+                {shoppingDatumErrors.modifyEstimatedBudget &&
+                  shoppingDatumErrors.modifyEstimatedBudget.types?.pattern && (
+                    <Box color="red">{shoppingDatumErrors.modifyEstimatedBudget.types.pattern}</Box>
+                  )}
                 <Input
+                  _hover={{ fontWeight: "bold", cursor: "pointer" }}
                   isReadOnly={readOnly}
                   bg={readOnly ? "blackAlpha.200" : "white"}
+                  placeholder={!readOnly ? "一言メモ" : ""}
                   size="md"
-                  placeholder={!readOnly ? "お買い物の予算" : ""}
-                  type="number"
+                  w="90%"
                   fontSize={{ base: "sm", md: "md" }}
-                  {...shoppingDatumRegister("modifyEstimatedBudget", {
-                    pattern: {
-                      value: validationNumber,
-                      message: "半角整数で入力してください。",
-                    },
+                  {...shoppingDatumRegister("modifyShoppingMemo", {
+                    maxLength: { value: 150, message: "最大文字数は150文字です。" },
                   })}
                 />
-                <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                  円
-                </InputRightElement>
-              </InputGroup>
-              {shoppingDatumErrors.modifyEstimatedBudget &&
-                shoppingDatumErrors.modifyEstimatedBudget.types?.pattern && (
-                  <Box color="red">{shoppingDatumErrors.modifyEstimatedBudget.types.pattern}</Box>
+                {shoppingDatumErrors.modifyShoppingMemo && shoppingDatumErrors.modifyShoppingMemo.types?.maxLength && (
+                  <Box color="red">{shoppingDatumErrors.modifyShoppingMemo.types.maxLength}</Box>
                 )}
-              <Input
-                isReadOnly={readOnly}
-                bg={readOnly ? "blackAlpha.200" : "white"}
-                placeholder={!readOnly ? "一言メモ" : ""}
-                size="md"
-                w="90%"
-                fontSize={{ base: "sm", md: "md" }}
-                {...shoppingDatumRegister("modifyShoppingMemo", {
-                  maxLength: { value: 150, message: "最大文字数は150文字です。" },
-                })}
-              />
-              {shoppingDatumErrors.modifyShoppingMemo && shoppingDatumErrors.modifyShoppingMemo.types?.maxLength && (
-                <Box color="red">{shoppingDatumErrors.modifyShoppingMemo.types.maxLength}</Box>
-              )}
-              <Input type="hidden" {...shoppingDatumRegister(`modyfyShoppingDatumId`)} />
-            </Stack>
-          </Box>
+                <Input type="hidden" {...shoppingDatumRegister(`modyfyShoppingDatumId`)} />
+              </Stack>
+            </Box>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <HStack>

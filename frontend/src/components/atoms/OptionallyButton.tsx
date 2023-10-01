@@ -6,17 +6,14 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  w?: string;
 };
 
 export const OptionallyButton: VFC<Props> = memo((props) => {
-  const {
-    children,
-    disabled = false,
-    loading = false,
-    onClick,
-  } = props;
+  const { children, disabled = false, loading = false, onClick, w } = props;
   return (
     <Button
+      w={w}
       bg="blue.400"
       color="white"
       _hover={{ opacity: 0.8 }}
