@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Image, Link, StackDivider, useDisclosure, VStack } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, Link, useDisclosure, VStack } from "@chakra-ui/react";
 import { MenuIconButton } from "components/atoms/MenuIconButton";
 import { MenuDrawer } from "components/molecules/MenuDrawer";
 import { memo, useContext, VFC } from "react";
@@ -75,7 +75,7 @@ export const Header: VFC = memo(() => {
               アカウントの作成
             </Link>
           </Box>
-          <HStack divider={<StackDivider borderColor="gray.200" />} spacing={4}>
+          <HStack spacing={4}>
             <VStack>
               <Box pr={4} display={isSignedIn ? "block" : "none"}>
                 <Link fontSize={textFontSize} onClick={onClickMakeMemo}>
