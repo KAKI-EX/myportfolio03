@@ -42,6 +42,7 @@ export const UserManagement: VFC = memo(() => {
       </Heading>
       <Center pt={10} onClick={onClickUserUpdate}>
         <Text
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
           bg="blue.50"
           w="70%"
           textAlign="center"
@@ -51,21 +52,6 @@ export const UserManagement: VFC = memo(() => {
           fontSize={textFontSize}
         >
           アカウント情報の編集する
-        </Text>
-      </Center>
-      <Center>
-        <Text
-          bg="red.50"
-          w="70%"
-          textAlign="center"
-          px={10}
-          borderTop="1px"
-          borderColor="gray.400"
-          py={4}
-          fontSize={textFontSize}
-          onClick={onOpen}
-        >
-          アカウント情報を削除する
         </Text>
       </Center>
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
@@ -90,6 +76,7 @@ export const UserManagement: VFC = memo(() => {
       </AlertDialog>
       <Center onClick={onClickTermOfService}>
         <Text
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
           bg="blue.50"
           w="70%"
           textAlign="center"
@@ -100,6 +87,22 @@ export const UserManagement: VFC = memo(() => {
           fontSize={textFontSize}
         >
           利用規約
+        </Text>
+      </Center>
+      <Center>
+        <Text
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
+          bg="red.50"
+          w="70%"
+          textAlign="center"
+          px={10}
+          borderTop="1px"
+          borderColor="gray.400"
+          py={4}
+          fontSize={textFontSize}
+          onClick={onOpen}
+        >
+          アカウント情報を削除する
         </Text>
       </Center>
       {/* <Center>
