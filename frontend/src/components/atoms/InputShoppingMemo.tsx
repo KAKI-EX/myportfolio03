@@ -4,23 +4,24 @@ import { memo, VFC } from "react";
 import { UseFormRegister } from "react-hook-form";
 
 type Props = {
-  readOnly: boolean;
-  register: UseFormRegister<MergeParams>;
-  index: number;
+  readOnly?: boolean;
+  register: UseFormRegister<MergeParams>
+  w?: string;
 };
 
-export const InputShoppingDetailMemo: VFC<Props> = memo((props) => {
-  const { readOnly, register, index } = props;
+export const InputShoppingMemo: VFC<Props> = memo((props) => {
+  const { readOnly = false, register, w } = props;
   return (
     <Input
       _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
       isReadOnly={readOnly}
       bg={readOnly ? "blackAlpha.200" : "white"}
-      placeholder="メモ入力欄"
-      // placeholder={!readOnly ? "メモ" : ""}
-      fontSize={{ base: "sm", md: "md" }}
+      // placeholder={!readOnly ? "一言メモ" : ""}
+      placeholder="買い物メモ"
       size="md"
-      {...register(`listForm.${index}.shoppingDetailMemo`, {
+      w={w}
+      fontSize={{ base: "sm", md: "md" }}
+      {...register("shoppingMemo", {
         maxLength: { value: 150, message: "最大文字数は150文字です。" },
       })}
     />

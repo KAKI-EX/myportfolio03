@@ -1,83 +1,102 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
-  HStack,
   Input,
-  InputGroup,
-  InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Stack,
 } from "@chakra-ui/react";
-import { MergeParams } from "interfaces";
+import { InputEstimatedBudget } from "components/atoms/InputEstimatedBudget";
+import { InputEstimatedBudgetErrors } from "components/atoms/InputEstimatedBudgetErrors";
+import { InputShopName } from "components/atoms/InputshopName";
+import { InputShopNameErrors } from "components/atoms/InputShopNameErrors";
+import { InputShopNameSuggest } from "components/atoms/InputShopNameSuggest";
+import { InputShoppingDate } from "components/atoms/InputShoppingDate";
+import { InputShoppingMemo } from "components/atoms/InputShoppingMemo";
+import { InputShoppingMemoErrors } from "components/atoms/InputShoppingMemoErrors";
+import { MergeParams, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, VFC } from "react";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 type Props = {
   readOnly: boolean;
   register: UseFormRegister<MergeParams>;
   errors: FieldErrors<MergeParams>;
   // eslint-disable-next-line no-unused-vars
-  onClickShoppingDatumModify: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  // onClickShoppingDatumModify: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  setShopNameSuggestions: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
+  // eslint-disable-next-line no-unused-vars
+  onShopChange: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
+  shopNameSuggestions?: OkaimonoShopsIndexData[];
+  setValue?: UseFormSetValue<MergeParams>;
+  validationNumber: RegExp;
 };
 
 export const OkaimonoMemoUseMemo: VFC<Props> = memo((props) => {
-  const { readOnly, register, errors, onClickShoppingDatumModify } = props;
+  const {
+    register,
+    errors,
+    // onClickShoppingDatumModify,
+    setShopNameSuggestions,
+    onShopChange,
+    shopNameSuggestions,
+    setValue,
+    validationNumber,
+  } = props;
+
+  const {
+    ref,
+    onChange: registerOnChange,
+    ...rest
+  } = register("shopName", {
+    maxLength: { value: 35, message: "最大文字数は35文字までです。" },
+  });
+
+  const customOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // React Hook Form の onChange ハンドラを実行
+    if (registerOnChange) {
+      registerOnChange(event);
+    }
+
+    // 入力が空の場合、候補リストをクリアする
+    if (setShopNameSuggestions && event.target.value === "") {
+      setShopNameSuggestions([]);
+    }
+
+    // 親コンポーネントから渡された onChange ハンドラを実行
+    if (onShopChange) {
+      onShopChange(event, event.target.value);
+    }
+  };
+
+  const onClickSuggests = (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>, shopName: string) => {
+    event.preventDefault();
+    if (setValue && setShopNameSuggestions && shopName) {
+      setValue("shopName", shopName);
+      setShopNameSuggestions([]);
+    }
+  };
   return (
     <Box bg="white" rounded="xl" w={{ base: "100%", md: "50%" }} boxShadow="md">
-      <HStack>
-        <Stack align="center" justify="center" py={6} spacing="3" w="95%" ml={5}>
-          <Input
-            isReadOnly={readOnly}
-            bg={readOnly ? "blackAlpha.200" : "white"}
-            size="md"
-            type="date"
-            w="100%"
-            fontSize={{ base: "sm", md: "md" }}
-            {...register("shoppingDate")}
-          />
-          <Input
-            isReadOnly={readOnly}
-            bg={readOnly ? "blackAlpha.200" : "white"}
-            placeholder={readOnly ? "お店の名前" : ""}
-            size="md"
-            w="100%"
-            fontSize={{ base: "sm", md: "md" }}
-            {...register("shopName", {
-              maxLength: { value: 35, message: "最大文字数は35文字までです。" },
-            })}
-          />
-          {errors.shopName && errors.shopName.types?.maxLength && (
-            <Box color="red">{errors.shopName.types.maxLength}</Box>
-          )}
-          <InputGroup w="100%">
-            <Input
-              isReadOnly={readOnly}
-              bg={readOnly ? "blackAlpha.200" : "white"}
-              size="md"
-              placeholder={!readOnly ? "お買い物の予算" : ""}
-              type="number"
-              fontSize={{ base: "sm", md: "md" }}
-              {...register("estimatedBudget")}
-            />
-            <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-              円
-            </InputRightElement>
-          </InputGroup>
-          <Input type="hidden" {...register(`shoppingDatumId`)} />
-          <Input type="hidden" {...register(`isFinish`)} />
-        </Stack>
-        <Box w="5%">
+      {/* <HStack> */}
+      <Stack align="center" justify="center" py={6} spacing="3">
+        <InputShoppingDate register={register} w="90%" />
+        <InputShopName customOnChange={customOnChange} w="90%" ref={ref} rest={rest} />
+        <InputShopNameSuggest shopNameSuggestions={shopNameSuggestions} onClickSuggests={onClickSuggests} w="90%" />
+        <InputShopNameErrors errors={errors} />
+        <InputEstimatedBudget register={register} w="90%" validationNumber={validationNumber} />
+        <InputEstimatedBudgetErrors errors={errors} />
+        <InputShoppingMemo register={register} w="90%" />
+        <InputShoppingMemoErrors errors={errors} />
+        <Input type="hidden" {...register(`shoppingDatumId`)} />
+        <Input type="hidden" {...register(`isFinish`)} />
+      </Stack>
+      {/* <Box w="5%">
           <Menu>
             <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }} />
             <MenuList borderRadius="md" shadow="md">
               <MenuItem onClick={(event) => onClickShoppingDatumModify(event)}>編集する</MenuItem>
             </MenuList>
           </Menu>
-        </Box>
-      </HStack>
+        </Box> */}
+      {/* </HStack> */}
     </Box>
   );
 });

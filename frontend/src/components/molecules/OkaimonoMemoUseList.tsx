@@ -172,7 +172,7 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                       }
                     }}
                   />
-                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
+                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "xs", md: "md" }}>
                     個
                   </InputRightElement>
                 </InputGroup>
@@ -185,7 +185,7 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                       pattern: { value: validationNumber, message: "半角整数で入力してください。" },
                     })}
                   />
-                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
+                  <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "xs", md: "md" }}>
                     円
                   </InputRightElement>
                 </InputGroup>

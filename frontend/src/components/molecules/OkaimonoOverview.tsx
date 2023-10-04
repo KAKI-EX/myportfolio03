@@ -1,13 +1,10 @@
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Divider,
   FormControl,
   FormLabel,
   HStack,
   Input,
-  InputGroup,
-  InputRightElement,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -17,9 +14,14 @@ import {
   PopoverTrigger,
   Stack,
   Switch,
-  Text,
-  VStack,
 } from "@chakra-ui/react";
+import { InputEstimatedBudget } from "components/atoms/InputEstimatedBudget";
+import { InputEstimatedBudgetErrors } from "components/atoms/InputEstimatedBudgetErrors";
+import { InputShopName } from "components/atoms/InputshopName";
+import { InputShopNameErrors } from "components/atoms/InputShopNameErrors";
+import { InputShopNameSuggest } from "components/atoms/InputShopNameSuggest";
+import { InputShoppingDate } from "components/atoms/InputShoppingDate";
+import { InputShoppingMemo } from "components/atoms/InputShoppingMemo";
 import { MergeParams, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, VFC } from "react";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
@@ -84,90 +86,15 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
   return (
     <Box bg="white" rounded="xl" w={{ base: "100%", md: "70%", xl: "60%" }}>
       <Stack align="center" justify="center" py={6} spacing="3">
-        <Input
-          _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
-          isReadOnly={readOnly}
-          bg={readOnly ? "blackAlpha.200" : "white"}
-          size="md"
-          type="date"
-          w="90%"
-          fontSize={{ base: "sm", md: "md" }}
-          {...register("shoppingDate")}
-        />
+        <InputShoppingDate readOnly={readOnly} register={register} w="90%" />
         <Box w="90%">
-          <Input
-            _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
-            onChange={customOnChange}
-            isReadOnly={readOnly}
-            bg={readOnly ? "blackAlpha.200" : "white"}
-            placeholder={!readOnly ? "お店の名前" : ""}
-            size="md"
-            w="100%"
-            fontSize={{ base: "sm", md: "md" }}
-            ref={ref}
-            {...rest}
-          />
-          {shopNameSuggestions && shopNameSuggestions?.length > 0 && (
-            <Box w="100%" position="relative" zIndex="dropdown">
-              <VStack w="100%" position="absolute" bg="white" boxShadow="lg" align="start" px={5}>
-                {shopNameSuggestions.map((value) => (
-                  <Box key={value.id} w="100%">
-                    <Divider w="100%" />
-                    <Text
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                      fontSize={{ base: "sm", md: "md" }}
-                      w="100%"
-                      onClick={(event) => onClickSuggests(event, value.shopName)}
-                      _hover={{ fontWeight: "bold" }}
-                    >
-                      {value.shopName}
-                    </Text>
-                  </Box>
-                ))}
-              </VStack>
-            </Box>
-          )}
+          <InputShopName readOnly={readOnly} customOnChange={customOnChange} w="100%" ref={ref} rest={rest} />
+          <InputShopNameSuggest shopNameSuggestions={shopNameSuggestions} onClickSuggests={onClickSuggests} w="100%" />
         </Box>
-        {errors.shopName && errors.shopName.types?.maxLength && (
-          <Box color="red">{errors.shopName.types.maxLength}</Box>
-        )}
-        <InputGroup w="90%" _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}>
-          <Input
-            _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
-            isReadOnly={readOnly}
-            bg={readOnly ? "blackAlpha.200" : "white"}
-            size="md"
-            placeholder={!readOnly ? "お買い物の予算" : ""}
-            type="number"
-            fontSize={{ base: "sm", md: "md" }}
-            {...register("estimatedBudget", {
-              pattern: {
-                value: validationNumber,
-                message: "半角整数で入力してください。",
-              },
-            })}
-          />
-          <InputRightElement pointerEvents="none" color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-            円
-          </InputRightElement>
-        </InputGroup>
-        {errors.estimatedBudget && errors.estimatedBudget.types?.pattern && (
-          <Box color="red">{errors.estimatedBudget.types.pattern}</Box>
-        )}
-        <Input
-          _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
-          isReadOnly={readOnly}
-          bg={readOnly ? "blackAlpha.200" : "white"}
-          placeholder={!readOnly ? "一言メモ" : ""}
-          size="md"
-          w="90%"
-          fontSize={{ base: "sm", md: "md" }}
-          {...register("shoppingMemo", {
-            maxLength: { value: 150, message: "最大文字数は150文字です。" },
-          })}
-        />
+        <InputShopNameErrors errors={errors} />
+        <InputEstimatedBudget readOnly={readOnly} register={register} w="90%" validationNumber={validationNumber} />
+        <InputEstimatedBudgetErrors errors={errors} />
+        <InputShoppingMemo readOnly={readOnly} register={register} w="90%" />
         {errors.shoppingMemo && errors.shoppingMemo.types?.maxLength && (
           <Box color="red">{errors.shoppingMemo.types.maxLength}</Box>
         )}

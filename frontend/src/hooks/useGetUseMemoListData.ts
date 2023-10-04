@@ -3,10 +3,10 @@ import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
 import {
   MergeParams,
-  OkaimonoMemoDataShow,
+  // OkaimonoMemoDataShow,
   OkaimonoMemosData,
   OkaimonoMemosDataResponse,
-  OkaimonoShopModifingData,
+  // OkaimonoShopModifingData,
 } from "interfaces";
 import { memosShow, shoppingDatumShow, shopShow } from "lib/api/show";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";
@@ -14,9 +14,9 @@ import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-ho
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   shoppingDatumId: string;
-  setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoDataShow | undefined>>;
+  // setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoDataShow | undefined>>;
   setValue: UseFormSetValue<MergeParams>;
-  setShopDataValues: React.Dispatch<React.SetStateAction<OkaimonoShopModifingData | undefined>>;
+  // setShopDataValues: React.Dispatch<React.SetStateAction<OkaimonoShopModifingData | undefined>>;
   setListValues: React.Dispatch<React.SetStateAction<OkaimonoMemosData[] | undefined>>;
   append: UseFieldArrayAppend<MergeParams, "listForm">;
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
@@ -30,9 +30,9 @@ export const useGetUseMemoListData = () => {
       setLoading,
       fields,
       shoppingDatumId,
-      setShoppingDatumValues,
+      // setShoppingDatumValues,
       setValue,
-      setShopDataValues,
+      // setShopDataValues,
       setListValues,
       append,
     } = props;
@@ -45,17 +45,18 @@ export const useGetUseMemoListData = () => {
       try {
         const shoppingDatumRes = await shoppingDatumShow(memosProps);
         if (shoppingDatumRes?.status === 200) {
-          setShoppingDatumValues(shoppingDatumRes.data);
+          // setShoppingDatumValues(shoppingDatumRes.data);
           setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
           setValue("shoppingDatumId", shoppingDatumId);
           setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
+          setValue("shoppingMemo", shoppingDatumRes.data.shoppingMemo);
           setValue("isFinish", true);
           const shopProps = {
             shopId: shoppingDatumRes.data.shopId,
           };
           const shopRes = await shopShow(shopProps);
           if (shopRes && shopRes.status === 200) {
-            setShopDataValues(shopRes.data);
+            // setShopDataValues(shopRes.data);
             setValue("shopName", shopRes.data.shopName);
             const listProps = {
               shoppingDatumId,

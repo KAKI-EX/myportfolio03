@@ -1,13 +1,12 @@
 import { Box } from "@chakra-ui/react";
 import { UserInputParams } from "interfaces";
-import { memo, VFC } from "react";
 import { FieldErrors } from "react-hook-form";
 
 type Props = {
   errors: FieldErrors<UserInputParams>;
 };
 
-export const InputPasswordConfirmationWithoutButtonErrors: VFC<Props> = memo((props) => {
+export function InputPasswordConfirmationWithoutButtonErrors(props: Props) {
   const { errors } = props;
   return (
     <>
@@ -23,4 +22,4 @@ export const InputPasswordConfirmationWithoutButtonErrors: VFC<Props> = memo((pr
       )}
     </>
   );
-});
+}

@@ -1,13 +1,12 @@
 import { Box } from "@chakra-ui/react";
 import { SignInParams } from "interfaces";
-import { memo, VFC } from "react";
 import { FieldErrors } from "react-hook-form";
 
 type Props = {
   errors: FieldErrors<SignInParams>;
 };
 
-export const InputEmailAddressErrors: VFC<Props> = memo((props) => {
+export function InputEmailAddressErrors(props: Props) {
   const { errors } = props;
   return (
     <>
@@ -19,4 +18,4 @@ export const InputEmailAddressErrors: VFC<Props> = memo((props) => {
       )}
     </>
   );
-});
+}

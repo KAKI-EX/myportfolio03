@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Image, Link, useDisclosure, VStack } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, Link, useDisclosure } from "@chakra-ui/react";
 import { MenuIconButton } from "components/atoms/MenuIconButton";
 import { MenuDrawer } from "components/molecules/MenuDrawer";
 import { memo, useContext, VFC } from "react";
@@ -61,7 +61,11 @@ export const Header: VFC = memo(() => {
   return (
     <>
       <Flex as="nav" bg="teal.500" color="gray.50" align="center" justify="space-between" padding={{ base: 3, md: 5 }}>
-        <Box boxSize={{ base: "35%", sm: "35%", md: "18%", xl: "13%" }} _hover={{ cursor: "pointer" }} onClick={onClickHome}>
+        <Box
+          boxSize={{ base: "35%", sm: "35%", md: "18%", xl: "13%" }}
+          _hover={{ cursor: "pointer" }}
+          onClick={onClickHome}
+        >
           <Image src="https://okaimono-portfolio.s3.ap-northeast-1.amazonaws.com/material/logo_full.png" alt="logo" />
         </Box>
         <Flex fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }} justifyContent="center">
@@ -76,42 +80,42 @@ export const Header: VFC = memo(() => {
             </Link>
           </Box>
           <HStack spacing={4}>
-            <VStack>
-              <Box pr={4} display={isSignedIn ? "block" : "none"}>
-                <Link fontSize={textFontSize} onClick={onClickMakeMemo}>
-                  メモの作成
-                </Link>
-              </Box>
-              <Box pr={4} display={isSignedIn ? "block" : "none"}>
-                <Link fontSize={textFontSize} onClick={onClickMemoIndex}>
-                  メモ一覧
-                </Link>
-              </Box>
-            </VStack>
-            <VStack>
-              <Box pr={4} display={isSignedIn ? "block" : "none"}>
-                <Link fontSize={textFontSize} onClick={onClickAlert}>
-                  アラート
-                </Link>
-              </Box>
-              <Box pr={4} display={isSignedIn ? "block" : "none"}>
-                <Link fontSize={textFontSize} onClick={onClickSearch}>
-                  サーチ
-                </Link>
-              </Box>
-            </VStack>
-            <VStack>
-              <Box pr={4} display={isSignedIn ? "block" : "none"}>
-                <Link fontSize={textFontSize} onClick={onClickShopShow}>
-                  お店情報の確認と編集
-                </Link>
-              </Box>
-              <Box pr={4} display={isSignedIn ? "block" : "none"}>
-                <Link fontSize={textFontSize} onClick={onClickMyPage}>
-                  マイページ
-                </Link>
-              </Box>
-            </VStack>
+            {/* <VStack> */}
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <Link fontSize={textFontSize} onClick={onClickMakeMemo}>
+                メモの作成
+              </Link>
+            </Box>
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <Link fontSize={textFontSize} onClick={onClickMemoIndex}>
+                メモ一覧
+              </Link>
+            </Box>
+            {/* </VStack> */}
+            {/* <VStack> */}
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <Link fontSize={textFontSize} onClick={onClickAlert}>
+                アラート
+              </Link>
+            </Box>
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <Link fontSize={textFontSize} onClick={onClickSearch}>
+                サーチ
+              </Link>
+            </Box>
+            {/* </VStack> */}
+            {/* <VStack> */}
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <Link fontSize={textFontSize} onClick={onClickShopShow}>
+                お店情報の確認と編集
+              </Link>
+            </Box>
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <Link fontSize={textFontSize} onClick={onClickMyPage}>
+                マイページ
+              </Link>
+            </Box>
+            {/* </VStack> */}
             <Box pr={4} display={isSignedIn ? "block" : "none"}>
               <Link fontSize={textFontSize} onClick={onClickSignOut}>
                 サインアウト

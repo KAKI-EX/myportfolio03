@@ -3,16 +3,16 @@ import { format } from "date-fns";
 import {
   ListFormParams,
   MergeParams,
-  OkaimonoMemoDataShow,
+  // OkaimonoMemoDataShow,
   OkaimonoMemosData,
-  OkaimonoShopModifingData,
+  // OkaimonoShopModifingData,
   OkaimonoShopsIndexData,
 } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
 import { useHistory, useParams } from "react-router-dom";
-import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
+// import { useUpdateUseMemoData } from "hooks/useUpdateUseMemoData";
 import { useUpdateUseSingleListData } from "hooks/useUpdateUseSingleListData";
 import { useGetUseMemoListData } from "hooks/useGetUseMemoListData";
 import { useGetUseSingleListData } from "hooks/useGetUseSingleListData";
@@ -20,7 +20,7 @@ import { useUpdateUseMemoListData } from "hooks/useUpdateUseMemoListData";
 import { OkaimonoMemoUseMemo } from "components/molecules/OkaimonoMemoUseMemo";
 import { OkaimonoMemoUseList } from "components/molecules/OkaimonoMemoUseList";
 import { OkaimonoMemoUseCalculate } from "components/molecules/OkaimonoMemoUseCalculate";
-import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMemoModal";
+// import { OkaimonoMemoUseMemoModal } from "components/molecules/OkaimonoMemoUseMemoModal";
 import { OkaimonoMemoUseListModal } from "components/molecules/OkaimonoMemoUseListModal";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 import { useSuggestListCreate } from "hooks/useSuggestListCreate";
@@ -30,19 +30,19 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
   const [listValues, setListValues] = useState<OkaimonoMemosData[]>();
-  const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
-  const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
+  // const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
+  // const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
   const { showMessage } = useMessage();
-  const updateShoppingData = useUpdateUseMemoData();
+  // const updateShoppingData = useUpdateUseMemoData();
   const updateListData = useUpdateUseSingleListData();
   const getShoppingMemoList = useGetUseMemoListData();
   const getSingleListData = useGetUseSingleListData();
   const getSuggestionsShopName = useSuggestShopCreate();
   const getSuggestionsPurchaseName = useSuggestListCreate();
 
-  const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
+  // const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
 
   const defaultShoppingDate = new Date();
@@ -75,15 +75,15 @@ export const OkaimonoMemoUse: VFC = memo(() => {
 
   // ----------------------------------------------------------------------------------------------------------
   // shoppingDatum-編集用のuseForm呼び出し
-  const {
-    setValue: shoppingDatumSetValue,
-    register: shoppingDatumRegister,
-    handleSubmit: shoppiingDatumModifyHandleSubmit,
-    formState: { errors: shoppingDatumErrors },
-  } = useForm<MergeParams>({
-    criteriaMode: "all",
-    mode: "all",
-  });
+  // const {
+  //   setValue: shoppingDatumSetValue,
+  //   register: shoppingDatumRegister,
+  //   handleSubmit: shoppiingDatumModifyHandleSubmit,
+  //   formState: { errors: shoppingDatumErrors },
+  // } = useForm<MergeParams>({
+  //   criteriaMode: "all",
+  //   mode: "all",
+  // });
   // ----------------------------------------------------------------------------------------------------------
   // list-編集用のuseForm呼び出し
   const {
@@ -121,26 +121,26 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   );
   // ----------------------------------------------------------------------------------------------------------
   // shoppingDatumの更新部分。
-  const shoppingDatumSubmit = useCallback(
-    (formData: MergeParams) => {
-      const updateProps = {
-        setReadOnly,
-        readOnly,
-        setLoading,
-        shoppingDatumFormData: formData,
-        setValue,
-        setShoppingDatumValues,
-        setShopDataValues,
-      };
-      updateShoppingData(updateProps);
-    },
-    [setReadOnly, readOnly, setLoading]
-  );
+  // const shoppingDatumSubmit = useCallback(
+  //   (formData: MergeParams) => {
+  //     const updateProps = {
+  //       setReadOnly,
+  //       readOnly,
+  //       setLoading,
+  //       shoppingDatumFormData: formData,
+  //       setValue,
+  //       setShoppingDatumValues,
+  //       setShopDataValues,
+  //     };
+  //     updateShoppingData(updateProps);
+  //   },
+  //   [setReadOnly, readOnly, setLoading]
+  // );
 
-  const onCloseShoppingDatum = () => {
-    setReadOnly(true);
-    closeShoppingDatum();
-  };
+  // const onCloseShoppingDatum = () => {
+  //   setReadOnly(true);
+  //   closeShoppingDatum();
+  // };
   // ----------------------------------------------------------------------------------------------------------
   // リスト情報の単一修正論理式。(右の下矢印から編集を選び、編集する際に呼び出される論理式。)
   const onOneSubmit = async (oneListFormData: MergeParams) => {
@@ -181,9 +181,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
       setLoading,
       fields,
       shoppingDatumId,
-      setShoppingDatumValues,
+      // setShoppingDatumValues,
       setValue,
-      setShopDataValues,
+      // setShopDataValues,
       setListValues,
       append,
     };
@@ -206,18 +206,18 @@ export const OkaimonoMemoUse: VFC = memo(() => {
     getSingleListData(listDataProps);
   };
 
-  const onClickShoppingDatumModify = (event: React.MouseEvent) => {
-    event.preventDefault();
+  // const onClickShoppingDatumModify = (event: React.MouseEvent) => {
+  //   event.preventDefault();
 
-    if (shoppingDatumValues && shopDataValue) {
-      shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
-      shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
-      shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);
-      shoppingDatumSetValue("modyfyShoppingDatumId", shoppingDatumValues.id);
-      shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
-      onShoppingDatumOpen();
-    }
-  };
+  //   if (shoppingDatumValues && shopDataValue) {
+  //     shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
+  //     shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
+  //     shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);
+  //     shoppingDatumSetValue("modyfyShoppingDatumId", shoppingDatumValues.id);
+  //     shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
+  //     onShoppingDatumOpen();
+  //   }
+  // };
 
   const watchCheckbox = fields.map((field, index) => ({
     checked: watch(`listForm.${index}.isBought`),
@@ -313,7 +313,12 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               readOnly={readOnly}
               register={register}
               errors={errors}
-              onClickShoppingDatumModify={onClickShoppingDatumModify}
+              // onClickShoppingDatumModify={onClickShoppingDatumModify}
+              setShopNameSuggestions={setShopNameSuggestions}
+              onShopChange={onShopChange}
+              shopNameSuggestions={shopNameSuggestions}
+              setValue={setValue}
+              validationNumber={validationNumber}
             />
             <OkaimonoMemoUseList
               fields={fields}
@@ -342,7 +347,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         </Flex>
       </form>
 
-      <form onSubmit={shoppiingDatumModifyHandleSubmit(shoppingDatumSubmit)}>
+      {/* <form onSubmit={shoppiingDatumModifyHandleSubmit(shoppingDatumSubmit)}>
         <OkaimonoMemoUseMemoModal
           isShoppingDatumOpen={isShoppingDatumOpen}
           closeShoppingDatum={closeShoppingDatum}
@@ -358,7 +363,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
           shoppingDatumSetValue={shoppingDatumSetValue}
           setShopNameSuggestions={setShopNameSuggestions}
         />
-      </form>
+      </form> */}
 
       <form onSubmit={oneListModifyHandleSubmit(onOneSubmit)}>
         <OkaimonoMemoUseListModal
