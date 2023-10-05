@@ -50,7 +50,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
-  const validationNumber = /^[0-9]+$/;
+  // const validationNumber = /^[0-9]+$/;
 
   const { shoppingDatumId } = useParams<{ shoppingDatumId: string }>();
 
@@ -146,6 +146,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   const onOneSubmit = async (oneListFormData: MergeParams) => {
     const listProps = { setReadOnly, readOnly, setLoading, oneListFormData, setValue };
     updateListData(listProps);
+    closeList();
   };
 
   const onCloseList = () => {
@@ -318,13 +319,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
               onShopChange={onShopChange}
               shopNameSuggestions={shopNameSuggestions}
               setValue={setValue}
-              validationNumber={validationNumber}
+              // validationNumber={validationNumber}
             />
             <OkaimonoMemoUseList
               fields={fields}
               register={register}
               getValues={getValues}
-              validationNumber={validationNumber}
+              // validationNumber={validationNumber}
               onClickListModify={onClickListModify}
               setDeleteIds={setDeleteIds}
               remove={remove}
@@ -369,9 +370,9 @@ export const OkaimonoMemoUse: VFC = memo(() => {
         <OkaimonoMemoUseListModal
           isListOpen={isListOpen}
           onCloseList={onCloseList}
-          readOnly={readOnly}
+          // readOnly={readOnly}
           listRegister={listRegister}
-          validationNumber={validationNumber}
+          // validationNumber={validationNumber}
           listErrors={listErrors}
           startDate={startDate}
           oneListModifyHandleSubmit={oneListModifyHandleSubmit}

@@ -18,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
-import { MergeParams, OkaimonoMemosData, OkaimonoShopModifingData, OkaimonoMemoData } from "interfaces";
+import { MergeParams, OkaimonoMemosData } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ja } from "date-fns/locale";
@@ -40,8 +40,8 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
   const [listValues, setListValues] = useState<OkaimonoMemosData[]>();
-  const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoData>();
-  const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
+  // const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoData>();
+  // const [shopDataValue, setShopDataValues] = useState<OkaimonoShopModifingData>();
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
   const { showMessage } = useMessage();
@@ -50,7 +50,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   const getShoppingMemoList = useGetUseMemoListOpenData();
   const getSingleListData = useGetUseSingleListOpenData();
 
-  const { isOpen: isShoppingDatumOpen, onOpen: onShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
+  const { isOpen: isShoppingDatumOpen, onClose: closeShoppingDatum } = useDisclosure();
   const { isOpen: isListOpen, onOpen: onListOpen, onClose: closeList } = useDisclosure();
   const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: closeConfirm } = useDisclosure();
 
@@ -85,7 +85,6 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // shoppingDatum-編集用のuseForm呼び出し
   const {
-    setValue: shoppingDatumSetValue,
     register: shoppingDatumRegister,
     handleSubmit: shoppiingDatumModifyHandleSubmit,
     formState: { errors: shoppingDatumErrors },
@@ -138,7 +137,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
       shoppingDatumFormData,
       setValue,
       userId,
-      setShoppingDatumValues,
+      // setShoppingDatumValues,
     };
     updateMemoOpenData(updateMemoProps);
   };
@@ -187,9 +186,9 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
       setLoading,
       fields,
       shoppingDatumId,
-      setShoppingDatumValues,
+      // setShoppingDatumValues,
       setValue,
-      setShopDataValues,
+      // setShopDataValues,
       setListValues,
       append,
       userId,
@@ -219,20 +218,20 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
     getSingleListData(singleListProps);
   };
 
-  const onClickShoppingDatumModify = (event: React.MouseEvent) => {
-    event.preventDefault();
+  // const onClickShoppingDatumModify = (event: React.MouseEvent) => {
+  //   event.preventDefault();
 
-    if (shoppingDatumValues) {
-      shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
-      shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
-      shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);
-      shoppingDatumSetValue("modyfyShoppingDatumId", shoppingDatumValues.id);
-      if (shopDataValue) {
-        shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
-        onShoppingDatumOpen();
-      }
-    }
-  };
+  //   if (shoppingDatumValues) {
+  //     shoppingDatumSetValue("modifyShoppingDate", shoppingDatumValues.shoppingDate);
+  //     shoppingDatumSetValue("modifyEstimatedBudget", shoppingDatumValues.estimatedBudget);
+  //     shoppingDatumSetValue("modifyShoppingMemo", shoppingDatumValues.shoppingMemo);
+  //     shoppingDatumSetValue("modyfyShoppingDatumId", shoppingDatumValues.id);
+  //     if (shopDataValue) {
+  //       shoppingDatumSetValue("modifyShopName", shopDataValue.shopName);
+  //       onShoppingDatumOpen();
+  //     }
+  //   }
+  // };
 
   const watchCheckbox = fields.map((field, index) => ({
     checked: watch(`listForm.${index}.isBought`),
@@ -254,21 +253,21 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
 
   const onAllSubmit = (originFormData: MergeParams) => {
     if (calculateCheckbox === 0) {
-    const formData = { ...originFormData, totalBudget };
-    const updateMemoListProps = {
-      formData,
-      deleteIds,
-      setDeleteIds,
-      fields,
-      append,
-      setValue,
-      userId,
-    };
+      const formData = { ...originFormData, totalBudget };
+      const updateMemoListProps = {
+        formData,
+        deleteIds,
+        setDeleteIds,
+        fields,
+        append,
+        setValue,
+        userId,
+      };
 
-    updateMemoListData(updateMemoListProps);
-  } else {
-    showMessage({ title: "買い忘れ商品があります。チェックボックスにチェックを入れてください。", status: "warning" });
-  }
+      updateMemoListData(updateMemoListProps);
+    } else {
+      showMessage({ title: "買い忘れ商品があります。チェックボックスにチェックを入れてください。", status: "warning" });
+    }
   };
   // ----------------------------------------------------------------------------------------------------------
 
@@ -295,13 +294,13 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
               readOnly={readOnly}
               register={register}
               errors={errors}
-              onClickShoppingDatumModify={onClickShoppingDatumModify}
+              // onClickShoppingDatumModify={onClickShoppingDatumModify}
             />
             <OkaimonoMemoUseList
               fields={fields}
               register={register}
               getValues={getValues}
-              validationNumber={validationNumber}
+              // validationNumber={validationNumber}
               onClickListModify={onClickListModify}
               setDeleteIds={setDeleteIds}
               remove={remove}
@@ -339,9 +338,9 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
         <OkaimonoMemoUseListModal
           isListOpen={isListOpen}
           onCloseList={onCloseList}
-          readOnly={readOnly}
+          // readOnly={readOnly}
           listRegister={listRegister}
-          validationNumber={validationNumber}
+          // validationNumber={validationNumber}
           listErrors={listErrors}
           startDate={startDate}
           oneListModifyHandleSubmit={oneListModifyHandleSubmit}

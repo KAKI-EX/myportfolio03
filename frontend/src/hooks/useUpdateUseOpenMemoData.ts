@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
-import { MergeParams, OkaimonoMemoData, OkaimonoMemoDataShowResponse, OkaimonoShopDataResponse } from "interfaces";
+import { MergeParams, OkaimonoMemoDataShowResponse, OkaimonoShopDataResponse } from "interfaces";
 import { shopCreateOpenTrue } from "lib/api/post";
 import { shoppingDatumUpdateOpenTrue } from "lib/api/update";
 import { UseFormSetValue } from "react-hook-form";
@@ -15,7 +15,7 @@ type Props = {
   shoppingDatumFormData: MergeParams;
   setValue: UseFormSetValue<MergeParams>;
   userId: string;
-  setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoData | undefined>>;
+  // setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoData | undefined>>;
 };
 
 export const useUpdateUseOpenMemoData = () => {
@@ -23,7 +23,7 @@ export const useUpdateUseOpenMemoData = () => {
 
   const updateMemoOpenData = useCallback(
     async (props: Props) => {
-      const { setReadOnly, readOnly, setLoading, shoppingDatumFormData, setValue, userId, setShoppingDatumValues } =
+      const { setReadOnly, readOnly, setLoading, shoppingDatumFormData, setValue, userId } =
         props;
       const { modifyShopName, modifyShoppingDate, modifyShoppingMemo, modifyEstimatedBudget, modyfyShoppingDatumId } =
         shoppingDatumFormData;
@@ -47,7 +47,7 @@ export const useUpdateUseOpenMemoData = () => {
             };
             const updateRes: OkaimonoMemoDataShowResponse = await shoppingDatumUpdateOpenTrue(shoppingDataParams);
             if (updateRes && updateRes.status === 200) {
-              setShoppingDatumValues(updateRes.data);
+              // setShoppingDatumValues(updateRes.data);
               setValue("shoppingDate", updateRes.data.shoppingDate);
               setValue("shopName", shopUpdateRes.data.shopName);
               setValue("estimatedBudget", updateRes.data.estimatedBudget);

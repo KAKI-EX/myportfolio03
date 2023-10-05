@@ -1,8 +1,4 @@
-import {
-  Box,
-  Input,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Input, Stack } from "@chakra-ui/react";
 import { InputEstimatedBudget } from "components/atoms/InputEstimatedBudget";
 import { InputEstimatedBudgetErrors } from "components/atoms/InputEstimatedBudgetErrors";
 import { InputShopName } from "components/atoms/InputshopName";
@@ -21,12 +17,11 @@ type Props = {
   errors: FieldErrors<MergeParams>;
   // eslint-disable-next-line no-unused-vars
   // onClickShoppingDatumModify: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  setShopNameSuggestions: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
+  setShopNameSuggestions?: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
   // eslint-disable-next-line no-unused-vars
-  onShopChange: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
+  onShopChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
   shopNameSuggestions?: OkaimonoShopsIndexData[];
   setValue?: UseFormSetValue<MergeParams>;
-  validationNumber: RegExp;
 };
 
 export const OkaimonoMemoUseMemo: VFC<Props> = memo((props) => {
@@ -38,7 +33,6 @@ export const OkaimonoMemoUseMemo: VFC<Props> = memo((props) => {
     onShopChange,
     shopNameSuggestions,
     setValue,
-    validationNumber,
   } = props;
 
   const {
@@ -81,7 +75,7 @@ export const OkaimonoMemoUseMemo: VFC<Props> = memo((props) => {
         <InputShopName customOnChange={customOnChange} w="90%" ref={ref} rest={rest} />
         <InputShopNameSuggest shopNameSuggestions={shopNameSuggestions} onClickSuggests={onClickSuggests} w="90%" />
         <InputShopNameErrors errors={errors} />
-        <InputEstimatedBudget register={register} w="90%" validationNumber={validationNumber} />
+        <InputEstimatedBudget register={register} w="90%" />
         <InputEstimatedBudgetErrors errors={errors} />
         <InputShoppingMemo register={register} w="90%" />
         <InputShoppingMemoErrors errors={errors} />

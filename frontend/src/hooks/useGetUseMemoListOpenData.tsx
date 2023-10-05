@@ -1,16 +1,16 @@
 import React from "react";
 import { AxiosError } from "axios";
 import { useMessage } from "hooks/useToast";
-import { ListFormParams, MergeParams, OkaimonoMemoData, OkaimonoMemosData, OkaimonoShopModifingData } from "interfaces";
+import { ListFormParams, MergeParams, OkaimonoMemosData } from "interfaces";
 import { memosShowOpenTrue, shoppingDatumShowOpenTrue, shopShowOpenTrue } from "lib/api/show";
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormSetValue } from "react-hook-form";
 
 type Props = {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   shoppingDatumId: string;
-  setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoData | undefined>>;
+  // setShoppingDatumValues: React.Dispatch<React.SetStateAction<OkaimonoMemoData | undefined>>;
   setValue: UseFormSetValue<MergeParams>;
-  setShopDataValues: React.Dispatch<React.SetStateAction<OkaimonoShopModifingData | undefined>>;
+  // setShopDataValues: React.Dispatch<React.SetStateAction<OkaimonoShopModifingData | undefined>>;
   setListValues: React.Dispatch<React.SetStateAction<OkaimonoMemosData[] | undefined>>;
   append: UseFieldArrayAppend<MergeParams, "listForm">;
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
@@ -25,9 +25,9 @@ export const useGetUseMemoListOpenData = () => {
       setLoading,
       fields,
       shoppingDatumId,
-      setShoppingDatumValues,
+      // setShoppingDatumValues,
       setValue,
-      setShopDataValues,
+      // setShopDataValues,
       setListValues,
       append,
       userId,
@@ -42,7 +42,7 @@ export const useGetUseMemoListOpenData = () => {
       try {
         const shoppingDatumRes = await shoppingDatumShowOpenTrue(memosProps);
         if (shoppingDatumRes?.status === 200) {
-          setShoppingDatumValues(shoppingDatumRes.data);
+          // setShoppingDatumValues(shoppingDatumRes.data);
           setValue("shoppingDate", shoppingDatumRes.data.shoppingDate);
           setValue("shoppingDatumId", shoppingDatumId);
           setValue("estimatedBudget", shoppingDatumRes.data.estimatedBudget);
@@ -54,7 +54,7 @@ export const useGetUseMemoListOpenData = () => {
           const getShop = await shopShowOpenTrue(shopProps);
           if (getShop && getShop.status === 200) {
             const shopResponse = getShop;
-            setShopDataValues(shopResponse.data);
+            // setShopDataValues(shopResponse.data);
             setValue("shopName", shopResponse.data.shopName);
             const listProps = {
               userId,

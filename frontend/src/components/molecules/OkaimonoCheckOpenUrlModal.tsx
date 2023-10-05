@@ -36,10 +36,13 @@ type Props = {
   register: UseFormRegister<FieldValues>;
   onClickUrlCopy: () => void;
   getValues: UseFormGetValues<FieldValues>;
+  memoId: string | undefined;
+  // eslint-disable-next-line no-unused-vars
+  onClickShowMemo: (id: string) => (event: React.MouseEvent) => void;
 };
 
 export const OkaimonoCheckOpenUrlModal: VFC<Props> = memo((props) => {
-  const { isOpenUrl, onCloseUrl, openMessage, register, onClickUrlCopy, getValues } = props;
+  const { isOpenUrl, onCloseUrl, openMessage, register, onClickUrlCopy, getValues, memoId, onClickShowMemo } = props;
   const [nickname, setNickname] = useState<UserInputParams>();
   const isMounted = useRef(true);
   const fNProps = {
@@ -70,10 +73,18 @@ export const OkaimonoCheckOpenUrlModal: VFC<Props> = memo((props) => {
         <ModalBody>
           <VStack>
             <Text fontSize={{ base: "sm", md: "md" }}>{openMessage}</Text>
+            {memoId ? (
+              <Text fontSize={{ base: "sm", md: "md" }}>
+                設定を変更したい場合は
+                <Text as="ins" onClick={onClickShowMemo(memoId)} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                  こちらのページから
+                </Text>
+              </Text>
+            ) : null}
             <InputGroup>
               <Input pr="4.5rem" {...register("openMemoUrl")} />
               <InputRightElement width="3.5rem">
-                <Button colorScheme="blue" h="1.75rem" size="sm" color="white" onClick={onClickUrlCopy}>
+                <Button colorScheme="blue" h="1.75rem" size="sm" color="white" onClick={onClickUrlCopy} disabled={URL === "非公開"}>
                   コピー
                 </Button>
               </InputRightElement>

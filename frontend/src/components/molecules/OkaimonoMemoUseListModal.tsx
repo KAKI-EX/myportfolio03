@@ -25,9 +25,9 @@ import { FieldErrors, UseFormHandleSubmit, UseFormRegister, UseFormSetValue } fr
 type Props = {
   isListOpen: boolean;
   onCloseList: () => void;
-  readOnly: boolean;
+  // readOnly: boolean;
   listRegister: UseFormRegister<MergeParams>;
-  validationNumber: RegExp;
+  // validationNumber: RegExp;
   listErrors: FieldErrors<MergeParams>;
   startDate: string | undefined;
   oneListModifyHandleSubmit: UseFormHandleSubmit<MergeParams>;
@@ -45,9 +45,9 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
   const {
     isListOpen,
     onCloseList,
-    readOnly,
+    // readOnly,
     listRegister,
-    validationNumber,
+    // validationNumber,
     listErrors,
     startDate,
     oneListModifyHandleSubmit,
@@ -58,6 +58,8 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
     purchaseNameSuggestions,
     onListChange,
   } = props;
+
+  const validationNumber = /^[0-9]+$/;
 
   const {
     ref,
@@ -107,8 +109,8 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                     <Input
                       _hover={{ fontWeight: "bold", cursor: "pointer" }}
                       onChange={customOnChange}
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
+                      // isReadOnly={readOnly}
+                      // bg={readOnly ? "blackAlpha.200" : "white"}
                       placeholder="商品名"
                       w="100%"
                       fontSize={{ base: "sm", md: "md" }}
@@ -142,8 +144,8 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                   <InputGroup w="30%" _hover={{ fontWeight: "bold", cursor: "pointer" }}>
                     <Input
                       _hover={{ fontWeight: "bold", cursor: "pointer" }}
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
+                      // isReadOnly={readOnly}
+                      // bg={readOnly ? "blackAlpha.200" : "white"}
                       placeholder="個数"
                       type="number"
                       fontSize={{ base: "sm", md: "md" }}
@@ -171,8 +173,8 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                 )}
                 <Input
                   _hover={{ fontWeight: "bold", cursor: "pointer" }}
-                  isReadOnly={readOnly}
-                  bg={readOnly ? "blackAlpha.200" : "white"}
+                  // isReadOnly={readOnly}
+                  // bg={readOnly ? "blackAlpha.200" : "white"}
                   placeholder="メモ"
                   fontSize={{ base: "sm", md: "md" }}
                   {...listRegister(`modifyMemo`, {
@@ -191,8 +193,8 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
                     </FormLabel>
                     <Input
                       _hover={{ fontWeight: "bold", cursor: "pointer" }}
-                      isReadOnly={readOnly}
-                      bg={readOnly ? "blackAlpha.200" : "white"}
+                      // isReadOnly={readOnly}
+                      // bg={readOnly ? "blackAlpha.200" : "white"}
                       type="date"
                       placeholder="終了日"
                       {...listRegister(`modifyExpiryDateEnd`, {
@@ -226,7 +228,7 @@ export const OkaimonoMemoUseListModal: VFC<Props> = memo((props) => {
               閉じる
             </Button>
             <PrimaryButtonForReactHookForm onClick={oneListModifyHandleSubmit(onOneSubmit)}>
-              {readOnly ? "編集" : "保存"}{" "}
+              更新
             </PrimaryButtonForReactHookForm>
           </HStack>
         </ModalFooter>

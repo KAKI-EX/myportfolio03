@@ -1,9 +1,10 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Menu, MenuButton, MenuItem, MenuList, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { Button, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { OkaimonoMemoData } from "interfaces";
 import React, { memo, VFC } from "react";
 import { TableThread } from "components/molecules/TableThread";
 import { useDateConversion } from "hooks/useDateConversion";
+import { BsCardChecklist, BsShare, BsTrash3 } from "react-icons/bs";
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
@@ -17,17 +18,29 @@ type Props = {
   onClickShowOpenUrl: (shoppingDatumId: string, event: React.MouseEvent) => void;
 };
 
-export const OkaimonoIndexTapPanelConfimed: VFC<Props> = memo((props) => {
+export const OkaimonoIndexTabPanelConfimed: VFC<Props> = memo((props) => {
   const { onClickShowMemo, setDeletePost, onAlertOpen, readyShoppingMemo, onClickMemoUse, onClickShowOpenUrl } = props;
   const { dateConversion } = useDateConversion();
-
+  console.log(readyShoppingMemo);
   return (
     <Table variant="simple" w="100%" bg="white" rounded={10}>
-      <TableThread />
+      <TableThread isFinished={readyShoppingMemo ? readyShoppingMemo[0].isFinish : undefined} />
       {readyShoppingMemo?.map((i: OkaimonoMemoData) => {
         return (
           <Tbody key={i.id} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
             <Tr>
+              <Td borderTop="1px" borderColor="gray.300" fontSize={{ base: "xs", md: "md" }} textAlign="center" px={0}>
+                <Button
+                  border="1px"
+                  h={7}
+                  fontSize={{ base: "xs", md: "md" }}
+                  bg={i.isOpen ? "teal.500" : "gray.400"}
+                  color="white"
+                  onClick={(event) => onClickShowOpenUrl(i.id, event)}
+                >
+                  {i.isOpen ? "公開中" : "非公開"}
+                </Button>
+              </Td>
               <Td
                 borderTop="1px"
                 borderColor="gray.300"
@@ -73,21 +86,28 @@ export const OkaimonoIndexTapPanelConfimed: VFC<Props> = memo((props) => {
               </Td>
               <Td px="0" borderTop="1px" borderColor="gray.300" textAlign="center" display={{ base: "table-cell" }}>
                 <Menu>
-                  <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }}>
-                    Actions
-                  </MenuButton>
+                  <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }} />
                   <MenuList borderRadius="md" shadow="md">
                     {/* <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem> */}
-                    <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                    <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>おつかい（シェア）</MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        setDeletePost(i);
-                        onAlertOpen();
-                      }}
-                    >
-                      削除する
-                    </MenuItem>
+                    <HStack>
+                      <Icon as={BsCardChecklist} w={4} h={4} ml={3} />
+                      <MenuItem onClick={onClickShowMemo(i.id)}>確認</MenuItem>
+                    </HStack>
+                    <HStack>
+                      <Icon as={BsShare} w={4} h={4} ml={3} />
+                      <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>おつかい（シェア）</MenuItem>
+                    </HStack>
+                    <HStack>
+                      <Icon as={BsTrash3} w={4} h={4} ml={3} />
+                      <MenuItem
+                        onClick={() => {
+                          setDeletePost(i);
+                          onAlertOpen();
+                        }}
+                      >
+                        削除
+                      </MenuItem>
+                    </HStack>
                   </MenuList>
                 </Menu>
               </Td>

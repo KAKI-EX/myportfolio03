@@ -36,18 +36,19 @@ type Props = {
   setShopNameSuggestions?: React.Dispatch<React.SetStateAction<OkaimonoShopsIndexData[]>>;
   // eslint-disable-next-line no-unused-vars
   onShopChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: string) => void;
+  isFinished?: boolean;
 };
 
 export const OkaimonoOverview: VFC<Props> = memo((props) => {
   const {
     register,
-    validationNumber,
     errors,
     readOnly = false,
     onShopChange,
     shopNameSuggestions,
     setValue,
     setShopNameSuggestions,
+    isFinished,
   } = props;
 
   const {
@@ -92,31 +93,40 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
           <InputShopNameSuggest shopNameSuggestions={shopNameSuggestions} onClickSuggests={onClickSuggests} w="100%" />
         </Box>
         <InputShopNameErrors errors={errors} />
-        <InputEstimatedBudget readOnly={readOnly} register={register} w="90%" validationNumber={validationNumber} />
+        <InputEstimatedBudget readOnly={readOnly} register={register} w="90%" />
         <InputEstimatedBudgetErrors errors={errors} />
         <InputShoppingMemo readOnly={readOnly} register={register} w="90%" />
         {errors.shoppingMemo && errors.shoppingMemo.types?.maxLength && (
           <Box color="red">{errors.shoppingMemo.types.maxLength}</Box>
         )}
-        <HStack>
-          <FormControl display="flex" alignItems="center">
-            <FormLabel htmlFor="email-alerts" mb="0">
-              おつかい機能をオン
-            </FormLabel>
-            <Switch isReadOnly={readOnly} fontSize={{ base: "sm", md: "lg" }} {...register("isOpen")} />
-          </FormControl>
-          <Popover>
-            <PopoverTrigger>
-              <QuestionOutlineIcon w={5} h={5} mb={-2} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap" />
-            </PopoverTrigger>
-            <PopoverContent _focus={{ outline: "none" }}>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <PopoverHeader>おつかい機能？</PopoverHeader>
-              <PopoverBody>確定後に発行される指定のURLを送ることでお買い物メモを共有できます！</PopoverBody>
-            </PopoverContent>
-          </Popover>
-        </HStack>
+        {isFinished ? null : (
+          <HStack>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="email-alerts" mb="0">
+                おつかい機能をオン
+              </FormLabel>
+              <Switch isReadOnly={readOnly} fontSize={{ base: "sm", md: "lg" }} {...register("isOpen")} />
+            </FormControl>
+            <Popover>
+              <PopoverTrigger>
+                <QuestionOutlineIcon
+                  w={5}
+                  h={5}
+                  mb={-2}
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                  whiteSpace="nowrap"
+                />
+              </PopoverTrigger>
+              <PopoverContent _focus={{ outline: "none" }}>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>おつかい機能？</PopoverHeader>
+                <PopoverBody>確定後に発行される指定のURLを送ることでお買い物メモを共有できます！</PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </HStack>
+        )}
         <Input type="hidden" {...register(`shoppingDatumId`)} />
         <Input type="hidden" {...register(`isFinish`)} />
       </Stack>

@@ -7,11 +7,11 @@ type Props = {
   readOnly?: boolean;
   register: UseFormRegister<MergeParams>;
   w?: string;
-  validationNumber: RegExp;
 };
 
 export const InputEstimatedBudget: VFC<Props> = memo((props) => {
-  const { readOnly = false, register, w, validationNumber } = props;
+  const { readOnly = false, register, w } = props;
+  const validationNumber = /^[0-9]+$/;
   return (
     <InputGroup w={w} _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}>
       <Input

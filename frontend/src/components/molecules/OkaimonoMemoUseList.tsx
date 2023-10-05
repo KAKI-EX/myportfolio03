@@ -30,7 +30,7 @@ type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
   register: UseFormRegister<MergeParams>;
   getValues: UseFormGetValues<MergeParams>;
-  validationNumber: RegExp;
+  // validationNumber: RegExp;
   // eslint-disable-next-line no-unused-vars
   onClickListModify: (index: number, event: React.MouseEvent) => void;
   setDeleteIds: React.Dispatch<React.SetStateAction<string[]>>;
@@ -51,7 +51,7 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
     fields,
     register,
     getValues,
-    validationNumber,
+    // validationNumber,
     onClickListModify,
     setDeleteIds,
     remove,
@@ -63,6 +63,8 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
     setPurchaseNameSuggestions,
     onListChange,
   } = props;
+
+  const validationNumber = /^[0-9]+$/;
 
   const onClickSuggests = (
     event: React.MouseEvent<HTMLParagraphElement, MouseEvent>,

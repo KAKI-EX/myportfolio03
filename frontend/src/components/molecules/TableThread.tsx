@@ -1,16 +1,36 @@
 import { Th, Thead, Tr } from "@chakra-ui/react";
 import { memo, VFC } from "react";
 import { TableThreadTitle } from "components/atoms/ThreadTitle";
+import { OkaimonoMemoData } from "interfaces";
 
-export const TableThread: VFC = memo(() => {
+type Props = {
+  isFinished: boolean | null | undefined;
+};
+
+export const TableThread: VFC<Props> = memo((props: Props) => {
+  const { isFinished } = props;
   return (
     <Thead>
       <Tr>
+        {isFinished === false ? (
+          <TableThreadTitle
+            p={0}
+            color="white"
+            bg="teal.500"
+            w={{ base: "8%", md: "10%" }}
+            borderBottom="1px"
+            borderColor="gray.400"
+            textAlign="center"
+            fontSize={{ base: "sm", md: "md" }}
+          >
+            {null}
+          </TableThreadTitle>
+        ) : null}
         <TableThreadTitle
           p={0}
           color="white"
           bg="teal.500"
-          w={{ base: "35%", md: "20%" }}
+          w={{ base: "28%", md: "20%" }}
           borderBottom="1px"
           borderColor="gray.400"
           textAlign="center"
@@ -33,7 +53,7 @@ export const TableThread: VFC = memo(() => {
         <TableThreadTitle
           color="white"
           bg="teal.500"
-          w={{ base: "", md: "13%" }}
+          w={{ base: "", md: "15%" }}
           borderBottom="1px"
           borderColor="gray.400"
           textAlign="center"
@@ -46,7 +66,7 @@ export const TableThread: VFC = memo(() => {
           color="white"
           bg="teal.500"
           px="17px"
-          w={{ base: "43%", md: "22%" }}
+          w={{ base: "45%", md: "45%" }}
           borderBottom="1px"
           borderColor="gray.400"
           textAlign="center"
@@ -54,7 +74,7 @@ export const TableThread: VFC = memo(() => {
         >
           一言メモ
         </TableThreadTitle>
-        <Th bg="teal.500" px="0" w={{ base: "7%", md: "8%" }} borderBottom="1px" borderColor="gray.400" />
+        <Th bg="teal.500" px="0" w={{ base: "11%", md: "8%" }} borderBottom="1px" borderColor="gray.400" />
       </Tr>
     </Thead>
   );

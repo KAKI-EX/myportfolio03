@@ -237,6 +237,7 @@ export const OkaimonoShow: VFC = memo(() => {
             shopNameSuggestions={shopNameSuggestions}
             setValue={setValue}
             setShopNameSuggestions={setShopNameSuggestions}
+            isFinished={isFinished}
           />
           <Divider my={4} />
           <OkaimonoDetail

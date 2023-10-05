@@ -8,7 +8,7 @@ import { useGetOpenUrl } from "hooks/useGetOpenUrl";
 import { useOkaimonoIndexDelete } from "hooks/useOkaimonoIndexDelete";
 import { OkaimonoIndexTabList } from "components/molecules/OkaimonoIndexTabList";
 import { OkaimonoIndexTabPanelTemporary } from "components/molecules/OkaimonoIndexTabPanelTemporary";
-import { OkaimonoIndexTapPanelConfimed } from "components/molecules/OkaimonoIndexTapPanelConfimed";
+import { OkaimonoIndexTabPanelConfimed } from "components/molecules/OkaimonoIndexTabPanelConfimed";
 import { OkaimonoIndexTabPanelCompleted } from "components/molecules/OkaimonoIndexTabPanelCompleted";
 import { DeleteConfimationDialog } from "components/molecules/DeleteConfimationDialog";
 import { OkaimonoCheckOpenUrlModal } from "components/molecules/OkaimonoCheckOpenUrlModal";
@@ -20,6 +20,7 @@ export const OkaimonoIndex: VFC = memo(() => {
   const [openMessage, setOpenMessage] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
+  const [memoId, setMemoId] = useState<string>();
 
   const getIndex = useGetOkaimonoIndex();
   const getOpenUrl = useGetOpenUrl(readyShoppingMemo);
@@ -66,6 +67,7 @@ export const OkaimonoIndex: VFC = memo(() => {
   // ---------------------------------------------------------------------------------
   // 公開用ページのopenModalとコピー機能(コピー機能はhttps環境下出ないと動作しないため注意)
   const onClickShowOpenUrl = (shoppingDatumId: string, event: React.MouseEvent) => {
+    setMemoId(shoppingDatumId);
     const openUrlProps = { setOpenMessage, setValue, onOpenUrl, setLoading, shoppingDatumId, event };
     getOpenUrl(openUrlProps);
   };
@@ -94,7 +96,7 @@ export const OkaimonoIndex: VFC = memo(() => {
             />
             <TabPanels>
               <TabPanel p={1}>
-                <OkaimonoIndexTapPanelConfimed
+                <OkaimonoIndexTabPanelConfimed
                   onClickShowMemo={onClickShowMemo}
                   setDeletePost={setDeletePost}
                   onAlertOpen={onAlertOpen}
@@ -136,6 +138,8 @@ export const OkaimonoIndex: VFC = memo(() => {
           openMessage={openMessage}
           register={register}
           onClickUrlCopy={onClickUrlCopy}
+          memoId={memoId}
+          onClickShowMemo={onClickShowMemo}
         />
       </Box>
     </Flex>
