@@ -291,7 +291,7 @@ export const OkaimonoOpenTrue: VFC = memo(() => {
             </Heading>
             <Divider my={4} />
             <OkaimonoMemoUseMemo
-              readOnly={readOnly}
+              // readOnly={readOnly}
               register={register}
               errors={errors}
               // onClickShoppingDatumModify={onClickShoppingDatumModify}

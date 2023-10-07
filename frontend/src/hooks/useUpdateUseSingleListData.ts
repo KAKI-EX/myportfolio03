@@ -24,7 +24,6 @@ export const useUpdateUseSingleListData = () => {
     // setReadOnly(!readOnly);
 
     setLoading(true);
-    console.log("oneListFormData", oneListFormData);
     try {
       const listParams: ListFormParams = {
         listId: oneListFormData.modifyId,
