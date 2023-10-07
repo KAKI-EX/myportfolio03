@@ -27,7 +27,7 @@ import { useSuggestListCreate } from "hooks/useSuggestListCreate";
 import { useMessage } from "hooks/useToast";
 
 export const OkaimonoMemoUse: VFC = memo(() => {
-  const [readOnly, setReadOnly] = useState(true);
+  // const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState(false);
   const [listValues, setListValues] = useState<OkaimonoMemosData[]>();
   // const [shoppingDatumValues, setShoppingDatumValues] = useState<OkaimonoMemoDataShow>();
@@ -144,13 +144,13 @@ export const OkaimonoMemoUse: VFC = memo(() => {
   // ----------------------------------------------------------------------------------------------------------
   // リスト情報の単一修正論理式。(右の下矢印から編集を選び、編集する際に呼び出される論理式。)
   const onOneSubmit = async (oneListFormData: MergeParams) => {
-    const listProps = { setReadOnly, readOnly, setLoading, oneListFormData, setValue };
+    const listProps = { setLoading, oneListFormData, setValue };
     updateListData(listProps);
     closeList();
   };
 
   const onCloseList = () => {
-    setReadOnly(true);
+    // setReadOnly(true);
     closeList();
   };
   // ----------------------------------------------------------------------------------------------------------
@@ -311,7 +311,7 @@ export const OkaimonoMemoUse: VFC = memo(() => {
             </Heading>
             <Divider my={4} />
             <OkaimonoMemoUseMemo
-              readOnly={readOnly}
+              // readOnly={readOnly}
               register={register}
               errors={errors}
               // onClickShoppingDatumModify={onClickShoppingDatumModify}

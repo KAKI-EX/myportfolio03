@@ -21,10 +21,9 @@ type Props = {
 export const OkaimonoIndexTabPanelConfimed: VFC<Props> = memo((props) => {
   const { onClickShowMemo, setDeletePost, onAlertOpen, readyShoppingMemo, onClickMemoUse, onClickShowOpenUrl } = props;
   const { dateConversion } = useDateConversion();
-  console.log(readyShoppingMemo);
   return (
     <Table variant="simple" w="100%" bg="white" rounded={10}>
-      <TableThread isFinished={readyShoppingMemo ? readyShoppingMemo[0].isFinish : undefined} />
+      <TableThread isFinished={readyShoppingMemo && readyShoppingMemo[0] ? readyShoppingMemo[0].isFinish : undefined} />
       {readyShoppingMemo?.map((i: OkaimonoMemoData) => {
         return (
           <Tbody key={i.id} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
@@ -51,15 +50,18 @@ export const OkaimonoIndexTabPanelConfimed: VFC<Props> = memo((props) => {
               >
                 {dateConversion(i.shoppingDate)}
               </Td>
-              <Td
-                borderTop="1px"
-                borderColor="gray.300"
-                fontSize={{ base: "sm", md: "md" }}
-                textAlign="center"
-                onClick={onClickMemoUse(i.id)}
-              >
-                {i.memosCount}
-              </Td>
+              {i.isFinish === false ? null : (
+                <Td
+                  borderTop="1px"
+                  borderColor="gray.300"
+                  fontSize={{ base: "sm", md: "md" }}
+                  textAlign="center"
+                  onClick={onClickMemoUse(i.id)}
+                >
+                  {i.memosCount}
+                </Td>
+              )}
+
               <Td
                 borderTop="1px"
                 borderColor="gray.300"
@@ -75,7 +77,7 @@ export const OkaimonoIndexTabPanelConfimed: VFC<Props> = memo((props) => {
                 borderTop="1px"
                 borderColor="gray.300"
                 fontSize={{ base: "sm", md: "md" }}
-                textAlign="left"
+                textAlign="center"
                 overflow="hidden"
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"

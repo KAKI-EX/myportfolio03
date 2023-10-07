@@ -117,7 +117,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
         when "params_exsist" then
           end_date = Date.parse(params[:expiry_date_end])
           existing_memo = shopping_data.memos.find(params[:list_id])
-          existing_memo.assign_attributes(is_expiry_date: true, is_display: false, is_bought: false, expiry_date_end: end_date)
+          existing_memo.assign_attributes(is_expiry_date: true, is_display: true, is_bought: true, expiry_date_end: end_date)
           existing_memo.update!(params.except(:list_id, :user_id))
         when "record_exsist" then
           existing_memo = shopping_data.memos.find(params[:list_id])

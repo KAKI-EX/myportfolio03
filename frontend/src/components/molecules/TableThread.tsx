@@ -1,14 +1,13 @@
 import { Th, Thead, Tr } from "@chakra-ui/react";
 import { memo, VFC } from "react";
 import { TableThreadTitle } from "components/atoms/ThreadTitle";
-import { OkaimonoMemoData } from "interfaces";
 
 type Props = {
-  isFinished: boolean | null | undefined;
+  isFinished?: boolean | null | undefined;
 };
 
 export const TableThread: VFC<Props> = memo((props: Props) => {
-  const { isFinished } = props;
+  const { isFinished = true } = props;
   return (
     <Thead>
       <Tr>
@@ -17,7 +16,7 @@ export const TableThread: VFC<Props> = memo((props: Props) => {
             p={0}
             color="white"
             bg="teal.500"
-            w={{ base: "8%", md: "10%" }}
+            w={{ base: "20%", md: "10%" }}
             borderBottom="1px"
             borderColor="gray.400"
             textAlign="center"
@@ -30,7 +29,7 @@ export const TableThread: VFC<Props> = memo((props: Props) => {
           p={0}
           color="white"
           bg="teal.500"
-          w={{ base: "28%", md: "20%" }}
+          w={{ base: "35%", md: "20%" }}
           borderBottom="1px"
           borderColor="gray.400"
           textAlign="center"
@@ -38,18 +37,20 @@ export const TableThread: VFC<Props> = memo((props: Props) => {
         >
           お買い物予定日
         </TableThreadTitle>
-        <TableThreadTitle
-          p={0}
-          color="white"
-          bg="teal.500"
-          w={{ base: "15%", md: "10%" }}
-          borderBottom="1px"
-          borderColor="gray.400"
-          textAlign="center"
-          fontSize={{ base: "sm", md: "md" }}
-        >
-          リスト数
-        </TableThreadTitle>
+        {isFinished === false ? null : (
+          <TableThreadTitle
+            p={0}
+            color="white"
+            bg="teal.500"
+            w={{ base: "20%", md: "10%" }}
+            borderBottom="1px"
+            borderColor="gray.400"
+            textAlign="center"
+            fontSize={{ base: "sm", md: "md" }}
+          >
+            リスト数
+          </TableThreadTitle>
+        )}
         <TableThreadTitle
           color="white"
           bg="teal.500"

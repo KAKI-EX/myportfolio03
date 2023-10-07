@@ -41,6 +41,7 @@ module.exports = {
     "react/jsx-indent-props": "off",
     "consistent-return": "off",
     "implicit-arrow-linebreak": "off",
-    "react/jsx-no-useless-fragment": "off"
+    "react/jsx-no-useless-fragment": "off",
+    "react/require-default-props": "off"
   },
 };

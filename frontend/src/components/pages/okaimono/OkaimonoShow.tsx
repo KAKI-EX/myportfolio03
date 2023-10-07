@@ -6,7 +6,6 @@ import {
   VStack,
   Spinner,
   Heading,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
@@ -22,7 +21,7 @@ import { useShowUpdateList } from "hooks/useShowUpdateList";
 import { useSuggestListCreate } from "hooks/useSuggestListCreate";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 import { OkaimonoButtonAndCalculater } from "components/molecules/OkaimonoButtonAndCalculater";
-import { OkaimonoConfirmExpiryDateModal } from "components/molecules/OkaimonoConfirmExpiryDateModal";
+// import { OkaimonoConfirmExpiryDateModal } from "components/molecules/OkaimonoConfirmExpiryDateModal";
 
 export const OkaimonoShow: VFC = memo(() => {
   const getSuggestionsPurchaseName = useSuggestListCreate();
@@ -35,7 +34,7 @@ export const OkaimonoShow: VFC = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const [expiryDate, setExpiryDate] = useState<boolean>(false);
   const [pushTemporarilyButton, setPushTemporarilyButton] = useState<boolean>(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -133,8 +132,8 @@ export const OkaimonoShow: VFC = memo(() => {
   const onSubmit = (formData: MergeParams) => {
     const updateProps = {
       setReadOnly,
-      expiryDate,
-      onOpen,
+      // expiryDate,
+      // onOpen,
       formData,
       pushTemporarilyButton,
       deleteIds,
@@ -159,10 +158,10 @@ export const OkaimonoShow: VFC = memo(() => {
     }
   }, [pushTemporarilyButton]);
 
-  const onClickInputNow = useCallback(() => {
-    setExpiryDate(true);
-    onClose();
-  }, []);
+  // const onClickInputNow = useCallback(() => {
+  //   setExpiryDate(true);
+  //   onClose();
+  // }, []);
   // ---------------------------------------------------------------------------
   // 店名入力欄のsuggest機能
   const [shopNameValue, setShopNameValue] = useState("");
@@ -207,11 +206,11 @@ export const OkaimonoShow: VFC = memo(() => {
 
   // ---------------------------------------------------------------------------
 
-  useEffect(() => {
-    if (isFinished !== undefined && !isFinished && !readOnly) {
-      onOpen();
-    }
-  }, [isFinished]);
+  // useEffect(() => {
+  //   if (isFinished !== undefined && !isFinished && !readOnly) {
+  //     onOpen();
+  //   }
+  // }, [isFinished]);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -259,6 +258,7 @@ export const OkaimonoShow: VFC = memo(() => {
             setValue={setValue}
             setPurchaseNameSuggestions={setPurchaseNameSuggestions}
             purchaseNameIndex={purchaseNameIndex}
+            isFinished={isFinished}
           />
           <OkaimonoButtonAndCalculater
             totalBudget={totalBudget}
@@ -271,7 +271,7 @@ export const OkaimonoShow: VFC = memo(() => {
           />
           <Box h="12.5rem" />
         </VStack>
-        <OkaimonoConfirmExpiryDateModal isOpen={isOpen} onClose={onClose} onClickInputNow={onClickInputNow} />
+        {/* <OkaimonoConfirmExpiryDateModal isOpen={isOpen} onClose={onClose} onClickInputNow={onClickInputNow} /> */}
       </Flex>
     </form>
   );

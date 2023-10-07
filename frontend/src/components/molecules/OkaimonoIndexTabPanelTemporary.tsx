@@ -1,9 +1,11 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Menu, MenuButton, MenuItem, MenuList, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { OkaimonoMemoData } from "interfaces";
 import React, { memo, VFC } from "react";
 import { TableThread } from "components/molecules/TableThread";
 import { useDateConversion } from "hooks/useDateConversion";
+import { BsCardChecklist, BsTrash3 } from "react-icons/bs";
+import { CiEraser } from "react-icons/ci";
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
@@ -58,7 +60,7 @@ export const OkaimonoIndexTabPanelTemporary: VFC<Props> = memo((props) => {
                 borderTop="1px"
                 borderColor="gray.300"
                 fontSize={{ base: "sm", md: "md" }}
-                textAlign="left"
+                textAlign="center"
                 overflow="hidden"
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"
@@ -69,18 +71,27 @@ export const OkaimonoIndexTabPanelTemporary: VFC<Props> = memo((props) => {
               </Td>
               <Td px="0" borderTop="1px" borderColor="gray.300" textAlign="center" display={{ base: "table-cell" }}>
                 <Menu>
-                  <MenuButton as={ChevronDownIcon}>Actions</MenuButton>
+                  <MenuButton as={ChevronDownIcon} />
                   <MenuList borderRadius="md" shadow="md">
-                    <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
-                    <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        setDeletePost(i);
-                        onAlertOpen();
-                      }}
-                    >
-                      削除する
-                    </MenuItem>
+                    <HStack>
+                      <Icon as={BsCardChecklist} w={4} h={4} ml={3} />
+                      <MenuItem onClick={onClickShowMemo(i.id)}>確認する</MenuItem>
+                    </HStack>
+                    <HStack>
+                      <Icon as={CiEraser} w={4} h={4} ml={3} />
+                      <MenuItem onClick={onClickShowMemo(i.id)}>修正する</MenuItem>
+                    </HStack>
+                    <HStack>
+                      <Icon as={BsTrash3} w={4} h={4} ml={3} />
+                      <MenuItem
+                        onClick={() => {
+                          setDeletePost(i);
+                          onAlertOpen();
+                        }}
+                      >
+                        削除する
+                      </MenuItem>
+                    </HStack>
                   </MenuList>
                 </Menu>
               </Td>

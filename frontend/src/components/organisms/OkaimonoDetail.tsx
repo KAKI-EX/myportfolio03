@@ -29,8 +29,9 @@ import { PurchaseNameSuggestion } from "components/atoms/PurchaseNameSuggestion"
 import { InputAmount } from "components/atoms/InputAmount";
 import { InputShoppingDetailMemo } from "components/atoms/InputShoppingDetailMemo";
 import { InputPrice } from "components/atoms/InputPrice";
-import { InputExpiryDateEnd } from "components/atoms/InputExpiryDateEnd";
+// import { InputExpiryDateEnd } from "components/atoms/InputExpiryDateEnd";
 import { TitleHeading } from "components/atoms/TitleHeading";
+import { InputExpiryDateEnd } from "components/atoms/InputExpiryDateEnd";
 
 type Props = {
   fields: FieldArrayWithId<MergeParams, "listForm", "key">[];
@@ -53,6 +54,7 @@ type Props = {
   setValue?: UseFormSetValue<MergeParams>;
   setPurchaseNameSuggestions?: React.Dispatch<React.SetStateAction<ListFormParams[]>>;
   purchaseNameIndex?: number;
+  isFinished?: boolean | undefined
 };
 
 export const OkaimonoDetail: VFC<Props> = memo((props) => {
@@ -66,12 +68,13 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
     readOnly = false,
     getValues,
     setDeleteIds,
-    expiryDate,
+    // expiryDate,
     onListChange,
     purchaseNameSuggestions,
     setValue,
     setPurchaseNameSuggestions,
     purchaseNameIndex,
+    isFinished,
   } = props;
 
   const separeteFunction = useSeparateFunctionPurchaseName();
@@ -171,7 +174,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
                   {errors.listForm[index]?.price?.types?.pattern}
                 </Box>
               )}
-              {expiryDate && (
+              {isFinished && (
                 <>
                   <Divider my={4} />
                   <HStack w="70%" py={2}>

@@ -16,6 +16,7 @@ type Props = {
   onClickInputNow: () => void;
 };
 
+// 現在廃止中。必要に応じて戻す。
 export const OkaimonoConfirmExpiryDateModal: VFC<Props> = memo((props) => {
   const { isOpen, onClose, onClickInputNow } = props;
 

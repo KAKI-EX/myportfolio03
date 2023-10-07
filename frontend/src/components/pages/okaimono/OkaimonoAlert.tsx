@@ -1,11 +1,4 @@
-import {
-  Box,
-  Flex,
-  VStack,
-  Spinner,
-  Heading,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Flex, VStack, Spinner, Heading, useDisclosure } from "@chakra-ui/react";
 
 import React, { memo, useCallback, useEffect, useState, VFC } from "react";
 import { alertParams, ListFormParams, MergeParams, OkaimonoShopsIndexData } from "interfaces";
@@ -102,10 +95,10 @@ export const OkaimonoAlert: VFC = memo(() => {
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
     </Box>
   ) : (
-    <>
+    <Box w="95vw">
       <form onSubmit={handleSubmit(deleteSubmit)}>
         <Flex align="center" justify="center" px={2}>
-          <Box w={{ base: "100%", md: "50%" }}>
+          <Box w={{ base: "100%", md: "80%" }}>
             <Heading as="h1" size="lg" textAlign="center" my={5}>
               お買い物アラート
             </Heading>
@@ -131,6 +124,6 @@ export const OkaimonoAlert: VFC = memo(() => {
         alertListShop={alertListShop}
         onClickClose={onClickClose}
       />
-    </>
+    </Box>
   );
 });

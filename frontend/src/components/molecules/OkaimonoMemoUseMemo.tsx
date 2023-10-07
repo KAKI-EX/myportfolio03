@@ -12,7 +12,7 @@ import React, { memo, VFC } from "react";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 type Props = {
-  readOnly: boolean;
+  // readOnly: boolean;
   register: UseFormRegister<MergeParams>;
   errors: FieldErrors<MergeParams>;
   // eslint-disable-next-line no-unused-vars

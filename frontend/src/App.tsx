@@ -5,7 +5,7 @@ import { BrowserRouter, Redirect } from "react-router-dom";
 import { User } from "interfaces";
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useGetCurrentUser } from "hooks/useGetCurrentUser";
-import { useMessage } from "hooks/useToast";
+// import { useMessage } from "hooks/useToast";
 
 // グローバルで扱う変数・関数
 // asで引数に対して型変換。
@@ -24,7 +24,7 @@ export const AuthContext = createContext(
 // ユーザーが認証済みかどうかでルーティングを決定
 // 未認証だった場合は「/signin」ページに促す
 export function Private({ children }: { children: React.ReactElement }) {
-  const { showMessage } = useMessage();
+  // const { showMessage } = useMessage();
   const { loading, isSignedIn } = useContext(AuthContext);
   const toastCount = useRef(0);
 
@@ -33,7 +33,7 @@ export function Private({ children }: { children: React.ReactElement }) {
       return children;
     }
     if (toastCount.current === 0) {
-      showMessage({ title: "ログインが必要です。", status: "warning" });
+      // showMessage({ title: "ログインが必要です。", status: "warning" });
       toastCount.current++;
     }
     return <Redirect to="/user/sign_in" />;

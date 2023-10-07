@@ -38,8 +38,6 @@ export const useMemoUpdate = (props: Props) => {
           isFinish,
           isOpen: isFinish ? false : isOpen,
         };
-        console.log("isFinish", isFinish);
-        console.log("isOpen", isOpen);
 
         const shoppingDatumUpdateRes = await shoppingDatumUpdate(shoppingDataParams);
         if (shoppingDatumUpdateRes.status === 200) {

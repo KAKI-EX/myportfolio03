@@ -1,4 +1,14 @@
-import { Box, Flex, Heading, Spinner, TabPanel, TabPanels, Tabs, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Spinner,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  useDisclosure,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import React, { memo, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { OkaimonoMemoData } from "interfaces";
@@ -12,6 +22,7 @@ import { OkaimonoIndexTabPanelConfimed } from "components/molecules/OkaimonoInde
 import { OkaimonoIndexTabPanelCompleted } from "components/molecules/OkaimonoIndexTabPanelCompleted";
 import { DeleteConfimationDialog } from "components/molecules/DeleteConfimationDialog";
 import { OkaimonoCheckOpenUrlModal } from "components/molecules/OkaimonoCheckOpenUrlModal";
+import { OkaimonoIndexBottomMenu } from "components/molecules/OkaimonoIndexBottomMenu";
 
 export const OkaimonoIndex: VFC = memo(() => {
   const [inCompleteMemo, setInCompleteMemo] = useState<OkaimonoMemoData[] | null>();
@@ -21,6 +32,7 @@ export const OkaimonoIndex: VFC = memo(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const [deletePost, setDeletePost] = useState<OkaimonoMemoData>();
   const [memoId, setMemoId] = useState<string>();
+  const [isLargerThan767] = useMediaQuery("(min-width: 767px)");
 
   const getIndex = useGetOkaimonoIndex();
   const getOpenUrl = useGetOpenUrl(readyShoppingMemo);
@@ -83,7 +95,7 @@ export const OkaimonoIndex: VFC = memo(() => {
     </Box>
   ) : (
     <Flex align="center" justify="center" px={2}>
-      <Box w={{ base: "100rem", md: "60rem" }}>
+      <Box w={{ base: "100rem", md: "60rem" }} pb={isLargerThan767 ? undefined : "25%"}>
         <Heading as="h1" size="lg" textAlign="center" my={5}>
           お買い物リスト一覧
         </Heading>
@@ -142,6 +154,7 @@ export const OkaimonoIndex: VFC = memo(() => {
           onClickShowMemo={onClickShowMemo}
         />
       </Box>
+      <OkaimonoIndexBottomMenu />
     </Flex>
   );
 });

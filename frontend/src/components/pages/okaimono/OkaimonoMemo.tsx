@@ -6,7 +6,6 @@ import {
   VStack,
   Spinner,
   Heading,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { ListFormParams, MergeParams } from "interfaces";
 import React, { memo, useCallback, useContext, useEffect, useState, VFC } from "react";
@@ -23,7 +22,7 @@ import { OkaimonoShopsIndexData } from "interfaces/index";
 import { useSuggestListCreate } from "hooks/useSuggestListCreate";
 import { useSuggestShopCreate } from "hooks/useSuggestShopCreate";
 import { OkaimonoButtonAndCalculater } from "components/molecules/OkaimonoButtonAndCalculater";
-import { OkaimonoConfirmExpiryDateModal } from "components/molecules/OkaimonoConfirmExpiryDateModal";
+// import { OkaimonoConfirmExpiryDateModal } from "components/molecules/OkaimonoConfirmExpiryDateModal";
 
 export const OkaimonoMemo: VFC = memo(() => {
   const { showMessage } = useMessage();
@@ -32,8 +31,8 @@ export const OkaimonoMemo: VFC = memo(() => {
 
   const defaultShoppingDate = new Date();
   const { setLoading, loading } = useContext(AuthContext);
-  const [expiryDate, setExpiryDate] = useState<boolean>(false);
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  // const [expiryDate, setExpiryDate] = useState<boolean>(false);
+  // const { isOpen, onClose, onOpen } = useDisclosure();
   const formattedDefaultShoppingDate = format(defaultShoppingDate, "yyyy-MM-dd", {
     locale: ja,
   });
@@ -119,10 +118,10 @@ export const OkaimonoMemo: VFC = memo(() => {
   const history = useHistory();
   const onClickBack = useCallback(() => history.push("/okaimono"), [history]);
 
-  const onClickInputNow = useCallback(() => {
-    setExpiryDate(true);
-    onClose();
-  }, []);
+  // const onClickInputNow = useCallback(() => {
+  //   setExpiryDate(true);
+  //   onClose();
+  // }, []);
 
   // ---------------------------------------------------------------------------
   // 店名入力欄のsuggest機能
@@ -168,7 +167,7 @@ export const OkaimonoMemo: VFC = memo(() => {
 
   // ---------------------------------------------------------------------------
 
-  useEffect(() => onOpen(), []);
+  // useEffect(() => onOpen(), []);
 
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
@@ -204,7 +203,7 @@ export const OkaimonoMemo: VFC = memo(() => {
             errors={errors}
             validationNumber={validationNumber}
             watch={watch}
-            expiryDate={expiryDate}
+            // expiryDate={expiryDate}
             onListChange={onListChange}
             getValues={getValues}
             purchaseNameSuggestions={purchaseNameSuggestions}
@@ -222,7 +221,7 @@ export const OkaimonoMemo: VFC = memo(() => {
           <Box h="15rem" />
         </VStack>
       </Flex>
-      <OkaimonoConfirmExpiryDateModal isOpen={isOpen} onClose={onClose} onClickInputNow={onClickInputNow} />
+      {/* <OkaimonoConfirmExpiryDateModal isOpen={isOpen} onClose={onClose} onClickInputNow={onClickInputNow} /> */}
     </form>
   );
 });

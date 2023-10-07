@@ -1,14 +1,33 @@
-import { Box, Flex, HStack, Image, Link, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, HStack, Icon, Image, Link, useDisclosure, VStack } from "@chakra-ui/react";
 import { MenuIconButton } from "components/atoms/MenuIconButton";
 import { MenuDrawer } from "components/molecules/MenuDrawer";
 import { memo, useContext, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "App";
 import { useSignOut } from "hooks/useSignOut";
+import { useOnClickMakeMemo } from "hooks/useOnClickMakeMemo";
+import { useOnClickAlert } from "hooks/useOnClickAlert";
+import { useOnClickSearch } from "hooks/useOnClickSearch";
+import { useOnClickMyPage } from "hooks/useOnClickMyPage";
+import {
+  BsCardChecklist,
+  BsDoorOpen,
+  BsJournalPlus,
+  BsListColumnsReverse,
+  BsPencilSquare,
+  BsSearch,
+} from "react-icons/bs";
+import { GoSignOut } from "react-icons/go";
+import { PiSignInLight } from "react-icons/pi";
+import { MdOutlineAccountCircle } from "react-icons/md";
 
 export const Header: VFC = memo(() => {
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const onClickMakeMemo = useOnClickMakeMemo();
+  const onClickAlert = useOnClickAlert();
+  const onClickSearch = useOnClickSearch();
+  const onClickMyPage = useOnClickMyPage();
 
   const onClickHome = () => {
     history.push("/");
@@ -22,28 +41,13 @@ export const Header: VFC = memo(() => {
     history.push("/user/sign_up");
     onClose();
   };
-  const onClickMakeMemo = () => {
-    history.push("/okaimono/okaimono_memo");
-    onClose();
-  };
+
   const onClickMemoIndex = () => {
     history.push("/okaimono");
     onClose();
   };
   const onClickShopShow = () => {
     history.push("/okaimono/okaimono_shop_index");
-    onClose();
-  };
-  const onClickAlert = () => {
-    history.push("/okaimono/okaimono_alert");
-    onClose();
-  };
-  const onClickSearch = () => {
-    history.push("/okaimono/okaimono_search");
-    onClose();
-  };
-  const onClickMyPage = () => {
-    history.push("/user/");
     onClose();
   };
 
@@ -56,7 +60,7 @@ export const Header: VFC = memo(() => {
     executionSignOut();
   };
 
-  const textFontSize = ["sm", "sm", "sm", "xl"];
+  const textFontSize = ["sm", "sm", "sm", "md"];
 
   return (
     <>
@@ -69,76 +73,159 @@ export const Header: VFC = memo(() => {
           <Image src="https://okaimono-portfolio.s3.ap-northeast-1.amazonaws.com/material/logo_full.png" alt="logo" />
         </Box>
         <Flex fontSize="sm" flexGrow={2} display={{ base: "none", md: "flex" }} justifyContent="center">
-          <Box pr={4}>
-            <Link fontSize={textFontSize} onClick={onClickSignIn} display={!isSignedIn ? "block" : "none"}>
-              ログイン
-            </Link>
+          <Box pr={4} display={!isSignedIn ? "block" : "none"}>
+            <VStack onClick={onClickSignIn} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+              <Icon
+                as={PiSignInLight}
+                h={8}
+                w={8}
+                _hover={{
+                  h: "9",
+                  w: "9",
+                  cursor: "pointer",
+                }}
+              />
+              <Link fontSize={textFontSize} onClick={onClickSignIn}>
+                ログイン
+              </Link>
+            </VStack>
           </Box>
           <Box pr={4} display={!isSignedIn ? "block" : "none"}>
-            <Link fontSize={textFontSize} onClick={onClickSignUp}>
-              アカウントの作成
-            </Link>
+            <VStack onClick={onClickSignUp} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+              <Icon
+                as={MdOutlineAccountCircle}
+                h={8}
+                w={8}
+                _hover={{
+                  h: "9",
+                  w: "9",
+                  cursor: "pointer",
+                }}
+              />
+              <Link fontSize={textFontSize}>アカウント作成</Link>
+            </VStack>
           </Box>
           <HStack spacing={4}>
-            {/* <VStack> */}
             <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickMakeMemo}>
-                メモの作成
-              </Link>
+              <VStack onClick={onClickMakeMemo} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={BsJournalPlus}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize}>メモの作成</Link>
+              </VStack>
             </Box>
             <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickMemoIndex}>
-                メモ一覧
-              </Link>
-            </Box>
-            {/* </VStack> */}
-            {/* <VStack> */}
-            <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickAlert}>
-                アラート
-              </Link>
-            </Box>
-            <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickSearch}>
-                サーチ
-              </Link>
-            </Box>
-            {/* </VStack> */}
-            {/* <VStack> */}
-            <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickShopShow}>
-                お店情報の確認と編集
-              </Link>
+              <VStack onClick={onClickMemoIndex} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={BsListColumnsReverse}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize}>メモ一覧</Link>
+              </VStack>
             </Box>
             <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickMyPage}>
-                マイページ
-              </Link>
+              <VStack onClick={onClickAlert} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={BsCardChecklist}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize}>アラート</Link>
+              </VStack>
             </Box>
-            {/* </VStack> */}
             <Box pr={4} display={isSignedIn ? "block" : "none"}>
-              <Link fontSize={textFontSize} onClick={onClickSignOut}>
-                サインアウト
-              </Link>
+              <VStack onClick={onClickSearch} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={BsSearch}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize}>サーチ</Link>
+              </VStack>
+            </Box>
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <VStack onClick={onClickShopShow} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={BsPencilSquare}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize}>お店編集</Link>
+              </VStack>
+            </Box>
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <VStack onClick={onClickMyPage} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={BsDoorOpen}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize}>マイページ</Link>
+              </VStack>
+            </Box>
+            <Box pr={4} display={isSignedIn ? "block" : "none"}>
+              <VStack onClick={onClickSignOut} _hover={{ fontWeight: "bold", cursor: "pointer" }}>
+                <Icon
+                  as={GoSignOut}
+                  h={8}
+                  w={8}
+                  _hover={{
+                    h: "9",
+                    w: "9",
+                    cursor: "pointer",
+                  }}
+                />
+                <Link fontSize={textFontSize} onClick={onClickSignOut}>
+                  サインアウト
+                </Link>
+              </VStack>
             </Box>
           </HStack>
-          {/* <Box pr={4} display={isSignedIn ? "block" : "none"}>
-            <Link onClick={onClickMemoUse}>お買い物メモを使う</Link>
-          </Box> */}
         </Flex>
         <MenuIconButton onOpen={onOpen} />
       </Flex>
       <MenuDrawer
         onClose={onClose}
         isOpen={isOpen}
-        // onClickHome={onClickHome}
         onClickSignIn={onClickSignIn}
         onClickSignUp={onClickSignUp}
         onClickMakeMemo={onClickMakeMemo}
         onClickSignOut={onClickSignOut}
         onClickMemoIndex={onClickMemoIndex}
         onClickShopShow={onClickShopShow}
-        // onClickMemoUse={onClickMemoUse}
         onClickAlert={onClickAlert}
         onClickSearch={onClickSearch}
         onClickMyPage={onClickMyPage}
