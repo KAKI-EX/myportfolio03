@@ -14,8 +14,8 @@ type ComponentProps = {
 
 type UpdateProps = {
   setReadOnly: React.Dispatch<React.SetStateAction<boolean>>;
-  expiryDate: boolean;
-  onOpen: () => void;
+  // expiryDate: boolean;
+  // onOpen: () => void;
   formData: MergeParams;
   pushTemporarilyButton: boolean;
   deleteIds: string[];
@@ -36,8 +36,8 @@ export const useShowUpdateList = (componentProps: ComponentProps) => {
     async (updateProps: UpdateProps) => {
       const {
         setReadOnly,
-        expiryDate,
-        onOpen,
+        // expiryDate,
+        // onOpen,
         formData,
         pushTemporarilyButton,
         deleteIds,
@@ -50,9 +50,9 @@ export const useShowUpdateList = (componentProps: ComponentProps) => {
       } = updateProps;
 
       setReadOnly(!readOnly);
-      if (readOnly && !expiryDate) {
-        onOpen();
-      }
+      // if (readOnly && !expiryDate) {
+      //   onOpen();
+      // }
 
       const addFormData = {
         ...formData,
