@@ -95,27 +95,29 @@ export const OkaimonoAlert: VFC = memo(() => {
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
     </Box>
   ) : (
-    <Box w="95vw">
-      <form onSubmit={handleSubmit(deleteSubmit)}>
-        <Flex align="center" justify="center" px={2}>
-          <Box w={{ base: "100%", md: "80%" }}>
-            <Heading as="h1" size="lg" textAlign="center" my={5}>
-              お買い物アラート
-            </Heading>
-            <VStack>
-              <PrimaryButtonForReactHookForm onClick={onClickDeleteAlert}>
-                {clickAlertDelete ? "確定" : "アラートを選択して消す"}
-              </PrimaryButtonForReactHookForm>
-              <OkaimonoAlertList
-                alertLists={alertLists}
-                clickAlertDelete={clickAlertDelete}
-                register={register}
-                onClickAlertListBody={onClickAlertListBody}
-              />
-            </VStack>
-          </Box>
-        </Flex>
-      </form>
+    <Box w="100%">
+      <VStack>
+        <form onSubmit={handleSubmit(deleteSubmit)}>
+          <Flex align="center" justify="center" px={2}>
+            <Box w="95vw">
+              <Heading as="h1" size="lg" textAlign="center" my={5}>
+                お買い物アラート
+              </Heading>
+              <VStack w="100%">
+                <PrimaryButtonForReactHookForm onClick={onClickDeleteAlert}>
+                  {clickAlertDelete ? "確定" : "アラートを選択して消す"}
+                </PrimaryButtonForReactHookForm>
+                <OkaimonoAlertList
+                  alertLists={alertLists}
+                  clickAlertDelete={clickAlertDelete}
+                  register={register}
+                  onClickAlertListBody={onClickAlertListBody}
+                />
+              </VStack>
+            </Box>
+          </Flex>
+        </form>
+      </VStack>
       <OkaimonoAlertModal
         isOpen={isOpen}
         onClose={onClose}

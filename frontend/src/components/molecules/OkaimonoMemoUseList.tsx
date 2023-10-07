@@ -206,33 +206,37 @@ export const OkaimonoMemoUseList: VFC<Props> = memo((props) => {
                   <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }} />
                   <MenuList borderRadius="md" shadow="md" zIndex="dropdown">
                     {getValues(`listForm.${index}.id`) ? (
-                      <HStack>
-                        <Icon as={CiEraser} w={4} h={4} ml={3} />
-                        <MenuItem onClick={(event) => onClickListModify(index, event)}>編集する</MenuItem>
-                      </HStack>
+                      <MenuItem onClick={(event) => onClickListModify(index, event)}>
+                        <HStack>
+                          <Icon as={CiEraser} w={4} h={4} ml={3} />
+                          <Text>編集する</Text>
+                        </HStack>
+                      </MenuItem>
                     ) : null}
-                    <HStack>
-                      <Icon as={BsTrash3} w={4} h={4} ml={3} />
-                      <MenuItem
-                        onClick={() => {
-                          if (getValues) {
-                            const listId = getValues(`listForm.${index}.id`);
-                            if (listId) {
-                              if (setDeleteIds) {
-                                setDeleteIds((prevIds) => [...(prevIds || []), listId]);
-                              }
+                    <MenuItem
+                      onClick={() => {
+                        if (getValues) {
+                          const listId = getValues(`listForm.${index}.id`);
+                          if (listId) {
+                            if (setDeleteIds) {
+                              setDeleteIds((prevIds) => [...(prevIds || []), listId]);
                             }
                           }
-                          remove(index);
-                        }}
-                      >
-                        削除する
-                      </MenuItem>
-                    </HStack>
-                    <HStack>
-                      <Icon as={GrChapterAdd} w={4} h={4} ml={3} />
-                      <MenuItem onClick={() => insertInputForm(index)}>フォームを下に追加</MenuItem>
-                    </HStack>
+                        }
+                        remove(index);
+                      }}
+                    >
+                      <HStack>
+                        <Icon as={BsTrash3} w={4} h={4} ml={3} />
+                        <Text>削除する</Text>
+                      </HStack>
+                    </MenuItem>
+                    <MenuItem onClick={() => insertInputForm(index)}>
+                      <HStack>
+                        <Icon as={GrChapterAdd} w={4} h={4} ml={3} />
+                        <Text>フォームを下に追加</Text>
+                      </HStack>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </HStack>

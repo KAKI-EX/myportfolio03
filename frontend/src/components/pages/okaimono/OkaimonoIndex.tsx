@@ -1,14 +1,4 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Spinner,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  useDisclosure,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Spinner, TabPanel, TabPanels, Tabs, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import React, { memo, useEffect, useState, VFC } from "react";
 import { useHistory } from "react-router-dom";
 import { OkaimonoMemoData } from "interfaces";
@@ -88,7 +78,6 @@ export const OkaimonoIndex: VFC = memo(() => {
     navigator.clipboard.writeText(getValues("openMemoUrl"));
   };
   // ---------------------------------------------------------------------------------
-
   return loading ? (
     <Box h="80vh" display="flex" justifyContent="center" alignItems="center">
       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />

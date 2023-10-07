@@ -61,7 +61,7 @@ export const TableThread: VFC<Props> = memo((props: Props) => {
           fontSize={{ base: "sm", md: "md" }}
           display={{ base: "none", md: "table-cell" }}
         >
-          ゆるい予算
+          {isFinished !== true ? "ゆるい予算" : "合計金額"}
         </TableThreadTitle>
         <TableThreadTitle
           color="white"

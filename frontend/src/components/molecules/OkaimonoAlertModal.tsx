@@ -44,7 +44,7 @@ export const OkaimonoAlertModal: VFC<Props> = memo((props) => {
     <Box w="100%">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent bg="gray.100" w="95vw" maxW="none">
+        <ModalContent bg="gray.100" w={{ base: "95%", md: "50%" }} maxW="none">
           <ModalHeader>選択したアラートの情報</ModalHeader>
           <ModalCloseButton _focus={{ boxShadow: "none" }} data-testid="close-button" />
           <ModalBody w="100%" overflowX="hidden">
@@ -52,6 +52,7 @@ export const OkaimonoAlertModal: VFC<Props> = memo((props) => {
               <TableContainer w="100%">
                 <Table w="100%">
                   <TableCaption
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
                     onClick={(event) => onClickShowMemo(event, alertListDetail?.shoppingDatumId)}
                     textAlign="center"
                   >
@@ -92,14 +93,18 @@ export const OkaimonoAlertModal: VFC<Props> = memo((props) => {
                         <Icon as={AiOutlineMoneyCollect} w={5} h={5} mb={-1} mr={1} />
                         価格
                       </Td>
-                      <Td fontSize={{ base: "sm", md: "md" }}>{alertListDetail?.price ? `${alertListDetail?.price}  円` : "入力なし"}</Td>
+                      <Td fontSize={{ base: "sm", md: "md" }}>
+                        {alertListDetail?.price ? `${alertListDetail?.price}  円` : "入力なし"}
+                      </Td>
                     </Tr>
                     <Tr>
                       <Td fontSize={{ base: "sm", md: "md" }}>
                         <Icon as={BiCube} w={5} h={5} mb={-1} mr={1} />
                         個数
                       </Td>
-                      <Td fontSize={{ base: "sm", md: "md" }}>{alertListDetail?.amount ? `${alertListDetail?.amount}  つ` : "入力なし"}</Td>
+                      <Td fontSize={{ base: "sm", md: "md" }}>
+                        {alertListDetail?.amount ? `${alertListDetail?.amount}  つ` : "入力なし"}
+                      </Td>
                     </Tr>
                   </Tbody>
                 </Table>

@@ -1,5 +1,18 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import {
+  Button,
+  HStack,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tr,
+} from "@chakra-ui/react";
 import { OkaimonoMemoData } from "interfaces";
 import React, { memo, VFC } from "react";
 import { TableThread } from "components/molecules/TableThread";
@@ -91,25 +104,29 @@ export const OkaimonoIndexTabPanelConfimed: VFC<Props> = memo((props) => {
                   <MenuButton as={ChevronDownIcon} _hover={{ cursor: "pointer" }} />
                   <MenuList borderRadius="md" shadow="md">
                     {/* <MenuItem onClick={onClickMemoUse(i.id)}>お買い物で使ってみる！</MenuItem> */}
-                    <HStack>
-                      <Icon as={BsCardChecklist} w={4} h={4} ml={3} />
-                      <MenuItem onClick={onClickShowMemo(i.id)}>確認</MenuItem>
-                    </HStack>
-                    <HStack>
-                      <Icon as={BsShare} w={4} h={4} ml={3} />
-                      <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>おつかい（シェア）</MenuItem>
-                    </HStack>
-                    <HStack>
-                      <Icon as={BsTrash3} w={4} h={4} ml={3} />
-                      <MenuItem
-                        onClick={() => {
-                          setDeletePost(i);
-                          onAlertOpen();
-                        }}
-                      >
-                        削除
-                      </MenuItem>
-                    </HStack>
+                    <MenuItem onClick={onClickShowMemo(i.id)}>
+                      <HStack>
+                        <Icon as={BsCardChecklist} w={4} h={4} ml={3} />
+                        <Text>確認</Text>
+                      </HStack>
+                    </MenuItem>
+                    <MenuItem onClick={(event) => onClickShowOpenUrl(i.id, event)}>
+                      <HStack>
+                        <Icon as={BsShare} w={4} h={4} ml={3} />
+                        <Text>おつかい（シェア）</Text>
+                      </HStack>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setDeletePost(i);
+                        onAlertOpen();
+                      }}
+                    >
+                      <HStack>
+                        <Icon as={BsTrash3} w={4} h={4} ml={3} />
+                        <Text>削除</Text>
+                      </HStack>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </Td>

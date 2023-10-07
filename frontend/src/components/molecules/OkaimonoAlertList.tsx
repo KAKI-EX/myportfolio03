@@ -22,7 +22,8 @@ export const OkaimonoAlertList: VFC<Props> = memo((props) => {
     <>
       {alertLists?.map((alert, index) => (
         <HStack
-          w="100%"
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
+          w={{ base: "100%", md: "60%" }}
           bg="white"
           py={4}
           px={2}
