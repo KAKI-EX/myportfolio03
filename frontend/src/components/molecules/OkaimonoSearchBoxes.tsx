@@ -1,13 +1,4 @@
-import {
-  Box,
-  Divider,
-  Heading,
-  HStack,
-  Input,
-  Select,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Divider, Heading, HStack, Input, Select, Text, VStack } from "@chakra-ui/react";
 import { PrimaryButtonForReactHookForm } from "components/atoms/PrimaryButtonForReactHookForm";
 import { ListFormParams, OkaimonoShopsIndexData, UseFormOnSearchPage } from "interfaces";
 import React, { memo, VFC } from "react";
@@ -48,7 +39,7 @@ export const OkaimonoSearchBoxes: VFC<Props> = memo((props) => {
     onClickSuggests,
     isOkaimonoShopsIndexData,
     startDate,
-    isValid
+    isValid,
   } = props;
 
   const {
@@ -63,6 +54,7 @@ export const OkaimonoSearchBoxes: VFC<Props> = memo((props) => {
     <Box boxShadow="lg" bg="white" rounded="xl" p={6}>
       <HStack>
         <Select
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
           placeholder="検索"
           size="md"
           w="40%"
@@ -76,6 +68,7 @@ export const OkaimonoSearchBoxes: VFC<Props> = memo((props) => {
         </Select>
         <Box>
           <Input
+            _hover={{ fontWeight: "bold", cursor: "pointer" }}
             onChange={customOnChange}
             placeholder="検索語句"
             size="md"
@@ -103,7 +96,7 @@ export const OkaimonoSearchBoxes: VFC<Props> = memo((props) => {
                                 event,
                                 isOkaimonoShopsIndexData(value) ? value.shopName || "" : value.purchaseName || ""
                               )}
-                        _hover={{ fontWeight: "bold" }}
+                        _hover={{ fontWeight: "bold", cursor: "pointer" }}
                       >
                         {isOkaimonoShopsIndexData(value) ? value.shopName || "" : value.purchaseName || ""}
                       </Text>
@@ -125,12 +118,19 @@ export const OkaimonoSearchBoxes: VFC<Props> = memo((props) => {
         更にお買い物日で絞り込む
       </Heading>
       <HStack>
-        <Input type="date" size="md" fontSize={{ base: "sm", md: "md" }} {...register("startDate")} />
+        <Input
+          type="date"
+          size="md"
+          fontSize={{ base: "sm", md: "md" }}
+          {...register("startDate")}
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
+        />
         <Text>〜</Text>
         <Input
           type="date"
           size="md"
           fontSize={{ base: "sm", md: "md" }}
+          _hover={{ fontWeight: "bold", cursor: "pointer" }}
           {...register("endDate", {
             validate: (value) =>
               !startDate ||

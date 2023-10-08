@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Text, VStack, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Heading, HStack, Text, VStack, useBreakpointValue, AspectRatio } from "@chakra-ui/react";
 import { memo, VFC } from "react";
 import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper/core";
 import { useHistory } from "react-router-dom";
@@ -12,6 +12,7 @@ import { HomeSpSlide } from "components/molecules/HomeSpSlide";
 import { HomeSpGuidance } from "components/molecules/HomeSpGuidance";
 import { HomePcGuidance } from "components/molecules/HomePcGuidance";
 import { appInfo } from "consts/appconst";
+import { HomePcSpYoutube } from "components/molecules/HomePcSpYoutube";
 
 // Install Swiper modules
 SwiperCore.use([Autoplay, Navigation, Pagination]);
@@ -55,7 +56,12 @@ export const Home: VFC = memo(() => {
                       今すぐ登録！
                     </PrimaryButton>
                   </Box>
-                  <Text as="ins" fontSize={textFontSize} onClick={onClickGuestSignIn}>
+                  <Text
+                    as="ins"
+                    fontSize={textFontSize}
+                    onClick={onClickGuestSignIn}
+                    _hover={{ fontWeight: "bold", cursor: "pointer" }}
+                  >
                     またはここからゲストログイン
                   </Text>
                 </VStack>
@@ -64,7 +70,9 @@ export const Home: VFC = memo(() => {
             {isLargerThan767 ? <HomePcSlide /> : ""}
           </HStack>
         </Box>
+        {isLargerThan767 ? <HomePcSpYoutube /> : null}
         {!isLargerThan767 ? <HomeSpSlide /> : ""}
+        {!isLargerThan767 ? <HomePcSpYoutube /> : null}
         <Box shadow="md" borderWidth="1px" bg="green.50" w="95%" mt={2} p={5}>
           <Heading as="h2" size="md" borderBottom="1px" borderColor="gray.300" pt={3}>
             {appInfo.Info.appName}でできること
@@ -76,7 +84,12 @@ export const Home: VFC = memo(() => {
               <PrimaryButton onClick={onClickRegister} fontSize={["md", "lg", "xl"]}>
                 今すぐ登録！
               </PrimaryButton>
-              <Text as="ins" fontSize={textFontSize} onClick={onClickGuestSignIn}>
+              <Text
+                as="ins"
+                fontSize={textFontSize}
+                onClick={onClickGuestSignIn}
+                _hover={{ fontWeight: "bold", cursor: "pointer" }}
+              >
                 またはここからゲストログイン
               </Text>
             </VStack>

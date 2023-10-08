@@ -65,10 +65,10 @@ export const UserManagement: VFC = memo(() => {
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
-                Cancel
+                キャンセル
               </Button>
               <Button colorScheme="red" onClick={onClickAccountDelete} ml={3}>
-                Delete
+                削除
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

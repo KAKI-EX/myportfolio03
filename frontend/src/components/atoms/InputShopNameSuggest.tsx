@@ -26,7 +26,7 @@ export const InputShopNameSuggest: VFC<Props> = memo((props) => {
                   fontSize={{ base: "sm", md: "md" }}
                   w={w}
                   onClick={(event) => onClickSuggests(event, value.shopName)}
-                  _hover={{ fontWeight: "bold" }}
+                  _hover={{ fontWeight: "bold", cursor: "pointer" }}
                 >
                   {value.shopName}
                 </Text>

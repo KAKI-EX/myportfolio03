@@ -116,6 +116,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
                   overflow="hidden"
                   textOverflow="ellipsis"
                   whiteSpace="nowrap"
+                  _hover={{ fontWeight: "bold", cursor: "pointer" }}
                 />
               </PopoverTrigger>
               <PopoverContent _focus={{ outline: "none" }}>

@@ -47,7 +47,7 @@ export const OkaimonoButtonAndCalculater: VFC<Props> = memo((props) => {
         {isFinished ? null : <Spacer />}
         {!isFinished && (
           <>
-            <OptionallyButton w="45%" onClick={onClickTemporarilySaved} disabled={readOnly}>
+            <OptionallyButton w="45%" onClick={onClickTemporarilySaved} disabled={!isValid}>
               一時保存
             </OptionallyButton>
           </>

@@ -28,7 +28,7 @@ export const OkaimonoSearchResults: VFC<Props> = memo((props) => {
           key={record.id}
           onClick={(event) => (record.id ? onClickList(event, record.id) : undefined)}
         >
-          <HStack>
+          <HStack _hover={{ fontWeight: "bold", cursor: "pointer" }}>
             <Text fontSize={{ base: "sm", md: "md" }} mr={2} w={{ base: "40%", md: "20%" }}>
               <Icon as={BsCartCheck} w={5} h={5} mb={-1} mr={1} />
               {record.shoppingDate}

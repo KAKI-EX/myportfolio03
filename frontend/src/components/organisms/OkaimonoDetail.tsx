@@ -25,7 +25,7 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import { PurchaseNameSuggestion } from "components/atoms/PurchaseNameSuggestion";
+import { InputPurchaseNameSuggestion } from "components/atoms/InputPurchaseNameSuggestion";
 import { InputAmount } from "components/atoms/InputAmount";
 import { InputShoppingDetailMemo } from "components/atoms/InputShoppingDetailMemo";
 import { InputPrice } from "components/atoms/InputPrice";
@@ -117,7 +117,7 @@ export const OkaimonoDetail: VFC<Props> = memo((props) => {
               <HStack w="100%">
                 <Box w="70%">
                   <InputPurchaseName readOnly={readOnly} customOnChange={customOnChange} inputRef={ref} rest={rest} />
-                  <PurchaseNameSuggestion
+                  <InputPurchaseNameSuggestion
                     index={index}
                     setValue={setValue}
                     setPurchaseNameSuggestions={setPurchaseNameSuggestions}

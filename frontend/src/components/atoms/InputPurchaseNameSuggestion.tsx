@@ -11,7 +11,7 @@ type Props = {
   purchaseNameSuggestions?: ListFormParams[];
 };
 
-export const PurchaseNameSuggestion: VFC<Props> = memo((props) => {
+export const InputPurchaseNameSuggestion: VFC<Props> = memo((props) => {
   const { index, setValue, setPurchaseNameSuggestions, purchaseNameIndex, purchaseNameSuggestions } = props;
 
   const onClickSuggests = (
@@ -42,7 +42,7 @@ export const PurchaseNameSuggestion: VFC<Props> = memo((props) => {
                   fontSize={{ base: "sm", md: "md" }}
                   w="100%"
                   onClick={(event) => (value.purchaseName ? onClickSuggests(event, value.purchaseName, index) : "")}
-                  _hover={{ fontWeight: "bold" }}
+                  _hover={{ fontWeight: "bold", cursor: "pointer" }}
                 >
                   {value.purchaseName}
                 </Text>
