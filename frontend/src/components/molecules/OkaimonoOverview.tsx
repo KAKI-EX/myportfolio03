@@ -21,6 +21,7 @@ import { InputShopName } from "components/atoms/InputshopName";
 import { InputShopNameErrors } from "components/atoms/InputShopNameErrors";
 import { InputShopNameSuggest } from "components/atoms/InputShopNameSuggest";
 import { InputShoppingDate } from "components/atoms/InputShoppingDate";
+import { InputShoppingDateErrors } from "components/atoms/InputShoppingDateErrors";
 import { InputShoppingMemo } from "components/atoms/InputShoppingMemo";
 import { MergeParams, OkaimonoShopsIndexData } from "interfaces";
 import React, { memo, VFC } from "react";
@@ -88,6 +89,7 @@ export const OkaimonoOverview: VFC<Props> = memo((props) => {
     <Box bg="white" rounded="xl" w={{ base: "100%", md: "70%", xl: "60%" }}>
       <Stack align="center" justify="center" py={6} spacing="3">
         <InputShoppingDate readOnly={readOnly} register={register} w="90%" />
+        <InputShoppingDateErrors errors={errors} />
         <Box w="90%">
           <InputShopName readOnly={readOnly} customOnChange={customOnChange} w="100%" ref={ref} rest={rest} />
           <InputShopNameSuggest shopNameSuggestions={shopNameSuggestions} onClickSuggests={onClickSuggests} w="100%" />

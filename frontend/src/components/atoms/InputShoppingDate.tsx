@@ -1,6 +1,6 @@
 import { Input } from "@chakra-ui/react";
 import { MergeParams } from "interfaces";
-import { memo, VFC } from "react";
+import { memo, useEffect, useState, VFC } from "react";
 import { UseFormRegister } from "react-hook-form";
 
 type Props = {
@@ -11,6 +11,14 @@ type Props = {
 
 export const InputShoppingDate: VFC<Props> = memo((props) => {
   const { readOnly = false, register, w } = props;
+
+  const today = new Date();
+  const nextYear = new Date(today);
+  nextYear.setFullYear(today.getFullYear() + 1);
+
+  const minDateString = today.toISOString().split("T")[0];
+  const maxDateString = nextYear.toISOString().split("T")[0];
+
   return (
     <Input
       _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
@@ -20,7 +28,16 @@ export const InputShoppingDate: VFC<Props> = memo((props) => {
       type="date"
       w={w}
       fontSize={{ base: "sm", md: "md" }}
-      {...register("shoppingDate")}
+      {...register("shoppingDate", {
+        validate: (value) => {
+          if (!value) {
+            return "日付は必須です。";
+          }
+          return (
+            (value >= minDateString && value <= maxDateString) || "日付の範囲は今日から1年以内である必要があります。"
+          );
+        },
+      })}
     />
   );
 });
