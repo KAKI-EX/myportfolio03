@@ -4,7 +4,7 @@ class Memo < ApplicationRecord
     where('purchase_name LIKE :value', { value: "#{sanitize_sql_like(purc)}%"})
   }
 
-  validates :user_id, :shop_id, :shopping_datum_id, presence: true
+  validates :user_id, :shop_id, :shopping_datum_id, :purchase_name, presence: true
   validates :shopping_date, presence: { message: "買い物をする日付けが入力されていません" }
   validates :purchase_name, length: {maximum: 50, message: "商品名は%{count}文字以上の登録はできません。"}
   validates :shopping_detail_memo, length: {maximum: 150, message: "商品メモは%{count}文字以上の登録はできません。"}
