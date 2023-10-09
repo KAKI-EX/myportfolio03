@@ -16,5 +16,44 @@
   https://web.okaimonoportfolio.xyz/
 
   # 2. インフラ構成図と使用技術について
-  ## ■ インフラ構成図
+  ### ■ インフラ構成図
+![ポートフォリオ_インフラ構成図 drawio (1)](https://github.com/KAKI-EX/myportfolio03/assets/115675329/a17f21fa-3702-410d-b9de-86ef5280647a)
 
+  ### ■ 主な使用技術
+  #### Backend
+    - Ruby 3.0.6
+    - Ruby on Rails(APIモード) 6.1.7
+    - devise
+    - devise token auth
+    - kaminari
+    - Unicorn
+    - NginX
+
+  #### Frontend
+    - React　17.0.2
+    - TypeScript 4.1.3
+    - chakra-ui
+    - react-autosuggest
+    - axios
+    - eslint
+
+  #### その他
+    - Docker
+    - docker-compose
+
+  # 3. 今後のアップデート予定
+  #### CircleCIとの連携、自動デプロイ
+  #### フロントエンド、バックエンドのテストの作成。(現在進行中)
+  #### 検索機能の強化（分析機能）
+
+  # 4. 今後の課題
+  #### フロントエンド　⇔　バックエンド　の連携簡素化
+    - React学習当初のコードが多分にあり、現在の知識で見てみると、かなりの簡素化が可能。
+    - 現在の仕様では、Transaction処理が不完全で、メモ作成時のエラー制御に大きな不安が残る。
+  #### コンポーネント共通化
+    - Atomicデザインを踏襲しているものの、まだまだ不完全。
+
+  #### TypeScriptへの理解が浅い
+    - 理解が単純に浅い。アプリ作成を続け、理解を深める。
+  
+  
