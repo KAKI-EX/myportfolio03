@@ -38,7 +38,7 @@
 
   # 2. インフラ構成図と使用技術について
   ### ■ インフラ構成図
-![ポートフォリオ_インフラ構成図 drawio (1)](https://github.com/KAKI-EX/myportfolio03/assets/115675329/a17f21fa-3702-410d-b9de-86ef5280647a)
+![ポートフォリオ_インフラ構成図 drawio (1)](https://github.com/KAKI-EX/myportfolio03/assets/115675329/d476153c-b229-480a-9a1b-b034e90fb0e1)
 
   ### ■主な使用技術
   #### Backend
