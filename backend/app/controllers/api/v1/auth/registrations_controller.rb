@@ -1,12 +1,12 @@
 # アカウント作成用コントローラー
 class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsController
-  before_action :ensure_normal_user, only: %i[update destroy]
+  before_action :ensure_normal_user, only: %i(update destroy)
 
   def render_create_success
     render json: {
       message: 'アカウントを作成しました',
       status: 'success',
-      data:   resource_data
+      data: resource_data,
     }
   end
 

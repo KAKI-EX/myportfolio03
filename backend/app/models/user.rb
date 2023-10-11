@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class User < ActiveRecord::Base
   before_create :set_uuid
 
@@ -27,8 +28,9 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   private
+
   def set_uuid
-    while self.id.blank? || User.find_by(id: self.id).present? do
+    while id.blank? || User.find_by(id: id).present?
       self.id = SecureRandom.uuid
     end
   end

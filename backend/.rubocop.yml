@@ -1,0 +1,28 @@
+require: rubocop-rspec
+
+inherit_from:
+  - .rubocop_airbnb.yml
+
+#以下にはrubocopで検証したくないフォルダを指定する
+AllCops:
+  Exclude:
+    - "db/**/*"
+    - "bin/*"
+    - "config/environments/*"
+    - "config/application.rb"
+    - "config/initializers/*"
+    - "config/spring.rb"
+    - "lib/tasks/*"
+    - "vendor/**/*"
+    - "path/ruby"
+    - "config/routes.rb"
+    - "spec/factories/*"
+
+LineLength:
+  Max: 200
+
+Layout/SpaceInsideStringInterpolation:
+  EnforcedStyle: space
+
+Style/RedundantReturn:
+  Enabled: false

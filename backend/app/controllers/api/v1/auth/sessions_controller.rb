@@ -5,12 +5,12 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
   def render_create_success
     render json: {
       message: I18n.t('devise.sessions.signed_in'), # この部分を追加した。
-      data: resource_data(resource_json: @resource.token_validation_response)
+      data: resource_data(resource_json: @resource.token_validation_response),
     }
   end
 
   def user_name_show
-    render json: {nickname: current_api_v1_user.nickname}
+    render json: { nickname: current_api_v1_user.nickname }
   end
 
   def guest_sign_in

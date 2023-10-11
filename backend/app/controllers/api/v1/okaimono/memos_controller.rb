@@ -106,9 +106,9 @@ class Api::V1::Okaimono::MemosController < ApplicationController
       update_memos = memos_params.each do |params|
         shopping_data = current_api_v1_user.shopping_data.find(params[:shopping_datum_id])
         expiry_end_date_check =
-          if (params[:expiry_date_end].present? && shopping_data.is_finish == true)
+          if params[:expiry_date_end].present? && shopping_data.is_finish == true
             "params_exsist"
-          elsif (current_api_v1_user.memos.find(params[:list_id]).expiry_date_end.present? && shopping_data.is_finish == true)
+          elsif current_api_v1_user.memos.find(params[:list_id]).expiry_date_end.present? && shopping_data.is_finish == true
             "record_exsist"
           else
             nil
@@ -129,7 +129,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
           existing_memo.update!(params.except(:list_id, :user_id))
         end
       end
-        render json: update_memos
+      render json: update_memos
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
     end
@@ -143,7 +143,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
         existing_memo.assign_attributes(is_expiry_date: true, is_display: true, is_bought: true)
         existing_memo.update!(params.except(:list_id, :user_id, :expiry_date_end))
       end
-        render json: update_memos
+      render json: update_memos
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
     end
@@ -202,7 +202,6 @@ class Api::V1::Okaimono::MemosController < ApplicationController
     end
   end
 
-
   private
 
   def one_memo_params
@@ -221,12 +220,11 @@ class Api::V1::Okaimono::MemosController < ApplicationController
       :expiry_date_start,
       :expiry_date_end,
       :is_bought
-      )
+    )
   end
 
-
   def memos_params
-    params.require(:memos).map do | memo_param |
+    params.require(:memos).map do |memo_param|
       memo_param.permit(
         :user_id,
         :shop_id,

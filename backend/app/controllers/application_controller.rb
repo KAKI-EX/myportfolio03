@@ -12,5 +12,4 @@ class ApplicationController < ActionController::Base
   def params_missing
     render json: { error: 'パラメーターが正しくありません' }, status: :bad_request
   end
-
 end

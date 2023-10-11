@@ -17,7 +17,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
       shopping_records = shopping_records.map do |record|
-        record.attributes.merge({ 'memos_count': record.memos.count})
+        record.attributes.merge({ 'memos_count': record.memos.count })
       end
       render json: { records: shopping_records, total_pages: total_pages }
     end
@@ -29,7 +29,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       render json: { error: 'お店が見つかりませんでした' }, status: :not_found
       return
     end
-    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5);
+    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
     total_pages = shopping_records.total_pages
 
     if shopping_records.empty?
@@ -44,7 +44,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     end
 
     shopping_records = shopping_records.map do |record|
-      record.attributes.merge({ 'memos_count': record.memos.count})
+      record.attributes.merge({ 'memos_count': record.memos.count })
     end
 
     render json: { records: shopping_records, total_pages: total_pages }
@@ -67,11 +67,11 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       end
     end
 
-    shopping_records = shopping_records.page((params[:page] || 1)).per(5);
+    shopping_records = shopping_records.page((params[:page] || 1)).per(5)
     total_pages = shopping_records.total_pages
 
     shopping_records = shopping_records.map do |record|
-      record.attributes.merge({ 'memos_count': record.memos.count})
+      record.attributes.merge({ 'memos_count': record.memos.count })
     end
 
     render json: { records: shopping_records, total_pages: total_pages }
@@ -147,7 +147,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       :is_finish,
       :is_open,
       :is_signed_in
-      )
+    )
   end
 
   def find_shopping
