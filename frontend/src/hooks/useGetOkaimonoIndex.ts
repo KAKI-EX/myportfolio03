@@ -53,7 +53,7 @@ export const useGetOkaimonoIndex = () => {
       const axiosError = err as AxiosError;
       // eslint-disable-next-line no-console
       console.error(axiosError.response);
-      showMessage({ title: axiosError.response?.data.errors, status: "error" });
+      showMessage({ title: axiosError.response?.data.error, status: "error" });
       setLoading(false);
     }
   };

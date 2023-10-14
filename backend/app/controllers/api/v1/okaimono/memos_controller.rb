@@ -1,10 +1,10 @@
 class Api::V1::Okaimono::MemosController < ApplicationController
   before_action :authenticate_api_v1_user!, except: [:show_open_memos, :show_open_memo, :update_open_memo, :create_open_memos, :update_open_memos, :destroy_open_memo]
 
-  def index
-    memos = current_api_v1_user.memos
-    render json: memos
-  end
+  # def index
+  #   memos = current_api_v1_user.memos
+  #   render json: memos
+  # end
 
   def suggestions_index
     purchases = current_api_v1_user.memos.by_purchase_name_like(params[:purchase_name]).limit(10).select(:id, :purchase_name).reject(&:blank?)
