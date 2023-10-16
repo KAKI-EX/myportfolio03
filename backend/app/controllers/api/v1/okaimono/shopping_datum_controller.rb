@@ -13,44 +13,60 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     end
   end
 
-  def record_index
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
-    total_pages = shopping_records.total_pages
-    if shopping_records.nil?
-      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+  def create
+    shopping_data = current_api_v1_user.shopping_data.new(shopping_params)
+    if shopping_data.save
+      render json: shopping_data, status: :created
     else
-      shopping_records = shopping_records.map do |record|
-        record.attributes.merge({ 'memos_count': record.memos.count })
-      end
-      render json: { records: shopping_records, total_pages: total_pages }
+      render_unprocessable_entity
     end
   end
 
-  def search_by_shop
-    shop = current_api_v1_user.shops.find_by(shop_name: params[:word])
-    if shop.nil?
-      render json: { error: 'お店が見つかりませんでした' }, status: :not_found
-      return
+  def show
+    if @shopping_datum.nil?
+      render_not_found_error
+    else
+      render json: @shopping_datum
     end
-    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
-    total_pages = shopping_records.total_pages
+  end
 
-    if shopping_records.empty?
-      render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
-      return
-    elsif params[:start].present? && params[:end].present?
-      shopping_records = shopping_records.where(shopping_date: params[:start]..params[:end])
-      if shopping_records.empty?
-        render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
-        return
-      end
+  def show_open_memo
+    shopping = User.find_by(id: params[:user_id])&.shopping_data&.find_by(id: params[:shopping_datum_id])
+
+    if shopping.nil?
+      render_not_found_error
+    elsif shopping.is_open
+      render json: shopping
+    else
+      render_unauthorized_operation
     end
+  end
 
-    shopping_records = shopping_records.map do |record|
-      record.attributes.merge({ 'memos_count': record.memos.count })
+  def update
+    if @shopping_datum.update(shopping_params)
+      render json: @shopping_datum
+    else
+      render json: { error: '更新に失敗しました' }, status: :not_modified
     end
+  end
 
-    render json: { records: shopping_records, total_pages: total_pages }
+  def update_open_memo
+    shopping = User.find_by(id: shopping_params[:user_id]).shopping_data.find_by(id: shopping_params[:shopping_datum_id])
+    if shopping.nil?
+      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+    elsif shopping.update(shopping_params.except(:user_id, :shopping_datum_id))
+      render json: shopping
+    else
+      render json: { error: '更新に失敗しました' }, status: :not_modified
+    end
+  end
+
+  def destroy
+    if @shopping_datum.destroy
+      render json: @shopping_datum
+    else
+      render json: @shopping_datum.errors
+    end
   end
 
   def search_by_purchase
@@ -80,60 +96,44 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     render json: { records: shopping_records, total_pages: total_pages }
   end
 
-  def create
-    shopping = current_api_v1_user.shopping_data.new(shopping_params)
-    if shopping.save
-      render json: shopping
-    else
-      render json: { errors: '何らかのエラーにより作成できませんでした' }, status: :unprocessable_entity
-    end
-  end
-
-  def show
-    if @shopping.nil?
+  def record_page_index
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
+    total_pages = shopping_records.total_pages
+    if shopping_records.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
     else
-      render json: @shopping
+      shopping_records = shopping_records.map do |record|
+        record.attributes.merge({ 'memos_count': record.memos.count })
+      end
+      render json: { records: shopping_records, total_pages: total_pages }
     end
   end
 
-  def show_open_memo
-    shopping = User.find_by(id: params[:user_id]).shopping_data.find_by(id: params[:shopping_datum_id])
-
-    if shopping.nil?
-      render json: { error: 'データが見つかりませんでした' }, status: :not_found
-    elsif shopping.is_open
-      render json: shopping
-    else
-      render json: { error: '不正な操作が実行されました' }, status: :unprocessable_entity
+  def search_by_shop_page_index
+    shop = current_api_v1_user.shops.find_by(shop_name: params[:word])
+    if shop.nil?
+      render json: { error: 'お店が見つかりませんでした' }, status: :not_found
+      return
     end
-  end
+    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
+    total_pages = shopping_records.total_pages
 
-  def update
-    if @shopping.update(shopping_params)
-      render json: @shopping
-    else
-      render json: { error: '更新に失敗しました' }, status: :not_modified
+    if shopping_records.empty?
+      render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
+      return
+    elsif params[:start].present? && params[:end].present?
+      shopping_records = shopping_records.where(shopping_date: params[:start]..params[:end])
+      if shopping_records.empty?
+        render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
+        return
+      end
     end
-  end
 
-  def update_open_memo
-    shopping = User.find_by(id: shopping_params[:user_id]).shopping_data.find_by(id: shopping_params[:shopping_datum_id])
-    if shopping.nil?
-      render json: { error: 'データが見つかりませんでした' }, status: :not_found
-    elsif shopping.update(shopping_params.except(:user_id, :shopping_datum_id))
-      render json: shopping
-    else
-      render json: { error: '更新に失敗しました' }, status: :not_modified
+    shopping_records = shopping_records.map do |record|
+      record.attributes.merge({ 'memos_count': record.memos.count })
     end
-  end
 
-  def destroy
-    if @shopping.destroy
-      render json: @shopping
-    else
-      render json: @shopping.errors
-    end
+    render json: { records: shopping_records, total_pages: total_pages }
   end
 
   private
@@ -154,7 +154,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def find_shopping
-    @shopping = current_api_v1_user.shopping_data.find_by(id: params[:shopping_datum_id])
+    @shopping_datum = current_api_v1_user.shopping_data.find_by(id: params[:shopping_datum_id])
   end
 
   def formatted_shopping_data(data)
