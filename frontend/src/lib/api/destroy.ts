@@ -10,7 +10,7 @@ export const memoDeleteOpenTrue = (params: { userId:string, listId: string }[]) 
 };
 
 export const shoppingDataDelete = (shoppingId: string) => {
-  return client.delete(`okaimono/shoppingdatum/destroy/${shoppingId}`);
+  return client.delete(`okaimono/shoppingdatum/destroy?shopping_datum_id=${shoppingId}`);
 };
 
 export const shopDelete = (shopId: string) => {

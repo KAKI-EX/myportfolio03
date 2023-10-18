@@ -34,7 +34,7 @@ export const useMemoCreate = (props: Props) => {
           isOpen,
         };
         const shoppingDatumCreateRes = await shoppingDatumCreate(shoppingDataParams);
-        if (shoppingDatumCreateRes.status === 200) {
+        if (shoppingDatumCreateRes.status === 201) {
           const shoppingDatumId = shoppingDatumCreateRes.data.id;
           const memosParams = {
             memos: (formData.listForm || []).map((data: ListFormParams) => {

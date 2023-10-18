@@ -37,7 +37,7 @@ export const useOkaimonoIndexDelete = (customHookProps: Props) => {
       try {
         await shoppingDataDelete(id);
         const shoppingDataRes = await shoppingDataIndex();
-        if (inCompleteMemo?.find((item) => item.id === id)) {
+        if (shoppingDataRes && shoppingDataRes.status !== 204 && inCompleteMemo?.find((item) => item.id === id)) {
           if (shoppingDataRes) {
             const isFinishNull = shoppingDataRes.data
               .filter((resData: OkaimonoMemoData) => resData.isFinish === null)
@@ -48,7 +48,11 @@ export const useOkaimonoIndexDelete = (customHookProps: Props) => {
             setInCompleteMemo(isFinishNull);
             setLoading(false);
           }
-        } else if (readyShoppingMemo?.find((item) => item.id === id)) {
+        } else if (
+          shoppingDataRes &&
+          shoppingDataRes.status !== 204 &&
+          readyShoppingMemo?.find((item) => item.id === id)
+        ) {
           if (shoppingDataRes) {
             const isFinishFalse = shoppingDataRes.data
               .filter((resData: OkaimonoMemoData) => resData.isFinish === false)
@@ -59,7 +63,7 @@ export const useOkaimonoIndexDelete = (customHookProps: Props) => {
             setReadyShoppingMemo(isFinishFalse);
             setLoading(false);
           }
-        } else if (finishedMemo?.find((item) => item.id === id)) {
+        } else if (shoppingDataRes && shoppingDataRes.status !== 204 && finishedMemo?.find((item) => item.id === id)) {
           if (shoppingDataRes) {
             const isFinishTrue = shoppingDataRes.data
               .filter((resData: OkaimonoMemoData) => resData.isFinish === true)
@@ -70,6 +74,11 @@ export const useOkaimonoIndexDelete = (customHookProps: Props) => {
             setFinishedMemo(isFinishTrue);
             setLoading(false);
           }
+        } else {
+          setInCompleteMemo(null);
+          setReadyShoppingMemo(null);
+          setFinishedMemo(null);
+          setLoading(false);
         }
       } catch (err) {
         const axiosError = err as AxiosError;

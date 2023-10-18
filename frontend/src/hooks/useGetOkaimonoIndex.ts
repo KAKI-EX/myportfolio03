@@ -19,7 +19,7 @@ export const useGetOkaimonoIndex = () => {
     try {
       setLoading(true);
       const indexRes = await shoppingDataIndex();
-      if (indexRes) {
+      if (indexRes && indexRes.status !== 204) {
         const isFinishNull = indexRes.data // 一時保存中のメモリストデータ
           .filter((resData: ListFormParams) => resData.isFinish === null)
           .map((nullList: ListFormParams) => {
@@ -46,8 +46,13 @@ export const useGetOkaimonoIndex = () => {
         setFinishedMemo(isFinishTrue);
         setLoading(false);
       }
-      if (indexRes?.data.length === 0) {
+      if (indexRes && indexRes.status === 204) {
+        setInCompleteMemo(null);
+        setReadyShoppingMemo(null);
+        setFinishedMemo(null);
+        setLoading(false);
         showMessage({ title: "まだメモが登録されていません", status: "info" });
+        setLoading(false);
       }
     } catch (err) {
       const axiosError = err as AxiosError;
