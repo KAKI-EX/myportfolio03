@@ -11,7 +11,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
       send(http_method, "#{ base_url }/#{ controller_action }",
       params: defined?(params) ? params : {},
       headers: auth.merge(auth_tokens))
-      @json_response = JSON.parse(response.body)
+      @json_response = response.body.present? ? JSON.parse(response.body) : response.body
     end
   end
 
@@ -79,13 +79,12 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         context "メモの登録がない場合" do
           include_context "user_signed_in"
           it "指定のエラーメッセージが返されていること" do
-            expect(@json_response["error"]).to eq("データが見つかりませんでした")
-            expect(response).to have_http_status(404)
+            expect(response).to have_http_status(204)
           end
         end
       end
 
-      context "ユーザー認証していない場合" do
+      context "ログインしていない場合" do
         it_behaves_like "status_code_401_when_unauthenticated_user"
       end
     end
@@ -199,7 +198,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
       end
     end
 
-    context "ユーザー認証をしていない場合" do
+    context "ログインをしていない場合" do
       it_behaves_like "status_code_401_when_unauthenticated_user"
     end
   end
@@ -242,8 +241,8 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
       let!(:shopping_datum) { create(:shopping_datum, user: user, shop: shop, shopping_date: Date.today, is_open: false) }
       let!(:shopping_datum_id) { shopping_datum.id }
       include_context "without_user_signed_in_with_show_open_memo"
-        it "ステータスコード422を返すこと" do
-          expect(response).to have_http_status(422)
+        it "ステータスコード400を返すこと" do
+          expect(response).to have_http_status(400)
         end
       end
     end
@@ -253,6 +252,92 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
       it "同じくshopping_datumが読み込めること" do
         expect(@json_response.values).to include(shopping_datum.id.to_s && shopping_datum.shopping_memo)
       end
+    end
+  end
+
+  describe "#update" do
+    let(:http_method) { "post" }
+    let(:controller_action) { "update" }
+    context "ログインしている場合" do
+      let!(:shop) { create(:shop, user: user) }
+      let!(:update_target) { create(:shopping_datum, user: user, shop: shop, shopping_date: Date.today) }
+      let!(:dummy_data) { create(:shopping_datum, user: user, shop: shop, shopping_date: Date.today) }
+      let!(:correct_attributes) do
+        {shopping_datum:
+          {
+            shopping_datum_id: update_target.id,
+            user_id: user.id.to_s,
+            shop_id: shop.id,
+            shopping_date: "2050-01-01",
+            shopping_memo: "update_test",
+            estimated_budget: "99999",
+            total_budget: "99999",
+            is_finish: true,
+            is_open: true,
+          }
+        }
+      end
+      let!(:params) { correct_attributes }
+      include_context "user_signed_in"
+      it "指定通りのshopping_datumが更新されていること" do
+        correct_attributes[:shopping_datum].except(:user_id, :shopping_datum_id).each do |key, value|
+          expect(@json_response[key.to_s]).to eq(value)
+        end
+      end
+      context "shopping_datumがnilの場合" do
+        let!(:wrong_attributes) do
+          {shopping_datum:
+            {
+              shopping_datum_id: "hoge_id",
+              user_id: user.id.to_s,
+              shop_id: shop.id,
+              shopping_date: "2050-01-01",
+              shopping_memo: "update_test",
+              estimated_budget: "99999",
+              total_budget: "99999",
+              is_finish: true,
+              is_open: true,
+            }
+          }
+        end
+        let!(:params) { wrong_attributes }
+        include_context "user_signed_in"
+        it "例外を起こさず、指定の文字列とステータスコード304を返すこと" do
+          expect(response).to have_http_status(304)
+        end
+      end
+    end
+
+    context "ログインをしていない場合" do
+      it_behaves_like "status_code_401_when_unauthenticated_user"
+    end
+  end
+
+  describe "#destroy" do
+    let(:http_method) { "delete" }
+    let(:controller_action) { "destroy" }
+
+    context "ログインしている場合" do
+      let!(:shop) { create(:shop, user: user) }
+      let!(:shopping_datum) { create(:shopping_datum, user: user, shop: shop, shopping_date: Date.today, is_open: false) }
+      let!(:params) { shopping_datum.id }
+      include_context "user_signed_in_with_show"
+      it "正しい情報が削除されていること" do
+        result = ShoppingDatum.find_by(id: shopping_datum.id)
+        expect(result).to be_nil
+      end
+
+      context "削除できなかった場合" do
+        let!(:params) { "does_not_exist_this_id" }
+        include_context "user_signed_in_with_show"
+        it "エラーメッセージを返すこと" do
+          expect(response).to have_http_status(404)
+        end
+      end
+    end
+
+    context "ログインしていない場合" do
+      it_behaves_like "status_code_401_when_unauthenticated_user"
     end
   end
 end

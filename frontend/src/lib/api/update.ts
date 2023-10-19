@@ -3,7 +3,7 @@ import client from "lib/api/client";
 
 // お買物情報更新
 export const shoppingDatumUpdate = (params: MergeParams) => {
-  return client.post("okaimono/shoppingdatum/update", params);
+  return client.post("okaimono/shoppingdatum/update", { shoppingDatum: params });
 };
 
 // お買物情報更新

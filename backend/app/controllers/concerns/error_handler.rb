@@ -12,4 +12,8 @@ module ErrorHandler
   def render_unauthorized_operation
     render json: { error: '不正な操作が実行されました' }, status: :bad_request
   end
+
+  def render_not_modified
+    render json: { error: '更新に失敗しました' }, status: :not_modified
+  end
 end

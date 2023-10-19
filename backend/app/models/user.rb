@@ -21,6 +21,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.find_user(user_id)
+    self.find_by(id: user_id)
+  end
+
+  def find_shopping_datum(shopping_datum_id)
+    self.shopping_data&.find_by(id: shopping_datum_id)
+  end
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
