@@ -1,8 +1,8 @@
 class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   include ErrorHandler
 
-  before_action :find_shopping_datum_for_query_params, only: [:show, :destroy]
   before_action :authenticate_api_v1_user!, except: [:show_open_memo, :update_open_memo]
+  before_action :find_shopping_datum_for_query_params, only: [:show, :destroy]
 
   def index
     shopping_data = current_api_v1_user.shopping_data.order(shopping_date: "DESC")
@@ -32,7 +32,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def show_open_memo
     shopping_datum = User.find_user(params[:user_id])&.find_shopping_datum(params[:shopping_datum_id])
-
     if shopping_datum.nil?
       render_not_found_error
     elsif shopping_datum.is_open
@@ -52,13 +51,13 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def update_open_memo
-    shopping = User.find_by(id: shopping_params[:user_id]).shopping_data.find_by(id: shopping_params[:shopping_datum_id])
-    if shopping.nil?
-      render json: { error: 'データが見つかりませんでした' }, status: :not_found
-    elsif shopping.update(shopping_params.except(:user_id, :shopping_datum_id))
-      render json: shopping
+    shopping_datum = User.find_user(shopping_params[:user_id])&.find_shopping_datum(shopping_params[:shopping_datum_id])
+    if shopping_datum.nil?
+      render_not_found_error
+    elsif shopping_datum.update(shopping_params.except(:user_id, :shopping_datum_id))
+      render json: shopping_datum
     else
-      render json: { error: '更新に失敗しました' }, status: :not_modified
+      render_not_modified
     end
   end
 
@@ -157,11 +156,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   def find_shopping_datum_for_query_params
     @shopping_datum = current_api_v1_user.shopping_data.find_by(id: params[:shopping_datum_id])
   end
-
-  def find_shopping_datum_for_request_body
-  end
-
-
 
   def formatted_shopping_data(data)
     data.map do |datum|

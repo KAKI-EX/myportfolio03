@@ -18,7 +18,7 @@ export const InputShoppingDate: VFC<Props> = memo((props) => {
 
   const minDateString = today.toISOString().split("T")[0];
   const maxDateString = nextYear.toISOString().split("T")[0];
-
+  console.log(minDateString);
   return (
     <Input
       _hover={readOnly ? undefined : { fontWeight: "bold", cursor: "pointer" }}
@@ -33,9 +33,10 @@ export const InputShoppingDate: VFC<Props> = memo((props) => {
           if (!value) {
             return "日付は必須です。";
           }
-          return (
-            (value >= minDateString && value <= maxDateString) || "日付の範囲は今日から1年以内である必要があります。"
-          );
+          const year = value.split("-")[0]; // "YYYY-MM-DD" の形式から "YYYY" を取得
+          if (year.length > 4) {
+            return "年は4桁を超えることはできません。";
+          }
         },
       })}
     />
