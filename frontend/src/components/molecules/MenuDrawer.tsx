@@ -127,7 +127,7 @@ export const MenuDrawer: VFC<Props> = memo((props) => {
           {isSignedIn && (
             <HStack borderTop="1px" borderColor="gray.300">
               <Button onClick={onClickSearch} w="100%" _focus={{ outline: "none" }} justifyContent="flex-start">
-                サーチ
+                履歴サーチ
               </Button>
               <Box pr={5}>
                 <ChevronRightIcon />

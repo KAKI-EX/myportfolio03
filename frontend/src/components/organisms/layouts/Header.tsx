@@ -163,7 +163,7 @@ export const Header: VFC = memo(() => {
                     cursor: "pointer",
                   }}
                 />
-                <Link fontSize={textFontSize}>サーチ</Link>
+                <Link fontSize={textFontSize}>履歴サーチ</Link>
               </VStack>
             </Box>
             <Box pr={4} display={isSignedIn ? "block" : "none"}>

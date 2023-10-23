@@ -199,7 +199,7 @@ export const OkaimonoSearch: VFC = memo(() => {
     <Flex align="center" justify="center" px={3}>
       <VStack w="95rem">
         <Heading as="h2" size="lg" textAlign="center" pt={3}>
-          お買い物サーチ
+          お買い物履歴サーチ
         </Heading>
         <Divider my={4} />
         <form onSubmit={handleSubmit(onSubmit)}>

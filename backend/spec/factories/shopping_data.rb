@@ -9,4 +9,8 @@ FactoryBot.define do
     is_finish { true } #trueは買い物が済んでいるメモのこと
     is_open { false } #falseはシェア機能を使用していないということ
   end
+
+  factory :shopping_datum_shopping_date, parent: :shopping_datum do
+    sequence(:shopping_date) {|n| Date.today + n.days }
+  end
 end

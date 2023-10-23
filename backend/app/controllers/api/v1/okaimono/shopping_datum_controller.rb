@@ -70,29 +70,32 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def search_by_purchase
-    purchase = current_api_v1_user.memos.where(purchase_name: params[:word])
-    if purchase.empty?
-      render json: { error: '商品が見つかりませんでした' }, status: :not_found
-      return
-    end
-    shopping_datum_ids = purchase.pluck(:shopping_datum_id)
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).where(id: shopping_datum_ids)
+    # purchase_records = current_api_v1_user.memos.where(purchase_name: params[:word])
+    purchase_records = current_api_v1_user.memos.where('purchase_name LIKE(?)', "%#{params[:word]}%")
 
-    if params[:start].present? && params[:end].present?
-      shopping_records = shopping_records.where(shopping_date: params[:start]..params[:end])
+    if purchase_records.empty?
+      render_not_found_error("お買い物履歴")
+      return
+    elsif purchase_records.present?
+      shopping_datum_ids = purchase_records.pluck(:shopping_datum_id)
+      shopping_records = current_api_v1_user.shopping_data.is_finish_true.where(id: shopping_datum_ids)
       if shopping_records.empty?
-        render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
+        render_not_found_error("お買い物が終了しているデータの中では記録")
         return
+      elsif params[:start_date].present? && params[:end_date].present?
+        shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
+        if shopping_records.empty?
+          render_not_found_error("ご指定いただいた期間でのお買い物履歴")
+          return
+        end
       end
     end
 
     shopping_records = shopping_records.page((params[:page] || 1)).per(5)
     total_pages = shopping_records.total_pages
-
     shopping_records = shopping_records.map do |record|
       record.attributes.merge({ 'memos_count': record.memos.count })
     end
-
     render json: { records: shopping_records, total_pages: total_pages }
   end
 
@@ -121,8 +124,8 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     if shopping_records.empty?
       render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
       return
-    elsif params[:start].present? && params[:end].present?
-      shopping_records = shopping_records.where(shopping_date: params[:start]..params[:end])
+    elsif params[:start_date].present? && params[:end_date].present?
+      shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
       if shopping_records.empty?
         render json: { error: 'お買い物履歴が見つかりませんでした' }, status: :not_found
         return

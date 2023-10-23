@@ -41,7 +41,7 @@ export const OkaimonoIndexBottomMenu: VFC = memo(() => {
             <Spacer />
             <VStack>
               <Icon as={BsSearch} h={8} w={8} onClick={onClickSearch} />
-              <Text>検索</Text>
+              <Text>履歴検索</Text>
             </VStack>
             <Spacer />
             <VStack>

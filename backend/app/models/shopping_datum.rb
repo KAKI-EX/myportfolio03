@@ -1,5 +1,5 @@
 class ShoppingDatum < ApplicationRecord
-  scope :is_finish_true, lambda { where(is_finish: true) }
+  scope :is_finish_true, lambda { where(is_finish: true).order(shopping_date: :desc) }
 
   before_create :set_uuid
   validates :user_id, :shop_id, :shopping_date, presence: true
