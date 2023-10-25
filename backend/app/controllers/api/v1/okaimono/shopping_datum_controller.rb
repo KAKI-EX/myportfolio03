@@ -83,15 +83,18 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
         render_not_found_error("お買い物が終了しているデータの中では記録")
         return
       elsif params[:start_date].present? && params[:end_date].present?
-        shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
+                shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
         if shopping_records.empty?
           render_not_found_error("ご指定いただいた期間でのお買い物履歴")
           return
         end
+      elsif params[:start_date].empty? || params[:end_date].empty?
+        render_unauthorized_operation("両方の日付を入力してください")
+        return
       end
     end
 
-    shopping_records = shopping_records.page((params[:page] || 1)).per(5)
+    shopping_records = shopping_records.page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
     total_pages = shopping_records.total_pages
     shopping_records = shopping_records.map do |record|
       record.attributes.merge({ 'memos_count': record.memos.count })
@@ -100,7 +103,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   end
 
   def record_page_index
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
     total_pages = shopping_records.total_pages
     if shopping_records.nil?
       render json: { error: 'データが見つかりませんでした' }, status: :not_found
@@ -118,7 +121,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
       render json: { error: 'お店が見つかりませんでした' }, status: :not_found
       return
     end
-    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(5)
+    shopping_records = shop.shopping_datum.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
     total_pages = shopping_records.total_pages
 
     if shopping_records.empty?

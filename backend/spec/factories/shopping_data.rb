@@ -11,6 +11,6 @@ FactoryBot.define do
   end
 
   factory :shopping_datum_shopping_date, parent: :shopping_datum do
-    sequence(:shopping_date) {|n| Date.today + n.days }
+    sequence(:shopping_date) {|n| Date.today + n-1.days }
   end
 end

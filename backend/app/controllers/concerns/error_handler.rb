@@ -9,8 +9,8 @@ module ErrorHandler
     render json: { errors: '何らかのエラーにより作成できませんでした' }, status: :unprocessable_entity
   end
 
-  def render_unauthorized_operation
-    render json: { error: '不正な操作が実行されました' }, status: :bad_request
+  def render_unauthorized_operation(word="不正な操作が実行されました'")
+    render json: { error: word }, status: :bad_request
   end
 
   def render_not_modified()
