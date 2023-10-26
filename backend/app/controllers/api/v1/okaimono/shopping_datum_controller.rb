@@ -96,9 +96,7 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
     shopping_records = shopping_records.page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
     total_pages = shopping_records.total_pages
-    shopping_records = shopping_records.map do |record|
-      record.attributes.merge({ 'memos_count': record.memos.count })
-    end
+    shopping_records = merge_memos_count(shopping_records)
     render json: { records: shopping_records, total_pages: total_pages }
   end
 
@@ -166,6 +164,12 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   def formatted_shopping_data(data)
     data.map do |datum|
       datum.attributes.merge({ 'memos_count': datum.memos.count })
+    end
+  end
+
+  def merge_memos_count(records)
+    records.map do |record|
+      record.attributes.merge({ 'memos_count': record.memos.count })
     end
   end
 end

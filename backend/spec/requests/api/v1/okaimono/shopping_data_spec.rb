@@ -557,6 +557,10 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         it_behaves_like "status_code_401_when_unauthenticated_user"
       end
     end
+
+    describe "#record_page_index" do
+      
+    end
   end
 
   private
