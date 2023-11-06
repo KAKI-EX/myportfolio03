@@ -69,6 +69,17 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     end
   end
 
+  def record_page_index
+    shopping_records = current_api_v1_user.shopping_data.is_finish_true.page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
+    total_pages = shopping_records.total_pages
+    if shopping_records.blank?
+      render_not_found_error
+    else
+      shopping_records = formatted_shopping_data(shopping_records)
+      render json: { records: shopping_records, total_pages: total_pages }
+    end
+  end
+
   def search_by_purchase
     # purchase_records = current_api_v1_user.memos.where(purchase_name: params[:word])
     purchase_records = current_api_v1_user.memos.where('purchase_name LIKE(?)', "%#{params[:word]}%")
@@ -96,21 +107,8 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
     shopping_records = shopping_records.page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
     total_pages = shopping_records.total_pages
-    shopping_records = merge_memos_count(shopping_records)
+    shopping_records = formatted_shopping_data(shopping_records)
     render json: { records: shopping_records, total_pages: total_pages }
-  end
-
-  def record_page_index
-    shopping_records = current_api_v1_user.shopping_data.is_finish_true.order(:shopping_date).page((params[:page] || 1)).per(Settings.shopping_datum[:display_limit])
-    total_pages = shopping_records.total_pages
-    if shopping_records.nil?
-      render json: { error: 'データが見つかりませんでした' }, status: :not_found
-    else
-      shopping_records = shopping_records.map do |record|
-        record.attributes.merge({ 'memos_count': record.memos.count })
-      end
-      render json: { records: shopping_records, total_pages: total_pages }
-    end
   end
 
   def search_by_shop_page_index
@@ -164,12 +162,6 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
   def formatted_shopping_data(data)
     data.map do |datum|
       datum.attributes.merge({ 'memos_count': datum.memos.count })
-    end
-  end
-
-  def merge_memos_count(records)
-    records.map do |record|
-      record.attributes.merge({ 'memos_count': record.memos.count })
     end
   end
 end

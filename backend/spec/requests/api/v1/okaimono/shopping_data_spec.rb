@@ -433,6 +433,39 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
       end
     end
 
+    describe "#record_page_index" do
+      let(:http_method) { "get" }
+      let(:controller_action) { "record_index" }
+      context "ログインしている場合" do
+        let!(:authenticate_user) { FactoryBot.create(:user) }
+        let!(:shop) { FactoryBot.create(:shop, user: authenticate_user) }
+        context "shopping_datumのis_finish:trueが11つあった場合" do
+          let!(:shopping_datum) { FactoryBot.create_list(:shopping_datum, 11, user: authenticate_user, shop: shop, is_finish: "true") }
+          let!(:shopping_datum_dummy) { FactoryBot.create_list(:shopping_datum, 11, user: authenticate_user, shop: shop, is_finish: "false") }
+          include_context "request_from_API"
+          it "is_finish: falseは存在しないこと" do
+            @json_response["records"].map do |record|
+              expect(record["is_finish"]).to eq(true)
+            end
+          end
+          it "total_pagesの値は、is_finish:trueの検索数/display_limitであること。（テスト作成時、desplay_limitは「5」、11/5 = 2.2で3でパス）" do
+            expecting_total_pages = ((shopping_datum.length).to_f/(Settings.shopping_datum[:display_limit]).to_f).ceil
+            expect(@json_response["total_pages"]).to eq(expecting_total_pages)
+          end
+        end
+        context "shopping_datumが存在しない場合" do
+          include_context "request_from_API"
+          it "ステータスコード404と指定の文字列を返すこと" do
+            expect(response).to have_http_status(404)
+            expect(@json_response.values[0]).to eq("データが見つかりませんでした")
+          end
+        end
+      end
+      context "ログインしていない場合" do
+        it_behaves_like "status_code_401_when_unauthenticated_user"
+      end
+    end
+
     describe "#search_by_purchase" do
       let(:http_method) { "get" }
       let(:controller_action) { "search_by_purchase" }
@@ -556,10 +589,6 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
       context "ログインをしていない場合" do
         it_behaves_like "status_code_401_when_unauthenticated_user"
       end
-    end
-
-    describe "#record_page_index" do
-      
     end
   end
 
