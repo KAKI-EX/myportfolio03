@@ -476,7 +476,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         let(:authenticate_user_shop) { FactoryBot.create(:shop, user: authenticate_user) }
         let(:dummy_user_shop) { FactoryBot.create(:shop, user: dummy_user) }
         context "検索期間の指定が正しい場合" do
-          let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 11, user: authenticate_user, shop: authenticate_user_shop, is_finish: "true") }
+          let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 15, user: authenticate_user, shop: authenticate_user_shop, is_finish: "true") }
           let(:auth_user_shopping_datum_records_with_false) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_shop, is_finish: "false") }
           let(:dummy_user_shopping_datum_records) { FactoryBot.create_list(:shopping_datum_shopping_date, 6, user: dummy_user, shop: dummy_user_shop, is_finish: true) }
           let(:start_date) { Date.today }
@@ -497,8 +497,15 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
               FactoryBot.rewind_sequences
             end
             include_context "request_from_API"
-            it "該当の商品のみ値を返し、降順に並んでいること" do
-              sorted_date = auth_user_shopping_datum_records_with_true.map(&:shopping_date).sort.reverse.max(Settings.shopping_datum[:display_limit])
+            it "指摘期間内の該当の商品のみ値を返し、降順に並んでいること" do
+              date_range = start_date..end_date
+              selected_date = auth_user_shopping_datum_records_with_true.select do |record|
+                record_date = Date.parse(record.shopping_date)
+                # record_date >=start_date && record_date <= end_date
+                date_range.cover?(record_date)
+              end
+
+              sorted_date = selected_date.map(&:shopping_date).sort.reverse.max(Settings.shopping_datum[:display_limit])
               sorted_date.each_with_index do |datum, index|
                 expect(@json_response["records"][index]["shopping_date"]).to eq(datum)
               end
@@ -590,27 +597,150 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         it_behaves_like "status_code_401_when_unauthenticated_user"
       end
     end
+
+    describe "#search_by_shop_page_index" do
+      let(:http_method) { "get" }
+      let(:controller_action) { "search_by_shop" }
+      context "ログインしている場合" do
+        let(:authenticate_user) { FactoryBot.create(:user, name: "auth_user") }
+        let(:dummy_user) { FactoryBot.create(:user) }
+        let(:authenticate_user_test_shop) { FactoryBot.create(:shop, user: authenticate_user, shop_name: "test_shop") }
+        let(:authenticate_user_other_shop) { FactoryBot.create(:shop, user: authenticate_user, shop_name: "other_shop") }
+        let(:dummy_user_shop) { FactoryBot.create(:shop, user: dummy_user, shop_name: "dummy_shop") }
+        context "検索期間の指定が正しい場合" do
+          let(:auth_user_shopping_datum_records_with_true_test_shop) { FactoryBot.create_list(:shopping_datum_shopping_date, 7, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "true") }
+          let(:auth_user_shopping_datum_records_with_true_other_shop) { FactoryBot.create_list(:shopping_datum_shopping_date, 7, user: authenticate_user, shop: authenticate_user_other_shop, is_finish: "true") }
+          let(:auth_user_shopping_datum_records_with_false) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "false") }
+          let(:dummy_user_shopping_datum_records) { FactoryBot.create_list(:shopping_datum_shopping_date, 6, user: dummy_user, shop: dummy_user_shop, is_finish: true) }
+          let(:start_date) { Date.today }
+          let(:end_date) { Date.today + 10 }
+          context "検索ワードが「test_shop」の場合" do
+            let(:word) { "test_shop" }
+            let!(:create_data) do
+              auth_user_shopping_datum_records_with_true_test_shop.each do | datum |
+                create_memos_with_word(datum, 2, authenticate_user_test_shop)
+                create_memos_without_word(datum, 2, authenticate_user_test_shop)
+              end
+              auth_user_shopping_datum_records_with_true_test_shop.each do | datum |
+                create_memos_with_word(datum, 2, authenticate_user_test_shop)
+                create_memos_without_word(datum, 2, authenticate_user_test_shop)
+              end
+            end
+            before do
+              FactoryBot.rewind_sequences
+            end
+            include_context "request_from_API"
+            it "指定期間内の該当の店舗での買い物のみの値を返し、降順に並んでいること" do
+              date_range = start_date..end_date
+              selected_date = auth_user_shopping_datum_records_with_true_test_shop.select do |record|
+                record_date = Date.parse(record.shopping_date)
+                date_range.cover?(record_date)
+              end
+              sorted_date = selected_date.map(&:shopping_date).sort.reverse.max(Settings.shopping_datum[:display_limit])
+              sorted_date.each_with_index do |datum, index|
+                expect(@json_response["records"][index]["shopping_date"]).to eq(datum)
+              end
+            end
+            it "is_finish: falseのデータが含まれていないこと" do
+              is_finish_values = @json_response["records"].map { |record| record["is_finish"] }
+              expect(is_finish_values).not_to include(false)
+            end
+            context "memosがそれぞれのshopping_datumに2件ある場合" do
+              it "total_pageは検索結果/5の値(繰り上げ)、5つのハッシュデータであること" do
+                cal = auth_user_shopping_datum_records_with_true_test_shop.length.to_f/Settings.shopping_datum[:display_limit]
+                total_pages = cal < 1 ? 1 : cal.ceil
+                expect(total_pages).to eq(@json_response["total_pages"])
+                expect(Settings.shopping_datum[:display_limit]).to eq(@json_response["records"].length)
+              end
+              it "各shoppig_datumのmemos_countは2であること" do
+                @json_response["records"].each do |datum|
+                  expect(auth_user_shopping_datum_records_with_true_test_shop.first.memos.count).to eq(datum["memos_count"])
+                end
+              end
+            end
+          end
+          context "検索結果が見つからない場合" do
+            let(:word) { "hoge" }
+            # let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_shop, is_finish: "true") }
+            before do
+              auth_user_shopping_datum_records_with_true_test_shop.each do | datum |
+                create_memos_without_word(datum, 2, authenticate_user_test_shop)
+              end
+            end
+            include_context "request_from_API"
+            it "ステータスコード404と共に指定の文字列を返すこと" do
+              expect(response).to have_http_status(404)
+              expect(@json_response.values[0]).to eq("お店が見つかりませんでした")
+            end
+          end
+        end
+        context "検索期間の指定が正しくない場合" do
+          let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "true") }
+          let!(:create_data) do
+            auth_user_shopping_datum_records_with_true.each do | datum |
+              create_memos_with_word(datum, 2, authenticate_user_test_shop)
+            end
+          end
+          before do
+            FactoryBot.rewind_sequences
+          end
+
+          context "検索ワード「test_shop」の場合" do
+            let(:word) { "test_shop" }
+            context "期間がどちらか一方しか入力されていない場合" do
+              context "startしか入力されていない場合" do
+                let(:start_date) { Date.today }
+                let(:end_date) { "" }
+                include_context "request_from_API"
+                it "ステータスコード400と指定のメッセージを返すこと" do
+                  expect(response).to have_http_status(400)
+                  expect(@json_response.values[0]).to eq("両方の日付を入力してください")
+                end
+              end
+              context "endしか入力されていない場合" do
+                let(:start_date) { "" }
+                let(:end_date) { Date.today }
+                include_context "request_from_API"
+                it "ステータスコード400と指定のメッセージを返すこと" do
+                  expect(response).to have_http_status(400)
+                  expect(@json_response.values[0]).to eq("両方の日付を入力してください")
+                end
+              end
+              context "指定期間での検索結果が見つからなかった場合" do
+                let(:start_date) { "9999-01-01" }
+                let(:end_date) { "9999-01-02" }
+                include_context "request_from_API"
+                it "ステータスコード404と指定の文字列を返すこと" do
+                  expect(response).to have_http_status(404)
+                  expect(@json_response.values[0]).to eq("お買物履歴が見つかりませんでした")
+                end
+              end
+            end
+          end
+        end
+      end
+    end
   end
 
   private
 
-  def create_memos_with_word(shopping_datum, number)
+  def create_memos_with_word(shopping_datum, number, shop=authenticate_user_shop)
     FactoryBot.create_list(
       :memo,
       number,
       user:authenticate_user,
-      shop: authenticate_user_shop,
+      shop: shop,
       shopping_datum: shopping_datum,
       purchase_name: defined?(word) ? "#{word}#{Faker::Commerce.product_name}" : Faker::Commerce.product_name
     )
   end
 
-  def create_memos_without_word(shopping_datum, number)
+  def create_memos_without_word(shopping_datum, number, shop=authenticate_user_shop)
     FactoryBot.create_list(
       :memo,
       number,
       user:authenticate_user,
-      shop: authenticate_user_shop,
+      shop: shop,
       shopping_datum: shopping_datum,
       purchase_name: Faker::Commerce.product_name
     )
