@@ -26,7 +26,7 @@ export const shoppingDataIndexRecordByShop = async (formData: byShopProps) => {
   }
   const { searchSelect, searchWord, startDate, endDate, searchCurrentPage } = formData;
   const shoppingRecordRes = await client.get(
-    `okaimono/shoppingdatum/search_by_shop?page=${searchCurrentPage}&select=${searchSelect}&word=${searchWord}&start=${startDate}&end=${endDate}`
+    `okaimono/shoppingdatum/search_by_shop?page=${searchCurrentPage}&select=${searchSelect}&word=${searchWord}&start_date=${startDate}&end_date=${endDate}`
   );
   return {
     data: shoppingRecordRes.data,

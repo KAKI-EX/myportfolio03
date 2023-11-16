@@ -1,15 +1,15 @@
 module ErrorHandler
   extend ActiveSupport::Concern
 
-  def render_not_found_error(word="データ")
-    render json: { error: "#{word}が見つかりませんでした" }, status: :not_found
+  def render_not_found_error(word: "データ")
+    render json: { error: "#{ word }が見つかりませんでした" }, status: :not_found
   end
 
   def render_unprocessable_entity
     render json: { errors: '何らかのエラーにより作成できませんでした' }, status: :unprocessable_entity
   end
 
-  def render_unauthorized_operation(word="不正な操作が実行されました'")
+  def render_unauthorized_operation(word: "不正な操作が実行されました'")
     render json: { error: word }, status: :bad_request
   end
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
-include ErrorHandler
 
 RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
+  include ErrorHandler
   let!(:base_url) { 'http://192.168.0.210/api/v1/okaimono/shoppingdatum' }
   let!(:auth) { { 'Authorization' => "#{ ENV['API_KEY'] }" } }
 
@@ -13,10 +13,10 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         if defined?(params)
           params
         elsif defined?(shopping_datum_id)
-        #クエリパラメータの使用を想定。
+          # クエリパラメータの使用を想定。
           { shopping_datum_id: shopping_datum_id }
         elsif defined?(query_user_id) && defined?(query_shopping_datum_id)
-        #クエリパラメータの使用を想定。
+          # クエリパラメータの使用を想定。
           { user_id: query_user_id, shopping_datum_id: query_shopping_datum_id }
         elsif defined?(word) && defined?(start_date) && defined?(end_date)
           { word: word, start_date: start_date, end_date: end_date }
@@ -252,18 +252,19 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         let(:update_target) { create(:shopping_datum, user: authenticate_user, shop: shop) }
         let(:dummy_data) { create(:shopping_datum, user: authenticate_user, shop: shop) }
         let(:params) do
-          {shopping_datum:
-            {
-              shopping_datum_id: defined?(wrong_shopping_datum_id) ? wrong_shopping_datum_id : update_target.id,
-              user_id: authenticate_user.id.to_s,
-              shop_id: shop.id,
-              shopping_date: "2050-01-01",
-              shopping_memo: "update_test",
-              estimated_budget: "99999",
-              total_budget: defined?(wrong_total_budget) ? wrong_total_budget : "99999",
-              is_finish: true,
-              is_open: true,
-            }
+          {
+            shopping_datum:
+                        {
+                          shopping_datum_id: defined?(wrong_shopping_datum_id) ? wrong_shopping_datum_id : update_target.id,
+                          user_id: authenticate_user.id.to_s,
+                          shop_id: shop.id,
+                          shopping_date: "2050-01-01",
+                          shopping_memo: "update_test",
+                          estimated_budget: "99999",
+                          total_budget: defined?(wrong_total_budget) ? wrong_total_budget : "99999",
+                          is_finish: true,
+                          is_open: true,
+                        },
           }
         end
         include_context "request_from_API"
@@ -276,14 +277,14 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
           end
         end
         context "shopping_datumがnilの場合" do
-          let(:wrong_shopping_datum_id) {"hoge"}
+          let(:wrong_shopping_datum_id) { "hoge" }
           include_context "request_from_API"
           it "例外を起こさず、指定の文字列とステータスコード304を返すこと" do
             expect(response).to have_http_status(304)
           end
         end
         context "バリデーションに引っかかった場合場合" do
-          let(:wrong_total_budget) {"hoge"}
+          let(:wrong_total_budget) { "hoge" }
           include_context "request_from_API"
           it "例外を起こさず、指定の文字列とステータスコード304を返すこと" do
             expect(response).to have_http_status(304)
@@ -305,25 +306,26 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         let!(:update_target) { FactoryBot.create(:shopping_datum, user: user, shop: shop) }
         let!(:dummy_data) { FactoryBot.create(:shopping_datum, user: user, shop: shop) }
         let(:params) do
-          {shopping_datum:
-            {
-              shopping_datum_id: defined?(wrong_shopping_datum_id) ? wrong_shopping_datum_id : update_target.id,
-              user_id: defined?(wrong_user_id) ? wrong_user_id : user.id.to_s,
-              shop_id: shop.id,
-              shopping_date: "2050-01-01",
-              shopping_memo: "update_test",
-              estimated_budget: defined?(wrong_estimated_budget) ? wrong_estimated_budget : "99999",
-              total_budget: "99999",
-              is_finish: !update_target.is_finish,
-              is_open: !update_target.is_open,
-            }
+          {
+            shopping_datum:
+                        {
+                          shopping_datum_id: defined?(wrong_shopping_datum_id) ? wrong_shopping_datum_id : update_target.id,
+                          user_id: defined?(wrong_user_id) ? wrong_user_id : user.id.to_s,
+                          shop_id: shop.id,
+                          shopping_date: "2050-01-01",
+                          shopping_memo: "update_test",
+                          estimated_budget: defined?(wrong_estimated_budget) ? wrong_estimated_budget : "99999",
+                          total_budget: "99999",
+                          is_finish: !update_target.is_finish,
+                          is_open: !update_target.is_open,
+                        },
           }
         end
         include_context "request_from_API"
         it "該当のデータをアップデートできること" do
           params[:shopping_datum].each do |n|
             dummy_data.attributes.except("user_id", "shop_id").each do |dummy|
-              expect(@json_response.values).to include(n[1]) #update_targetの中にはshopping_datum_idの要素名は無いためvaluesで比較。
+              expect(@json_response.values).to include(n[1]) # update_targetの中にはshopping_datum_idの要素名は無いためvaluesで比較。
               expect(@json_response).not_to include(dummy)
             end
           end
@@ -332,7 +334,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
 
         context "ユーザーIDがnilまたは見つからない場合" do
           context "nilの場合" do
-            let!(:wrong_user_id) {""}
+            let!(:wrong_user_id) { "" }
             include_context "request_from_API"
             it "例外を起こさずステータスコード404を返すこと" do
               expect(response).to have_http_status(404)
@@ -340,7 +342,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
           end
 
           context "見つからない場合" do
-            let!(:wrong_user_id) {"hoge"}
+            let!(:wrong_user_id) { "hoge" }
             include_context "request_from_API"
             it "例外を起こさずステータスコード404を返すこと" do
               expect(response).to have_http_status(404)
@@ -349,7 +351,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         end
 
         context "shopping_datum_idがnilまたは見つからないの場合" do
-          let(:wrong_shopping_datum_id) {""}
+          let(:wrong_shopping_datum_id) { "" }
           include_context "request_from_API"
           context "nilの場合" do
             it "例外を起こさず、ステータスコード404を返すこと" do
@@ -357,7 +359,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
             end
           end
           context "見つからない場合" do
-            let(:wrong_shopping_datum_id) {"hoge"}
+            let(:wrong_shopping_datum_id) { "hoge" }
             include_context "request_from_API"
             it "例外を起こさず、ステータスコード404を返すこと" do
               expect(response).to have_http_status(404)
@@ -380,24 +382,25 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         let!(:update_target) { create(:shopping_datum, user: authenticate_user, shop: shop) }
         let!(:dummy_data) { create(:shopping_datum, user: authenticate_user, shop: shop) }
         let!(:params) do
-          {shopping_datum:
-            {
-              shopping_datum_id: update_target.id,
-              user_id: authenticate_user.id.to_s,
-              shop_id: shop.id,
-              shopping_date: "2050-01-01",
-              shopping_memo: "authenticate_user_with_update_open_memo",
-              estimated_budget: "99999",
-              total_budget:"99999",
-              is_finish: true,
-              is_open: true,
-            }
+          {
+            shopping_datum:
+                        {
+                          shopping_datum_id: update_target.id,
+                          user_id: authenticate_user.id.to_s,
+                          shop_id: shop.id,
+                          shopping_date: "2050-01-01",
+                          shopping_memo: "authenticate_user_with_update_open_memo",
+                          estimated_budget: "99999",
+                          total_budget: "99999",
+                          is_finish: true,
+                          is_open: true,
+                        },
           }
         end
         include_context "request_from_API"
         it "ログインしていない状態と同じく、アップデートができること" do
           params[:shopping_datum].each do |n|
-            expect(@json_response.values).to include(n[1]) #update_targetの中にはshopping_datum_idの要素名は無いためvaluesで比較。
+            expect(@json_response.values).to include(n[1]) # update_targetの中にはshopping_datum_idの要素名は無いためvaluesで比較。
             expect(response).to have_http_status(200)
           end
         end
@@ -449,7 +452,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
             end
           end
           it "total_pagesの値は、is_finish:trueの検索数/display_limitであること。（テスト作成時、desplay_limitは「5」、11/5 = 2.2で3でパス）" do
-            expecting_total_pages = ((shopping_datum.length).to_f/(Settings.shopping_datum[:display_limit]).to_f).ceil
+            expecting_total_pages = (shopping_datum.length.to_f / Settings.shopping_datum[:display_limit].to_f).ceil
             expect(@json_response["total_pages"]).to eq(expecting_total_pages)
           end
         end
@@ -484,13 +487,13 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
           context "検索ワード「しょうゆ」の場合" do
             let(:word) { "しょうゆ" }
             let!(:create_data) do
-              auth_user_shopping_datum_records_with_true.each do | datum |
-                create_memos_with_word(datum, 2)
-                create_memos_without_word(datum, 2)
+              auth_user_shopping_datum_records_with_true.each do |datum|
+                create_memos_with_word(shopping_datum: datum, number: 2)
+                create_memos_without_word(shopping_datum: datum, number: 2)
               end
-              auth_user_shopping_datum_records_with_false.each do | datum |
-                create_memos_with_word(datum, 2)
-                create_memos_without_word(datum, 2)
+              auth_user_shopping_datum_records_with_false.each do |datum|
+                create_memos_with_word(shopping_datum: datum, number: 2)
+                create_memos_without_word(shopping_datum: datum, number: 2)
               end
             end
             before do
@@ -518,7 +521,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
             end
             context "memosがそれぞれのshopping_datumに2件ある場合" do
               it "total_pageは検索結果/5の値(繰り上げ)、5つのハッシュデータであること" do
-                cal = auth_user_shopping_datum_records_with_true.length.to_f/Settings.shopping_datum[:display_limit]
+                cal = auth_user_shopping_datum_records_with_true.length.to_f / Settings.shopping_datum[:display_limit]
                 total_pages = cal < 1 ? 1 : cal.ceil
                 expect(total_pages).to eq(@json_response["total_pages"])
                 expect(Settings.shopping_datum[:display_limit]).to eq(@json_response["records"].length)
@@ -534,8 +537,8 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
             let(:word) { "hoge" }
             let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_shop, is_finish: "true") }
             before do
-              auth_user_shopping_datum_records_with_true.each do | datum |
-                create_memos_without_word(datum, 2)
+              auth_user_shopping_datum_records_with_true.each do |datum|
+                create_memos_without_word(shopping_datum: datum, number: 2)
               end
             end
             include_context "request_from_API"
@@ -548,8 +551,8 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         context "検索期間の指定が正しくない場合" do
           let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_shop, is_finish: "true") }
           let!(:create_data) do
-            auth_user_shopping_datum_records_with_true.each do | datum |
-              create_memos_with_word(datum, 2)
+            auth_user_shopping_datum_records_with_true.each do |datum|
+              create_memos_with_word(shopping_datum: datum, number: 2)
             end
           end
           before do
@@ -608,8 +611,12 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         let(:authenticate_user_other_shop) { FactoryBot.create(:shop, user: authenticate_user, shop_name: "other_shop") }
         let(:dummy_user_shop) { FactoryBot.create(:shop, user: dummy_user, shop_name: "dummy_shop") }
         context "検索期間の指定が正しい場合" do
-          let(:auth_user_shopping_datum_records_with_true_test_shop) { FactoryBot.create_list(:shopping_datum_shopping_date, 7, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "true") }
-          let(:auth_user_shopping_datum_records_with_true_other_shop) { FactoryBot.create_list(:shopping_datum_shopping_date, 7, user: authenticate_user, shop: authenticate_user_other_shop, is_finish: "true") }
+          let(:auth_user_shopping_datum_records_with_true_test_shop) do
+            FactoryBot.create_list(:shopping_datum_shopping_date, 7, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "true")
+          end
+          let(:auth_user_shopping_datum_records_with_true_other_shop) do
+            FactoryBot.create_list(:shopping_datum_shopping_date, 7, user: authenticate_user, shop: authenticate_user_other_shop, is_finish: "true")
+          end
           let(:auth_user_shopping_datum_records_with_false) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "false") }
           let(:dummy_user_shopping_datum_records) { FactoryBot.create_list(:shopping_datum_shopping_date, 6, user: dummy_user, shop: dummy_user_shop, is_finish: true) }
           let(:start_date) { Date.today }
@@ -617,13 +624,13 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
           context "検索ワードが「test_shop」の場合" do
             let(:word) { "test_shop" }
             let!(:create_data) do
-              auth_user_shopping_datum_records_with_true_test_shop.each do | datum |
-                create_memos_with_word(datum, 2, authenticate_user_test_shop)
-                create_memos_without_word(datum, 2, authenticate_user_test_shop)
+              auth_user_shopping_datum_records_with_true_test_shop.each do |datum|
+                create_memos_with_word(shopping_datum: datum, number: 2, shop: authenticate_user_test_shop)
+                create_memos_without_word(shopping_datum: datum, number: 2, shop: authenticate_user_test_shop)
               end
-              auth_user_shopping_datum_records_with_true_test_shop.each do | datum |
-                create_memos_with_word(datum, 2, authenticate_user_test_shop)
-                create_memos_without_word(datum, 2, authenticate_user_test_shop)
+              auth_user_shopping_datum_records_with_true_test_shop.each do |datum|
+                create_memos_with_word(shopping_datum: datum, number: 2, shop: authenticate_user_test_shop)
+                create_memos_without_word(shopping_datum: datum, number: 2, shop: authenticate_user_test_shop)
               end
             end
             before do
@@ -647,7 +654,7 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
             end
             context "memosがそれぞれのshopping_datumに2件ある場合" do
               it "total_pageは検索結果/5の値(繰り上げ)、5つのハッシュデータであること" do
-                cal = auth_user_shopping_datum_records_with_true_test_shop.length.to_f/Settings.shopping_datum[:display_limit]
+                cal = auth_user_shopping_datum_records_with_true_test_shop.length.to_f / Settings.shopping_datum[:display_limit]
                 total_pages = cal < 1 ? 1 : cal.ceil
                 expect(total_pages).to eq(@json_response["total_pages"])
                 expect(Settings.shopping_datum[:display_limit]).to eq(@json_response["records"].length)
@@ -663,8 +670,8 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
             let(:word) { "hoge" }
             # let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_shop, is_finish: "true") }
             before do
-              auth_user_shopping_datum_records_with_true_test_shop.each do | datum |
-                create_memos_without_word(datum, 2, authenticate_user_test_shop)
+              auth_user_shopping_datum_records_with_true_test_shop.each do |datum|
+                create_memos_without_word(shopping_datum: datum, number: 2, shop: authenticate_user_test_shop)
               end
             end
             include_context "request_from_API"
@@ -677,8 +684,8 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
         context "検索期間の指定が正しくない場合" do
           let(:auth_user_shopping_datum_records_with_true) { FactoryBot.create_list(:shopping_datum_shopping_date, 5, user: authenticate_user, shop: authenticate_user_test_shop, is_finish: "true") }
           let!(:create_data) do
-            auth_user_shopping_datum_records_with_true.each do | datum |
-              create_memos_with_word(datum, 2, authenticate_user_test_shop)
+            auth_user_shopping_datum_records_with_true.each do |datum|
+              create_memos_with_word(shopping_datum: datum, number: 2, shop: authenticate_user_test_shop)
             end
           end
           before do
@@ -724,22 +731,22 @@ RSpec.describe "Api::V1::Okaimono::ShoppingDatum", type: :request do
 
   private
 
-  def create_memos_with_word(shopping_datum, number, shop=authenticate_user_shop)
+  def create_memos_with_word(shopping_datum:, number:, shop: authenticate_user_shop)
     FactoryBot.create_list(
       :memo,
       number,
-      user:authenticate_user,
+      user: authenticate_user,
       shop: shop,
       shopping_datum: shopping_datum,
-      purchase_name: defined?(word) ? "#{word}#{Faker::Commerce.product_name}" : Faker::Commerce.product_name
+      purchase_name: defined?(word) ? "#{ word }#{ Faker::Commerce.product_name }" : Faker::Commerce.product_name
     )
   end
 
-  def create_memos_without_word(shopping_datum, number, shop=authenticate_user_shop)
+  def create_memos_without_word(shopping_datum:, number:, shop: authenticate_user_shop)
     FactoryBot.create_list(
       :memo,
       number,
-      user:authenticate_user,
+      user: authenticate_user,
       shop: shop,
       shopping_datum: shopping_datum,
       purchase_name: Faker::Commerce.product_name

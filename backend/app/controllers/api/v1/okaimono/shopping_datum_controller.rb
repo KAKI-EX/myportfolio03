@@ -82,25 +82,27 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
 
   def search_by_purchase
     # purchase_records = current_api_v1_user.memos.where(purchase_name: params[:word])
-    purchase_records = current_api_v1_user.memos.where('purchase_name LIKE(?)', "%#{params[:word]}%")
+    purchase_records = current_api_v1_user.memos.where('purchase_name LIKE(?)', "%#{ params[:word] }%")
 
     if purchase_records.empty?
-      render_not_found_error("お買い物履歴")
+      render_not_found_error(word: "お買い物履歴")
       return
     elsif purchase_records.present?
       shopping_datum_ids = purchase_records.pluck(:shopping_datum_id)
       shopping_records = current_api_v1_user.shopping_data.is_finish_true.where(id: shopping_datum_ids)
-      if shopping_records.empty?
-        render_not_found_error("お買い物が終了しているデータの中では記録")
-        return
-      elsif params[:start_date].present? && params[:end_date].present?
+      if shopping_records.present? && (params[:start_date].blank? && params[:end_date].blank?)
+        # 日付パラメーターが存在しない場合も処理を継続するために必要。
+      elsif shopping_records.present? && params[:start_date].present? && params[:end_date].present?
         shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
         if shopping_records.empty?
-          render_not_found_error("ご指定いただいた期間でのお買い物履歴")
+          render_not_found_error(word: "ご指定いただいた期間でのお買い物履歴")
           return
         end
-      elsif params[:start_date].empty? || params[:end_date].empty?
-        render_unauthorized_operation("両方の日付を入力してください")
+      elsif shopping_records.empty?
+        render_not_found_error(word: "お買い物が終了しているデータの中では記録")
+        return
+      elsif params[:start_date].present? || params[:end_date].present?
+        render_unauthorized_operation(word: "両方の日付を入力してください")
         return
       end
     end
@@ -115,23 +117,26 @@ class Api::V1::Okaimono::ShoppingDatumController < ApplicationController
     shop = current_api_v1_user.shops.find_by(shop_name: params[:word])
     # shop = current_api_v1_user.shops.where('shop_name LIKE(?)', "%#{params[:word]}%")
     if shop.blank?
-      render_not_found_error("お店")
+      render_not_found_error(word: "お店")
       return
-    end
-    shopping_records = paginate_records(shop.shopping_datum.is_finish_true, params)
-    total_pages = shopping_records.total_pages
-    if shopping_records.blank?
-      render_not_found_error("お買物履歴")
-      return
-    elsif params[:start_date].present? && params[:end_date].present?
-      shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
-      if shopping_records.empty?
-        render_not_found_error("お買物履歴")
+    else
+      shopping_records = paginate_records(shop.shopping_datum.is_finish_true, params)
+      total_pages = shopping_records.total_pages
+      if shopping_records.present? && (params[:start_date].blank? && params[:end_date].blank?)
+        # 日付パラメーターが存在しない場合も処理を継続するために必要。
+      elsif shopping_records.present? && (params[:start_date].present? && params[:end_date].present?)
+        shopping_records = shopping_records.where(shopping_date: params[:start_date]..params[:end_date])
+        if shopping_records.blank?
+          render_not_found_error(word: "お買物履歴")
+          return
+        end
+      elsif shopping_records.blank?
+        render_not_found_error(word: "お買物履歴")
+        return
+      elsif params[:start_date].blank? || params[:end_date].blank?
+        render_unauthorized_operation(word: "両方の日付を入力してください")
         return
       end
-    elsif params[:start_date].empty? || params[:end_date].empty?
-      render_unauthorized_operation("両方の日付を入力してください")
-      return
     end
 
     shopping_records = shopping_records.map do |record|
