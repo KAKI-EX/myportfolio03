@@ -1,6 +1,6 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:4000",  "http://192.168.0.210:4000", "https://web.okaimonoportfolio.xyz" # どこからのリクエストを受け入れるか指定する。
+    origins "http://localhost:4000",  "http://192.168.0.210:4000", "https://web.okaimonoportfolio.xyz", "http://10.11.108.14:4000" # どこからのリクエストを受け入れるか指定する。
 
     resource "*",
       headers: :any,
