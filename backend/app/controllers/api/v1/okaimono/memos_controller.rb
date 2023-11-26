@@ -1,4 +1,6 @@
 class Api::V1::Okaimono::MemosController < ApplicationController
+  include ErrorHandler
+
   before_action :authenticate_api_v1_user!, except: [:show_open_memos, :show_open_memo, :update_open_memo, :create_open_memos, :update_open_memos, :destroy_open_memo]
 
   # def index
@@ -13,7 +15,7 @@ class Api::V1::Okaimono::MemosController < ApplicationController
       purchases_json = unique_purchases.map { |purc| { id: purc.id, purchase_name: purc.purchase_name } }
       render json: purchases_json
     else
-      render json: { error: 'データが見つかりませんでした' }, status: :not_found
+      render_unauthorized_operation
     end
   end
 

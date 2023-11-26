@@ -72,7 +72,7 @@ RSpec.describe "Api::V1::Okaimono::Memos", type: :request do
             let(:params) { "" }
             include_context "request_from_API"
             it "notfoundを返すこと" do
-              expect(response).to have_http_status(404)
+              expect(response).to have_http_status(400)
             end
           end
         end
