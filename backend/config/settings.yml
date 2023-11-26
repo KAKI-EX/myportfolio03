@@ -1,2 +1,4 @@
 shopping_datum:
   display_limit: 5
+memo:
+  display_limit: 10

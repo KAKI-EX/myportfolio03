@@ -34,4 +34,11 @@ FactoryBot.define do
     is_display { false }
     is_expiry_date { true }
   end
+
+  factory :diff_by_purchase_name, parent: :memo do
+    transient do
+      custom_purchase_name { nil }
+    end
+    purchase_name { "#{custom_purchase_name}#{Faker::Commerce.product_name} #{Faker::Color.color_name}" }
+  end
 end
