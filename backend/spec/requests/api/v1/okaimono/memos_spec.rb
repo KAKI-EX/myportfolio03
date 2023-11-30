@@ -25,6 +25,13 @@ RSpec.describe "Api::V1::Okaimono::Memos", type: :request do
     end
   end
 
+  shared_examples 'status_code_401_when_unauthenticated_user' do
+    include_context "request_from_API"
+    it "ステータスコード401であること" do
+      expect(response).to have_http_status(401)
+    end
+  end
+
   describe "GET /api/v1/okaimono/memos" do
     describe "#suggestions_index" do
       let(:http_method) {:get}
@@ -97,6 +104,39 @@ RSpec.describe "Api::V1::Okaimono::Memos", type: :request do
           end
         end
       end
+      context "ログインしていない場合" do
+        it_behaves_like "status_code_401_when_unauthenticated_user"
+      end
+    end
+    describe "#create" do
+      let(:http_method) {:get}
+      let(:controller_action) { "create" }
+
+      context "ユーザー認証済みの場合" do
+        let(:authenticate_user) { create(:user) }
+        let(:params) do
+          {
+            memos:
+            {
+              user_id: authenticate_user.id.to_s,
+              shop_id: shop.id,
+              shopping_datum_id:,
+              purchase_name:,
+              shopping_detail_memo:,
+              amount:,
+              price:,
+              shopping_date:,
+              memo_type:,
+              list_id:,
+              asc:,
+              expiry_date_start:,
+              expiry_date_end:,
+              is_bought:,
+              is_expiry_date:,
+              is_display:
+            },
+          }
+        end
     end
   end
 
